@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a machine, mechanic or improvement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What would you like to see and how would it work in game?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What problem does it solve or what does it add to the fuel cycle?
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Real-world processes, images, similar features in other mods...

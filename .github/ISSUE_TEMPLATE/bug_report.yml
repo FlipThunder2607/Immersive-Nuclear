@@ -1,0 +1,53 @@
+name: Bug report
+description: Something is broken, crashes or looks wrong
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Please fill in as much as you can.
+  - type: input
+    id: version
+    attributes:
+      label: Immersive Nuclear version
+      placeholder: 0.1.0-alpha.17
+    validations:
+      required: true
+  - type: input
+    id: ie-version
+    attributes:
+      label: Immersive Engineering version
+      placeholder: 0.12-98
+    validations:
+      required: true
+  - type: input
+    id: forge-version
+    attributes:
+      label: Forge version
+      placeholder: 14.23.5.2860
+    validations:
+      required: true
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: Other mods installed
+      description: Or the name of the modpack.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Build the Filtration Unit
+        2. ...
+  - type: textarea
+    id: logs
+    attributes:
+      label: Crash report or log
+      description: Paste a link to a gist or attach `latest.log` / the crash report.
+      render: text
