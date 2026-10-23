@@ -1,95 +1,65 @@
-☢️ Project: RBMK Nuclear Control & Computing System (1.12.2)
+# TODO: Sistema de Controle e Automação para Reator RBMK (Anos 60)
+> **Contexto do Projeto:** Mod para Minecraft 1.12.2 baseado no Immersive Engineering (IE). Sistema computacional e de controle analógico retro-futurista inspirado em instalações nucleares soviéticas da década de 1960.
 
-Contexto: Sistema de automação, monitoramento e controle para reatores RBMK em estilo de computação analógica/digital dos anos 1960/70.
+---
 
-🛠️ Fase 1: Arquitetura de Hardware & Máquinas Analógicas
+## 📌 Fase 1: Arquitetura de Hardware e Máquinas Analógicas (Prioridade Atual)
 
-Foco na interface física, painéis de controle e mecanismos manuais/analógicos.
+- [ ] **1.1. Painéis de Controle e Sinalização Visual**
+  - [ ] Módulo de luzes de status:
+    - Verdes acessas: Operação OK / Sistemas dentro da faixa normal.
+    - Vermelhas acessas: *Warning* / Erro / Anomalia detectada.
+  - [ ] Painel de botões e seletores analógicos (Start/Stop, SCRAM/AZ-5 manual, Bypass de emergência).
+  - [ ] Alavancas de controle manual de hastes de absorção de nêutrons (*Control Rods*).
+  - [ ] Indicadores analógicos de ponteiro (Galvanômetros) para pressão, fluxo de refrigerante e temperatura.
 
-[ ] 1.1. Painel Principal de Telemetria e Alertas (Luzes e Indicadores)
+- [ ] **1.2. Unidade de Impressão e Relatórios (Teletipo/Teleimpressora)**
+  - [ ] Máquina de teletipo (Teleprinter/TTY) para saída de logs em fita de papel impressa.
+  - [ ] Sistema de registro contínuo de dados de telemetria e falhas.
+  - [ ] Módulo de alarmes sonoros mecânicos (campainha/sirene de aviso de pico de xerônio ou sobrepressão).
 
-[ ] Definir padrões visuais (Verde = Operacional / Vermelho = Alarme/Erro).
+- [ ] **1.3. Unidades de Processamento Analógico e Lógica Integrada**
+  - [ ] Racks de relés eletromecânicos e válvulas termiônicas (tubos de vácuo).
+  - [ ] Módulos de barramento elétrico para transmissão de sinais analógicos de 0-10V / 4-20mA.
+  - [ ] Unidade de Leitura de Cartões/Fitas Perfuradas para inicialização e programas fixos.
 
-[ ] Mapeamento dos módulos de luzes para indicadores de pressão, temperatura, fluxo de refrigeração e radiação.
+---
 
-[ ] Mecanismo analógico de lâmpadas incandescentes / relés de aviso sonoro (buzzer/alarmes).
+## 📌 Fase 2: Mapeamento de Sistemas e Interconexão do Reator RBMK
 
-[ ] 1.2. Interfaces de Controle Manual (Botões e Alavancas)
+- [ ] **2.1. Sensores de Entrada (Telemetria)**
+  - [ ] Sensores de temperatura de núcleo e dos canais de combustível.
+  - [ ] Sensores de fluxo de massa de água de refrigeração e bombas de circulação principal.
+  - [ ] Medidores de fluxo de nêutrons (densidade de potência do reator).
+  - [ ] Sensores de pressão nos tambores separadores de vapor.
 
-[ ] Módulo de Hastes de Controle (AZ-5 / Scram de Emergência - botão de cobertura articulada).
+- [ ] **2.2. Atuadores de Saída (Automação)**
+  - [ ] Motores de inserção/retirada de hastes de controle (mecanismo hidráulico/elétrico).
+  - [ ] Válvulas reguladoras de fluxo de refrigeração.
+  - [ ] Válvulas de alívio de pressão de emergência.
+  - [ ] Sistema de acionamento do SCRAM (Inserção total de emergência).
 
-[ ] Painel de Alavancas para Válvulas de Refrigeração e Bombas de Água Principais.
+---
 
-[ ] Chaves Seletoras para Troca de Modos (Manual, Automático, Standby).
+## 📌 Fase 3: Linguagem de Prompt, Comandos e Automação (Etapa Futura)
 
-[ ] 1.3. Unidade de Impressão e Relatórios (Periféricos)
+- [ ] **3.1. Design da Linguagem de Comandos Retro (Assembly/Prompt Lógico)**
+  - [ ] Definição do conjunto de instruções básicas (Ex: `READ`, `SET`, `VALVE`, `ALARM`, `SCRAM`).
+  - [ ] Manipulação de registradores e estados de relés.
 
-[ ] Máquina de Escrita Telegráfica / Teletype (TTY) para log físico em papel.
+- [ ] **3.2. Scripting e Automação por Fita Perfurada**
+  - [ ] Sintaxe para rotinas automáticas de arranque e desligamento seguro.
+  - [ ] Loops de checagem contínua de parâmetros de segurança.
 
-[ ] Leitor e Perfurador de Fitas de Papel (Armazenamento de dados/programas retro).
+---
 
-[ ] Plotter de Gráficos Analógicos para acompanhamento de curva de potência e xenon.
+## 📌 Fase 4: Documentação Técnica Estilo Anos 60
 
-⚙️ Fase 2: Mapeamento de Entradas e Saídas (Sinais I/O)
+- [ ] **4.1. Manual de Operação do Reator (Handbook)**
+  - [ ] Glossário de códigos de erro e tabela de luzes de status.
+  - [ ] Procedimentos padrão de operação (*SOP*) para operadores do painel.
+  - [ ] Guias de resolução de problemas e manutenção mecânica dos relés.
 
-Integração dos sinais analógicos e redstone com o reator RBMK.
-
-[ ] 2.1. Sensores de Leitura do Reator (Inputs)
-
-[ ] Captura de nível de potência do núcleo ($MW_{th}$).
-
-[ ] Sensores de temperatura por canal de combustível.
-
-[ ] Sensores de fluxo de vapor / água primária.
-
-[ ] Detectores de contaminação por Xenônio ($Xe^{135}$) e Radiação de fundo.
-
-[ ] 2.2. Atuadores e Mecanismos (Outputs)
-
-[ ] Pinos/Atuadores de inserção e extração das hastes de boro/grafite.
-
-[ ] Controle das bombas elétricas de alimentação de água.
-
-[ ] Válvulas de alívio de pressão de emergência.
-
-💻 Fase 3: Linguagem de Programação & Sistema Operacional Retro
-
-Desenvolvimento da lógica de automação e linguagem baseada em cartões/comandos.
-
-[ ] 3.1. Especificação da Linguagem (Ex: "RBMK-ASM" ou "SOV-60")
-
-[ ] Sintaxe básica (Comandos de leitora de fita, instruções condicionais IF ERROR).
-
-[ ] Conjunto de instruções para controle de ciclos de leitura I/O.
-
-[ ] Registradores analógicos de estado.
-
-[ ] 3.2. Console de Comando e Interatividade (Prompt)
-
-[ ] Terminal CRT de fósforo verde com CLI (Command Line Interface).
-
-[ ] Comandos de diagnostico (DIAG, STATUS, SCRAM, PRINT_LOG).
-
-[ ] Rotinas de interrupção em tempo real para tratar alertas vermelhos automaticamente.
-
-📚 Fase 4: Documentação Técnica & Manuais de Operação
-
-Documentação no estilo soviético dos anos 60.
-
-[ ] 4.1. Manual de Operação do Reator (SOP)
-
-[ ] Protocolo de inicialização do reator.
-
-[ ] Guia de interpretação do painel de luzes e alarmes.
-
-[ ] Procedimento operacional padrão de emergência (Protocolo AZ-5).
-
-[ ] 4.2. Documentação da Linguagem de Programação
-
-[ ] Tabela de opcodes e instruções da linguagem.
-
-[ ] Exemplos de scripts de automação para balanceamento térmico.
-
-[ ] 4.3. Diagramas de Conexão e Esquece de Fiação
-
-[ ] Mapeamento dos barramentos de sinais analógicos para as máquinas.
+- [ ] **4.2. Documentação da Arquitetura e Engenharia**
+  - [ ] Diagramas de fiação elétrica e conectividade entre módulos do Immersive Engineering.
+  - [ ] Especificações técnicas das máquinas e limitações do sistema de controle.
