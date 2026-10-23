@@ -1,0 +1,36 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
+newmtl conveyor_off
+map_Kd #conveyor_off
+
+newmtl metal_decoration0_radiator
+map_Kd #metal_decoration0_radiator
+
+newmtl metal_device0_fluid_pump_top
+map_Kd #metal_device0_fluid_pump_top
+
+newmtl metal_device1_fluid_pipe
+map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_device1_thermoelectric_gen_bottom
+map_Kd #metal_device1_thermoelectric_gen_bottom
+
+newmtl metal_multiblock_diesel_generator
+map_Kd #metal_multiblock_diesel_generator
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl storage_steel
+map_Kd #storage_steel
+
+newmtl wooden_device_windmill_advanced
+map_Kd #wooden_device_windmill_advanced
+

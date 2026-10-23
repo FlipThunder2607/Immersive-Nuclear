@@ -1,0 +1,18 @@
+newmtl conveyor_off
+map_Kd #conveyor_off
+
+newmtl metal_device1_fluid_pipe
+map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_multiblock_diesel_generator
+map_Kd #metal_multiblock_diesel_generator
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl storage_steel
+map_Kd #storage_steel
+
+newmtl wooden_device_windmill_advanced
+map_Kd #wooden_device_windmill_advanced
+

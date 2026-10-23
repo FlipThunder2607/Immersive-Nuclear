@@ -1,0 +1,13 @@
+[
+{
+  "modid": "immersivenuclear",
+  "name": "Immersive Nuclear",
+  "description": "Addon nuclear para Immersive Engineering.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "authorList": [],
+  "credits": "Textura da parede do tanque (tanque_parede.png) derivada do Chemical Reactor do Immersive Geology, de Muddykat-Tech e UnSchtalch (LGPL-3.0).",
+  "dependencies": ["immersiveengineering"]
+}
+]

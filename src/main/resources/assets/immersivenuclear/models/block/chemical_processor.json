@@ -1,0 +1,4 @@
+{
+    "parent": "block/cube_all",
+    "textures": { "all": "immersiveengineering:blocks/sheetmetal_lead" }
+}

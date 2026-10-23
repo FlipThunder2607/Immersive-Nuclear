@@ -1,0 +1,189 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true
+    },
+    "textures": {
+      "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+      "#conveyor_off": "immersiveengineering:blocks/conveyor_off",
+      "#metal_decoration0_radiator": "immersiveengineering:blocks/metal_decoration0_radiator",
+      "#metal_device0_fluid_pump_top": "immersiveengineering:blocks/metal_device0_fluid_pump_top",
+      "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_device1_thermoelectric_gen_bottom": "immersiveengineering:blocks/metal_device1_thermoelectric_gen_bottom",
+      "#metal_multiblock_diesel_generator": "immersiveengineering:blocks/metal_multiblock_diesel_generator",
+      "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+      "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+      "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+      "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "#wooden_device_windmill_advanced": "immersiveengineering:blocks/wooden_device_windmill_advanced",
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "facing=east,master=false,mirrored=false": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=east,master=false,mirrored=true": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/filter_press.obj",
+      "y": 90
+    },
+    "facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/filter_press_mirrored.obj",
+      "y": 90
+    },
+    "facing=north,master=false,mirrored=false": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=north,master=false,mirrored=true": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/filter_press.obj",
+      "y": 0
+    },
+    "facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/filter_press_mirrored.obj",
+      "y": 0
+    },
+    "facing=south,master=false,mirrored=false": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=south,master=false,mirrored=true": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/filter_press.obj",
+      "y": 180
+    },
+    "facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/filter_press_mirrored.obj",
+      "y": 180
+    },
+    "facing=west,master=false,mirrored=false": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=west,master=false,mirrored=true": {
+      "model": "immersiveengineering:ie_empty"
+    },
+    "facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/filter_press.obj",
+      "y": 270
+    },
+    "facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/filter_press_mirrored.obj",
+      "y": 270
+    },
+    "inventory": [
+      {
+        "model": "immersivenuclear:obj/filter_press_item.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0019,
+              0.0264,
+              0.0067
+            ],
+            "scale": 0.105,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.0034,
+              0.0138,
+              0.0021
+            ],
+            "scale": 0.055
+          },
+          "fixed": {
+            "translation": [
+              0.0063,
+              0.025,
+              -0.0038
+            ],
+            "scale": 0.1,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0008,
+              -0.0002,
+              0.0117
+            ],
+            "scale": 0.045,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0008,
+              -0.0002,
+              0.0117
+            ],
+            "scale": 0.045,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.001,
+              0.0138,
+              0.0039
+            ],
+            "scale": 0.055,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.001,
+              0.0138,
+              -0.0039
+            ],
+            "scale": 0.055,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

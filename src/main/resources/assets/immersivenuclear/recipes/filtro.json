@@ -1,0 +1,14 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "TFT",
+        "SFS",
+        "TFT"
+    ],
+    "key": {
+        "T": { "type": "forge:ore_dict", "ore": "plankTreatedWood" },
+        "F": { "type": "forge:ore_dict", "ore": "fabricHemp" },
+        "S": { "type": "forge:ore_dict", "ore": "stickSteel" }
+    },
+    "result": { "item": "immersivenuclear:filtro" }
+}

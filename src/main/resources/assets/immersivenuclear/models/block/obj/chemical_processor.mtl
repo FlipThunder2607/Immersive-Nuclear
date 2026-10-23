@@ -1,0 +1,36 @@
+newmtl glass
+map_Kd #glass
+
+newmtl metal_device1_fluid_pipe
+map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_multiblock_assembler
+map_Kd #metal_multiblock_assembler
+
+newmtl metal_multiblock_bottling_machine_a
+map_Kd #metal_multiblock_bottling_machine_a
+
+newmtl metal_multiblock_diesel_generator
+map_Kd #metal_multiblock_diesel_generator
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl metal_multiblock_squeezer
+map_Kd #metal_multiblock_squeezer
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl storage_steel
+map_Kd #storage_steel
+
+newmtl storage_uranium_top
+map_Kd #storage_uranium_top
+
+newmtl tanque_parede
+map_Kd #tanque_parede
+

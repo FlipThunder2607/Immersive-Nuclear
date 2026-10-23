@@ -1,0 +1,10 @@
+{
+    "chemical_processor_start": { "category": "block", "sounds": [ "immersivenuclear:chemical_processor_start" ] },
+    "chemical_processor_loop": { "category": "block", "sounds": [ "immersivenuclear:chemical_processor_loop" ] },
+    "chemical_processor_stop": { "category": "block", "sounds": [ "immersivenuclear:chemical_processor_stop" ] },
+    "filter_press_pressurize": { "category": "block", "sounds": [ "immersivenuclear:filter_press_pressurize" ] },
+    "filter_press_close": { "category": "block", "sounds": [ "immersivenuclear:filter_press_close" ] },
+    "filter_press_release": { "category": "block", "sounds": [ "immersivenuclear:filter_press_release" ] },
+    "filter_press_filter_loop": { "category": "block", "sounds": [ { "name": "immersivenuclear:filter_press_filter_loop", "stream": false } ] },
+    "filter_press_open": { "category": "block", "sounds": [ "immersivenuclear:filter_press_open" ] }
+}
