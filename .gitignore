@@ -1,0 +1,31 @@
+# Gradle / ForgeGradle
+.gradle/
+build/
+out/
+run/
+classes/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+eclipse/
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Local workspace files (not part of the mod)
+ferramentas/
+build-local.ps1

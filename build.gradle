@@ -1,0 +1,74 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = "https://maven.minecraftforge.net/" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "0.1.0-alpha.17"
+group = "immersivenuclear"
+archivesBaseName = "immersivenuclear"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+minecraft {
+    // 14.23.5.2864 (instancia de teste) nao publica userdev; 2847 e a mais proxima
+    version = "1.12.2-14.23.5.2847"
+    runDir = "run"
+    mappings = "stable_39"
+    replace "@VERSION@", project.version
+    replaceIn "ImmersiveNuclear.java"
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "https://cursemaven.com" }
+    maven { url = "https://dvs1.progwml6.com/files/maven" }
+}
+
+dependencies {
+    // Immersive Engineering 0.12-98
+    deobfCompile "curse.maven:immersive-engineering-231951:2974106"
+    // JEI, only to compile the plugin (the game brings its own JEI; 4.16 API = 4.22 API)
+    deobfProvided "mezz.jei:jei_1.12.2:4.16.1.302"
+}
+
+jar {
+    archiveName = "${baseName}-1.12.2-${version}.jar"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+task chemicalProcessorStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.ChemicalProcessorStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn chemicalProcessorStructureTest
+
+task filterPressStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.FilterPressStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn filterPressStructureTest
