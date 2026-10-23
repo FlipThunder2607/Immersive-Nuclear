@@ -69,3 +69,52 @@
 - [ ] **4.2. Documentação da Arquitetura e Engenharia**
   - [ ] Diagramas de fiação elétrica e conectividade entre módulos do Immersive Engineering.
   - [ ] Especificações técnicas das máquinas, limites de fita e limitações do sistema de controle.
+
+
+    # Especificação de Módulo: Danos e Efeitos da Exposição Prolongada ao Urânio
+> **Foco Inicial de Desenvolvimento:** Script/Mecânica de Contaminação e Síndrome Aguda/Crônica de Radiação (ARF/CRS) para o Minecraft 1.12.2.
+
+---
+
+## 📌 1. Vetores de Exposição (Como o jogador se contamina)
+- [ ] **Proximidade com o Reator e Elementos Combustíveis:**
+  - Radiação gama passiva atravessando paredes e blocos (atenuada por espessura de concreto/chumbo do Immersive Engineering).
+- [ ] **Vazamento de Água Pesada / Refrigerante Contaminado:**
+  - Contato direto com fluidos do circuito primário ou vapor liberado por válvulas de alívio.
+- [ ] **Manuseio de Mídia e Materiais:**
+  - Carregar barras de combustível bruto ou fitas magnéticas armazenadas incorretamente próximas a fontes radioativas.
+- [ ] **Poeira de Óxido de Urânio / Pó de Grafite (Inalação/Ingestão):**
+  - Exposição em salas de reator danificadas sem o uso de Equipamentos de Proteção Individual (EPIs).
+
+---
+
+## 📌 2. Estágios de Contaminação e Efeitos Graduais (Doenças por Radiação)
+
+- [ ] **Estágio 1: Exposição Leve / Contaminação Inicial (100 - 250 rads)**
+  - *Sintomas:* Fadiga leve, náusea esporádica após longos períodos no painel.
+  - *Efeitos visuais/mecânicos:* Leve efeito de lentidão (*Slowness I*) intermitente e tontura leve na tela.
+
+- [ ] **Estágio 2: Síndrome Moderada (250 - 450 rads)**
+  - *Sintomas:* Danos celulares visíveis, enfraquecimento do sistema imunológico.
+  - *Efeitos:* Fome esgotando mais rápido, náuseas frequentes (*Nausea*), perda progressiva de corações de vida máxima temporária.
+
+- [ ] **Estágio 3: Exposição Crítica / Envenenamento Severo por Radiação (450 - 650 rads)**
+  - *Sintomas:* Queimaduras de radiação na pele, falência orgânica inicial.
+  - *Efeitos:* Danos contínuos por segundo (*Wither* ou dano direto ignorando armadura), fraqueza extrema, tosse com partículas (gerando poeira contaminada no chão).
+
+- [ ] **Estágio 4: Letal / Síndrome Aguda Severa (> 650+ rads)**
+  - *Sintomas:* Destruição total da medula óssea e sistema gastrointestinal.
+  - *Efeitos:* Morte iminente em poucos minutos sem tratamento de suporte de emergência (Injeções de agentes quelantes / Prussian Blue fictício do mod).
+
+---
+
+## 📌 3. Mecânicas de Mitigação e Proteção (Equipamentos e Salas)
+
+- [ ] **Blindagem de Salas (Integração com Blocos):**
+  - Paredes de Concreto Denso (*Heavy Concrete*) reduzem a taxa de radiação em X%.
+  - Chapas de Chumbo em painéis de controle e racks de fitas magnéticas.
+- [ ] **EPIs (Equipamentos de Proteção):**
+  - Máscaras de gás soviéticas (GP-5 ou similares dos anos 60) para filtrar poeira particulada.
+  - Trajes de proteção química/radioativa (Hazmat retro).
+- [ ] **Protocolos de Descontaminação:**
+  - Chuveiros de emergência na entrada da sala de controle para lavar resíduos radioativos do inventário/jogador.
