@@ -10,6 +10,8 @@ An Immersive Engineering addon that brings the nuclear fuel cycle to life: proce
 
 > **Early alpha.** The mod is under active development. Machines, recipes, numbers and registry names may still change between versions. Do not use it in worlds you care about yet.
 
+**Wiki:** [flipthunder2607.github.io/Immersive-Nuclear-wiki](https://flipthunder2607.github.io/Immersive-Nuclear-wiki/). Every machine, item and fluid, the production lines as interactive flow charts and the plans for enrichment and fuel fabrication (in Portuguese for now).
+
 ---
 
 ## About
