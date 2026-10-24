@@ -15,7 +15,7 @@
 
 - [ ] **1.2. Armazenamento e Unidade de Impressão (Teletipo e Fitas Magnéticas)**
   - [ ] **Fitas Magnéticas de Dados (Mídia Principal de Armazenamento):**
-    - Padrão de fita de 1/2 polegada em rolos bobinados (estilo BESM-6 / IBM 7090 dos anos 60).
+    - Padrão de fita de 1/2 polegada em rolos bobinados (estilo anos 60).
     - Capacidade máxima realista: **2.5 MB a 5 MB por rolo** (densidades de 200 a 800 BPI).
     - Modos de operação: Gravação sequencial de telemetria, dump de erro do sistema e rotinas de carregamento de sistema.
   - [ ] **Máquina de Teletipo (Teleprinter / TTY):**
