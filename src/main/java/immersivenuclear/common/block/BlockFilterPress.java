@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 
 /**
  * Every part of a formed Filtration Unit. The master part draws the whole unit
- * (models/block/obj/filter_press*.obj, generated from design/2-unidade-de-filtro-prensa/filtro-prensa.bbmodel);
+ * (models/block/obj/filter_press*.obj);
  * the other parts are invisible. Same properties as {@link BlockChemicalProcessor}, all from the tile entity.
  */
 public class BlockFilterPress extends Block

@@ -13,21 +13,21 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Filtration Unit (layout: design/2-unidade-de-filtro-prensa/interface-filtracao-v1.png, approved by
- * the user). 176 x 248: fluids on top, the 28 filter slots below, the player inventory at the bottom. Tanks, energy,
+ * Interface of the Filtration Unit. 272 x 248 (as wide as the Chemical Separation Unit's): the process on top, the 28
+ * filter slots and the residue below, the player inventory at the bottom, centred. Tanks, energy,
  * pump, step, state and redstone mode go to the client as window properties (all below 32767).
  */
 public class ContainerFilterPress extends Container
 {
-	public static final int WIDTH = 176, HEIGHT = 248, INV_Y = 166;
+	public static final int WIDTH = 272, HEIGHT = 248, INV_X = 56, INV_Y = 167;
 	public static final int FILTERS_X = 9, FILTERS_Y = 84, FILTER_COLUMNS = 7;
 	/** Slot positions (top-left of the 16x16 item) after the filters, in the tile's slot order. */
 	public static final int[][] SLOT_XY = {
-			{142, 84}, // residue out
-			{9, 17},   // polpa container in
-			{9, 56},   // empty container out
-			{151, 17}, // empty container in (solution)
-			{151, 56}, // solution container out
+			{147, 84}, // residue out, under the chute
+			{10, 18},  // slurry container in
+			{10, 49},  // empty container out
+			{221, 18}, // empty container in (solution)
+			{221, 49}, // solution container out
 	};
 	public static final int BUTTON_REDSTONE = 0;
 
@@ -49,9 +49,9 @@ public class ContainerFilterPress extends Container
 			addSlotToContainer(new SlotItemHandler(tile.getInventory(), TileFilterPress.FILTERS + i, SLOT_XY[i][0], SLOT_XY[i][1]));
 		for(int i = 0; i < 3; i++)
 			for(int j = 0; j < 9; j++)
-				addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, INV_Y + i * 18));
+				addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, INV_X + j * 18, INV_Y + i * 18));
 		for(int i = 0; i < 9; i++)
-			addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, INV_Y + 58));
+			addSlotToContainer(new Slot(playerInv, i, INV_X + i * 18, INV_Y + 58));
 		read();
 	}
 
@@ -89,9 +89,9 @@ public class ContainerFilterPress extends Container
 	{
 		switch(id)
 		{
-			case 0: storage.setFluid(data > 0 ? new FluidStack(INContent.fluidPolpa, data) : null); break;
-			case 1: pressure.setFluid(data > 0 ? new FluidStack(INContent.fluidPolpa, data) : null); break;
-			case 2: solution.setFluid(data > 0 ? new FluidStack(INContent.fluidSolucaoBruta, data) : null); break;
+			case 0: storage.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
+			case 1: pressure.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
+			case 2: solution.setFluid(data > 0 ? new FluidStack(INContent.fluidCrudeSolution, data) : null); break;
 			case 3: energy = data; break;
 			case 4: pump = data; break;
 			case 5: phase = data; break;

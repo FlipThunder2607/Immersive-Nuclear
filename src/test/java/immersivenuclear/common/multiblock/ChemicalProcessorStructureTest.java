@@ -23,19 +23,19 @@ public class ChemicalProcessorStructureTest
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'B', "master is a tank barrel");
-		// Ports from the user's model.bbmodel
+		// Ports, as on the model
 		expect(get(1, -1, 0), 'l', "water input, right (south)");
 		expect(get(2, -1, -2), 'l', "uranium powder input, back (east)");
 		expect(get(2, -1, -1), 'l', "reagent input, back (east)");
-		expect(get(1, -1, -2), 'l', "polpa output, left (north)");
+		expect(get(1, -1, -2), 'l', "slurry output, left (north)");
 		expect(get(2, -1, 0), 'H', "energy input, heavy engineering column");
 		expect(portAt(1, -1, 0), PORT_WATER, "water port");
 		expect(portFace(1, -1, 0)[1], 1, "water on the south face");
 		expect(portAt(2, -1, -2), PORT_URANIUM, "uranium port");
 		expect(portAt(2, -1, -1), PORT_REAGENT, "reagent port");
 		expect(portFace(2, -1, -1)[0], 1, "item inputs on the east face");
-		expect(portAt(1, -1, -2), PORT_POLPA, "polpa port");
-		expect(portFace(1, -1, -2)[1], -1, "polpa on the north face");
+		expect(portAt(1, -1, -2), PORT_SLURRY, "slurry port");
+		expect(portFace(1, -1, -2)[1], -1, "slurry on the north face");
 		expect(portAt(2, -1, 0), PORT_ENERGY, "energy, lower heavy engineering");
 		expect(portAt(2, 0, 0), PORT_ENERGY, "energy, upper heavy engineering");
 		expect(portAt(0, 0, 0), PORT_REDSTONE, "redstone port is the trigger");

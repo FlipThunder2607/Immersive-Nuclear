@@ -24,18 +24,19 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.0-alpha.17)
+## Current content (0.1.1-alpha)
 
 ### Machines
 
 | Machine | Size | What it does |
 |---|---|---|
-| **Chemical Processing Unit** | 3×6×3 | Leaches IE uranium powder with water and Processing Reagent into **Uranium Slurry**. |
+| **Chemical Processing Unit** | 3×6×3 | Batch leaching reactor. Turns IE uranium powder, Processing Reagent and water into **Uranium Slurry**. |
 | **Filtration Unit** | 3×3×9 | Filter press. Splits the slurry into **Crude Uranium Solution** and **Wet Mineral Residue**. Uses 28 replaceable filters that wear out, with ports to automate the swap. Fully animated: actuators, plates and a discharge conveyor. |
+| **Chemical Separation Unit** | 5×4×7 | Solvent extraction in two mixer-settler stages. Turns the crude solution into **Purified Uranium Solution** and **Chemical Effluent**; the solvent goes round inside and only its losses are topped up. |
 
-Both machines have:
+All machines have:
 
-- IE-style GUI with status lights, tanks and energy bar
+- GUI drawn as an animated flow diagram, in graphite steel with IE's own slots, tanks and status lights
 - redstone control (a signal stops the machine, the hammer inverts it)
 - JEI recipe pages
 - looping and event sounds
@@ -63,18 +64,22 @@ Uranium powder (IE)
                           └─► [5] Industrial Dryer ──► Yellowcake     (+ Process Condensate)
 ```
 
-Machines 1 and 2 are playable. Machines 3 to 5 are being designed.
+Machines 1 to 3 are playable. Machines 4 and 5 are being designed.
+
+A branch after machine 3, the **Metal Extractor** (machine 3.5), will recover dissolved metals from the effluent in
+an electrolytic cell before it is treated.
 
 ## Roadmap
 
 **Line 1: uranium powder to yellowcake**
 - [x] Chemical Processing Unit
 - [x] Filtration Unit
-- [ ] Chemical Separation Unit (solvent extraction: extraction and stripping stages)
+- [x] Chemical Separation Unit (solvent extraction: extraction and stripping stages)
+- [ ] Metal Extractor (machine 3.5: electrolytic recovery of metals from the effluent)
 - [ ] Precipitation Unit
 - [ ] Industrial Dryer
 - [ ] Concentrate Drum (storage)
-- [ ] Effluent treatment: recycling, neutralization with quicklime, Metal Recovery Unit
+- [ ] Effluent treatment: recycling, neutralization with quicklime
 - [ ] Balancing pass (energy, time and quantities are placeholders)
 
 **Hazards**
@@ -131,4 +136,4 @@ Immersive Nuclear is licensed under the [GNU General Public License v3.0](LICENS
 ## Credits
 
 - [Immersive Engineering](https://github.com/BluSunrize/ImmersiveEngineering) by BluSunrize and contributors. This addon builds on its API and references its textures at runtime.
-- The tank wall texture (`tanque_parede.png`) is derived from the Chemical Reactor of [Immersive Geology](https://github.com/Immersive-Geology-Team/Immersive-Geology) by Muddykat-Tech and UnSchtalch, licensed under LGPL-3.0.
+- Some item icons are remixes of Immersive Engineering textures. They are not covered by this mod's GPL-3.0: they stay under [Immersive Engineering's license](https://github.com/BluSunrize/ImmersiveEngineering/blob/master/LICENSE) and are used under its clause for addons.

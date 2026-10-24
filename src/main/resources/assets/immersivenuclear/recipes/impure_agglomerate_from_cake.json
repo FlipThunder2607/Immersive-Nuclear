@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "XX",
+        "XX"
+    ],
+    "key": {
+        "X": { "item": "immersivenuclear:neutralization_cake" }
+    },
+    "result": { "item": "immersivenuclear:impure_agglomerate" }
+}

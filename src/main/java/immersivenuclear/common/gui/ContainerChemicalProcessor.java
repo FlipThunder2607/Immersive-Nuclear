@@ -14,48 +14,49 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Chemical Processing Unit (layout: design/interface-processamento-quimico-v1.png). Slots sit where
- * IE's refinery puts its frames; tanks, energy, progress, state and redstone mode go to the client as window
- * properties (all below 32767, which is what those carry).
+ * Interface of the Chemical Processing Unit. 272 x 210 (as wide as the other machines'): the reactor in the middle, the
+ * solids hopper on top of it, the player inventory at the bottom, centred. Tanks, energy, the batch (step, ticks,
+ * reactor), what moves, state and redstone mode go to the client as window properties (all below 32767).
  */
 public class ContainerChemicalProcessor extends Container
 {
+	public static final int WIDTH = 272, HEIGHT = 210, INV_X = 56, INV_Y = 129;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI. */
 	public static final int[][] SLOT_XY = {
-			{58, 15},  // uranium powder
-			{58, 54},  // reagent
-			{11, 15},  // water container in
-			{11, 54},  // empty water container out
-			{106, 15}, // empty container in (polpa)
-			{106, 54}, // polpa container out
+			{70, 12},  // uranium powder, on the hopper
+			{90, 12},  // reagent, on the hopper
+			{10, 54},  // water container in
+			{10, 85},  // empty water container out
+			{221, 54}, // empty container in (slurry)
+			{221, 85}, // slurry container out
 	};
 	public static final int BUTTON_REDSTONE = 0;
 
 	final TileChemicalProcessor tile;
 	/** Client copies of the master's values (on the server they are read straight from the tile). */
 	public final FluidTank water = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
-	public final FluidTank polpa = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
-	public int energy, progress, state;
+	public final FluidTank slurry = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
+	public int energy, phase, phaseTicks, reactor, moving, state;
 	public boolean redstoneInverted;
-	final int[] sent = {-1, -1, -1, -1, -1, -1};
+	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 	public ContainerChemicalProcessor(InventoryPlayer playerInv, TileChemicalProcessor tile)
 	{
 		this.tile = tile;
 		for(int i = 0; i < SLOT_XY.length; i++)
 			addSlotToContainer(new SlotItemHandler(tile.getInventory(), i, SLOT_XY[i][0], SLOT_XY[i][1]));
-		// Player inventory where IE's refinery has it
 		for(int i = 0; i < 3; i++)
 			for(int j = 0; j < 9; j++)
-				addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 85 + i * 18));
+				addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, INV_X + j * 18, INV_Y + i * 18));
 		for(int i = 0; i < 9; i++)
-			addSlotToContainer(new Slot(playerInv, i, 8 + i * 18, 143));
+			addSlotToContainer(new Slot(playerInv, i, INV_X + i * 18, INV_Y + 58));
 		read();
 	}
 
 	int[] values()
 	{
-		return new int[]{tile.getWater(), tile.getPolpa(), tile.getEnergy(), tile.getProgress(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0};
+		return new int[]{tile.getWater(), tile.getSlurry(), tile.getEnergy(), tile.getPhase(), tile.getPhaseTicks(), tile.getReactor(),
+				tile.getMoving(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0};
 	}
 
 	/** Server side: mirror the tile into the client copies, so the same fields can be read on both sides. */
@@ -87,11 +88,14 @@ public class ContainerChemicalProcessor extends Container
 		switch(id)
 		{
 			case 0: water.setFluid(data > 0 ? new FluidStack(FluidRegistry.WATER, data) : null); break;
-			case 1: polpa.setFluid(data > 0 ? new FluidStack(INContent.fluidPolpa, data) : null); break;
+			case 1: slurry.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
 			case 2: energy = data; break;
-			case 3: progress = data; break;
-			case 4: state = data; break;
-			case 5: redstoneInverted = data != 0; break;
+			case 3: phase = data; break;
+			case 4: phaseTicks = data; break;
+			case 5: reactor = data; break;
+			case 6: moving = data; break;
+			case 7: state = data; break;
+			case 8: redstoneInverted = data != 0; break;
 		}
 	}
 

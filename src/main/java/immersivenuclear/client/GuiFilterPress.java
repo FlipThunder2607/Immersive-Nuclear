@@ -5,43 +5,85 @@ import java.util.ArrayList;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import immersivenuclear.ImmersiveNuclear;
+import immersivenuclear.common.INContent;
 import immersivenuclear.common.block.TileFilterPress;
 import immersivenuclear.common.gui.ContainerFilterPress;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 /**
- * Interface of the Filtration Unit (design/2-unidade-de-filtro-prensa/interface-filtracao-v1.png), in IE's style and
- * drawn from IE's refinery GUI at run time (border, steel, frames, markers, arrows, tank gauge, wooden inventory),
- * taller than IE's 166 to fit one slot per filter. Our sheet (textures/gui/processamento_quimico.png) gives the
- * arrow fill, the dark insets, the status lights and the blank button.
- * Top: polpa buckets | 1 storage tank > 2 pump > 3 pressure tank, 4 pressure gauge > 5 filtering > 6 solution tank |
- * solution buckets. Below: 28 filters | residue, redstone button, status lights, energy.
+ * Interface of the Filtration Unit, in the finish of the Chemical Separation Unit (graphite brushed steel, IE's own
+ * slots, tanks and markers drawn at run time a little darker, the same right column), as a flow diagram:
+ *   buckets | storage tank > piston pump > pressure vessel with its dial > filter press > solution tank | buckets
+ *   below: the 28 filters | the chute from the press into the residue slot
+ * The pump's flywheel turns and its piston strokes while it pressurises; the dial shows the pressure; the press
+ * closes its plates, fills its chambers when the pressure is released (the solution leaves at once) and drops the
+ * cake down the chute when it opens. Our sheet (textures/gui/filter_press.png, made by ferramentas/gui_filtro.py with
+ * the same constants) holds the background and those parts; the button and the lights are machine 1's.
  */
 public class GuiFilterPress extends GuiIEContainerBase
 {
 	static final String IE = "immersiveengineering:textures/gui/refinery.png";
-	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/processamento_quimico.png";
+	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/chemical_processor.png";
+	static final String SHEET = ImmersiveNuclear.MODID + ":textures/gui/filter_press.png";
+	static final int SHEET_SIZE = 512;
 
-	// Pieces of refinery.png: {u, v, w, h}
-	static final int[] SLOT = {35, 13, 20, 20}, TANK = {11, 18, 20, 51}, BLUE = {42, 10, 6, 3}, ORANGE = {42, 49, 6, 3}, ARROW = {83, 36, 19, 13};
-	static final int TANK_Y = 20, STORAGE_X = 30, PRESSURE_X = 74, SOLUTION_X = 130;
-	static final int GAUGE_X = 94, GAUGE_Y = 18, GAUGE_W = 9, GAUGE_H = 51;
+	// Layout (same as gui_filtro.py)
+	static final int ROW = 16, STORAGE_X = 32, SOLUTION_X = 195;
 	/** Also JEI's click areas for the recipes (INJeiPlugin). */
-	public static final int PUMP_ARROW_X = 51, FILTER_ARROW_X = 106, ARROW_Y = 37;
-	static final int BUTTON_X = 141, BUTTON_Y = 105, BUTTON_SIZE = 16;
-	static final int PANEL_X = 141, PANEL_Y = 122, PANEL_W = 16, PANEL_H = 36;
-	static final int LIGHT_X = 146, LIGHT_Y = 126, LIGHT_STEP = 8;
-	static final int ENERGY_X = 161, ENERGY_Y = 82, ENERGY_W = 9, ENERGY_H = 76;
+	public static final int PUMP_X = 56, PUMP_DY = 13, PUMP_W = 30, PUMP_H = 24;
+	public static final int PRESS_X = 120, PRESS_DY = 6, PRESS_W = 70, PRESS_H = 38;
+	static final int WHEEL_CX = 7, WHEEL_CY = 12, WHEEL_R = 6, CRANK_R = 4;
+	/** The piston's stroke is twice the crank radius. */
+	static final int PUMP_WIN_X = 17, PUMP_WIN_Y = 9, PUMP_WIN_W = 11, PUMP_WIN_H = 6, PISTON_W = 3;
+	static final int VESSEL_X = 90, VESSEL_DY = 14, VESSEL_W = 24, VESSEL_H = 40;
+	static final int GLASS_X = 10, GLASS_Y = 8, GLASS_W = 4, GLASS_H = 24;
+	static final int DIAL_X = 93, DIAL_DY = -5, DIAL_S = 18;
+	static final int CHAMBER_X = 3, CHAMBER_Y = 4, CHAMBER_H = 30;
+	static final int CYL_W = 9, HEAD_W = 3, PLATE_W = 2, PLATES = 7;
+	/** The head moves this far when the press closes, and the chambers go from OPEN_GAP to CLOSED_GAP wide. */
+	static final int HEAD_STROKE = 7, OPEN_GAP = 4, CLOSED_GAP = 3;
+	static final int STRIP_X = 63, STRIP_Y = 5, STRIP_W = 4, STRIP_H = 28;
+	static final int CHUTE_X = 147, CHUTE_Y = ROW + PRESS_DY + PRESS_H, CHUTE_S = 16;
+	/** Every pipe between the parts at the tanks' middle; the slurry comes in low, under the pump. */
+	static final int PIPE_DY = 25, INLET_DY = 44, INLET_X = PUMP_X + 22;
+	static final int ENERGY_X = 248, ENERGY_Y = 16, ENERGY_W = 14, ENERGY_H = 64;
+	static final int BUTTON_X = 247, BUTTON_Y = 86, BUTTON_SIZE = 16;
+	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 112, LIGHT_STEP = 8;
+	static final int PANEL_X = ContainerFilterPress.INV_X - 8, PANEL_Y = ContainerFilterPress.INV_Y - 8;
+
+	// Our sprites in the sheet: {u, v, w, h}
+	static final int[] PUMP = {0, 260, PUMP_W, PUMP_H}, WHEEL = {32, 260, 2 * WHEEL_R + 1, 2 * WHEEL_R + 1}, PISTON = {100, 260, PISTON_W, PUMP_WIN_H},
+			VESSEL = {110, 260, VESSEL_W, VESSEL_H}, PRESS = {0, 304, PRESS_W, PRESS_H}, DIAL = {0, 346, DIAL_S, DIAL_S},
+			PLATE = {72, 304, PLATE_W, CHAMBER_H}, HEAD = {76, 304, HEAD_W, CHAMBER_H}, CHUTE = {82, 304, CHUTE_S, CHUTE_S};
+	static final int WHEEL_STEP = 15;
+	// IE's pieces in refinery.png
+	static final int[] IE_SLOT = {35, 13, 20, 20}, IE_TANK = {11, 18, 20, 51}, IE_BLUE = {42, 10, 6, 3}, IE_ORANGE = {42, 49, 6, 3};
+
+	static final int COL_SLURRY = 0xff968060, COL_SOLUTION = 0xffc86e32, COL_CAKE = 0xff6e5a3c, COL_NEEDLE = 0xffb01e14, COL_ROD = 0xffaaadb2;
 
 	final ContainerFilterPress container;
+	/** Shown pressure, 0..1: eases towards the real one, so the needle rises and falls smoothly. */
+	float shownPressure;
+	/** The pump's crank angle, in degrees, turning while it pressurises. */
+	float crank, lastCrank;
+	/** The press step's tick count kept on the client (smooth), set from the server's on a new step or a drift. */
+	int shownPhase = -1, shownTicks;
 
 	public GuiFilterPress(ContainerFilterPress container)
 	{
@@ -51,69 +93,24 @@ public class GuiFilterPress extends GuiIEContainerBase
 		ySize = ContainerFilterPress.HEIGHT;
 	}
 
-	void piece(int[] p, int x, int y)
+	boolean pumping()
 	{
-		drawTexturedModalRect(guiLeft + x, guiTop + y, p[0], p[1], p[2], p[3]);
+		return container.pressure.getFluidAmount() > 0 && container.pump < TileFilterPress.PRESSURIZE_TICKS
+				&& container.state != TileFilterPress.STATE_DISABLED && container.state != TileFilterPress.STATE_NO_POWER;
 	}
 
-	/** A slot frame, with the IE marker above it (blue = input, orange = output, null = none). */
-	void slotFrame(int itemX, int itemY, int[] marker)
+	/** The pressurised slurry going into the plates: the first ticks of the filtering. */
+	boolean releasing()
 	{
-		piece(SLOT, itemX - 2, itemY - 2);
-		if(marker != null)
-			piece(marker, itemX + 5, itemY - 5);
+		return container.phase == TileFilterPress.PHASE_FILTERING && container.phaseTicks < TileFilterPress.RELEASE_TICKS;
 	}
 
-	/** A frame of any size, cut from the refinery's slot frame (2 px light border). Refinery texture bound. */
-	void frame(int x, int y, int w, int h)
+	boolean filtering()
 	{
-		int u = SLOT[0], v = SLOT[1];
-		for(int i = 2; i < w - 2; i += 16)
-		{
-			int len = Math.min(16, w - 2 - i);
-			drawTexturedModalRect(guiLeft + x + i, guiTop + y, u + 2, v, len, 2);
-			drawTexturedModalRect(guiLeft + x + i, guiTop + y + h - 2, u + 2, v + 18, len, 2);
-		}
-		for(int j = 2; j < h - 2; j += 16)
-		{
-			int len = Math.min(16, h - 2 - j);
-			drawTexturedModalRect(guiLeft + x, guiTop + y + j, u, v + 2, 2, len);
-			drawTexturedModalRect(guiLeft + x + w - 2, guiTop + y + j, u + 18, v + 2, 2, len);
-		}
-		drawTexturedModalRect(guiLeft + x, guiTop + y, u, v, 2, 2);
-		drawTexturedModalRect(guiLeft + x + w - 2, guiTop + y, u + 18, v, 2, 2);
-		drawTexturedModalRect(guiLeft + x, guiTop + y + h - 2, u, v + 18, 2, 2);
-		drawTexturedModalRect(guiLeft + x + w - 2, guiTop + y + h - 2, u + 18, v + 18, 2, 2);
+		return container.phase == TileFilterPress.PHASE_FILTERING && container.state == TileFilterPress.STATE_RUNNING;
 	}
 
-	/** The dark inside of a frame, tiled from our sheet (32 x 32 at 0, 110). Our texture bound. */
-	void dark(int x, int y, int w, int h)
-	{
-		for(int j = 0; j < h; j += 32)
-			for(int i = 0; i < w; i += 32)
-				drawTexturedModalRect(guiLeft + x + i, guiTop + y + j, 0, 110, Math.min(32, w - i), Math.min(32, h - j));
-	}
-
-	/** 0 green running, 1 yellow waiting (polpa, pressure), 2 red stopped (power, full output, filters), 3 grey disabled. */
-	int litLight()
-	{
-		if(container.state == TileFilterPress.STATE_RUNNING)
-			return container.phase == TileFilterPress.PHASE_CLOSED ? 1 : 0;
-		switch(container.state)
-		{
-			case TileFilterPress.STATE_NO_INPUT: return 1;
-			case TileFilterPress.STATE_NO_POWER:
-			case TileFilterPress.STATE_OUTPUT_FULL:
-			case TileFilterPress.STATE_NO_FILTERS: return 2;
-			case TileFilterPress.STATE_DISABLED: return 3;
-			default: return -1;
-		}
-	}
-
-	/** Shown pressure, 0..1: eases towards the real one, so the gauge rises and falls like a needle. */
-	float shownPressure;
-
-	/** The pump's pressure on what is left in the pressure tank: it falls as the release empties the tank. */
+	/** The pump's pressure on what is left in the vessel: it falls as the release empties it. */
 	float targetPressure()
 	{
 		int amount = container.pressure.getFluidAmount();
@@ -132,82 +129,277 @@ public class GuiFilterPress extends GuiIEContainerBase
 		shownPressure += (targetPressure() - shownPressure) * 0.25F;
 		if(Math.abs(targetPressure() - shownPressure) < 0.002F)
 			shownPressure = targetPressure();
+		lastCrank = crank;
+		if(pumping())
+			crank += 30;
+		if(container.phase != shownPhase || Math.abs(container.phaseTicks - shownTicks) > 4)
+		{
+			shownPhase = container.phase;
+			shownTicks = container.phaseTicks;
+		}
+		else if(container.state == TileFilterPress.STATE_RUNNING)
+			shownTicks++;
+	}
+
+	// ---------- drawing helpers ----------
+	void sprite(int[] s, int x, int y, int du, int w, int h)
+	{
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft + x, guiTop + y, s[0] + du, s[1], w, h, SHEET_SIZE, SHEET_SIZE);
+	}
+
+	void sprite(int[] s, int x, int y)
+	{
+		sprite(s, x, y, 0, s[2], s[3]);
+	}
+
+	void piece(int[] p, int x, int y)
+	{
+		drawTexturedModalRect(guiLeft + x, guiTop + y, p[0], p[1], p[2], p[3]);
+	}
+
+	void rect(int x, int y, int w, int h, int argb)
+	{
+		if(w > 0 && h > 0)
+			drawRect(guiLeft + x, guiTop + y, guiLeft + x + w, guiTop + y + h, argb);
+	}
+
+	/** Moving fluid inside a pipe of the background (3 px core), one pixel past each end so the elbows join. */
+	void flow(int x0, int y0, int x1, int y1, int argb)
+	{
+		if(y0 == y1)
+			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, argb);
+		else
+			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, argb);
+	}
+
+	/** A one pixel line, point by point (the needle, the connecting rod). */
+	void line(float x0, float y0, float x1, float y1, int argb)
+	{
+		int n = (int)Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)));
+		for(int k = 0; k <= n; k++)
+		{
+			float t = n == 0 ? 0 : k / (float)n;
+			int x = Math.round(x0 + (x1 - x0) * t), y = Math.round(y0 + (y1 - y0) * t);
+			drawRect(guiLeft + x, guiTop + y, guiLeft + x + 1, guiTop + y + 1, argb);
+		}
+	}
+
+	/** Part of a fluid's still sprite (tiled from the top left), with an alpha; binds the blocks atlas. */
+	void fluid(Fluid f, int x, int y, int w, int h, float alpha)
+	{
+		if(f == null || w <= 0 || h <= 0)
+			return;
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		TextureAtlasSprite sp = mc.getTextureMapBlocks().getAtlasSprite(f.getStill().toString());
+		int c = f.getColor();
+		GlStateManager.enableBlend();
+		GlStateManager.color((c >> 16 & 255) / 255F, (c >> 8 & 255) / 255F, (c & 255) / 255F, alpha);
+		Tessellator t = Tessellator.getInstance();
+		BufferBuilder b = t.getBuffer();
+		b.begin(7, DefaultVertexFormats.POSITION_TEX);
+		for(int j = 0; j < h; j += 16)
+			for(int i = 0; i < w; i += 16)
+			{
+				int tw = Math.min(16, w - i), th = Math.min(16, h - j);
+				float u0 = sp.getMinU(), u1 = sp.getInterpolatedU(tw), v0 = sp.getMinV(), v1 = sp.getInterpolatedV(th);
+				double px = guiLeft + x + i, py = guiTop + y + j;
+				b.pos(px, py + th, zLevel).tex(u0, v1).endVertex();
+				b.pos(px + tw, py + th, zLevel).tex(u1, v1).endVertex();
+				b.pos(px + tw, py, zLevel).tex(u1, v0).endVertex();
+				b.pos(px, py, zLevel).tex(u0, v0).endVertex();
+			}
+		t.draw();
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	/** 0 green running, 1 yellow waiting (slurry, pressure), 2 red stopped (power, full output, filters), 3 grey disabled. */
+	int litLight()
+	{
+		if(container.state == TileFilterPress.STATE_RUNNING)
+			return container.phase == TileFilterPress.PHASE_CLOSED ? 1 : 0;
+		switch(container.state)
+		{
+			case TileFilterPress.STATE_NO_INPUT: return 1;
+			case TileFilterPress.STATE_NO_POWER:
+			case TileFilterPress.STATE_OUTPUT_FULL:
+			case TileFilterPress.STATE_NO_FILTERS: return 2;
+			case TileFilterPress.STATE_DISABLED: return 3;
+			default: return -1;
+		}
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my)
 	{
 		GlStateManager.color(1, 1, 1, 1);
-		ClientUtils.bindTexture(IE);
-		// Refinery top (border and rivets), its clean row 76 stretched for the side borders, its wooden inventory
-		// panel at the bottom; the inside is our steel, tiled (a stretched single row would show as streaks)
-		int woodTop = ContainerFilterPress.INV_Y - 8;
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, 77);
-		for(int y = 77; y < woodTop; y++)
-			drawTexturedModalRect(guiLeft, guiTop + y, 0, 76, xSize, 1);
-		drawTexturedModalRect(guiLeft, guiTop + woodTop, 0, 77, xSize, 89);
-		drawTexturedModalRect(guiLeft, guiTop + ySize - 1, 0, 165, xSize, 1);
-		ClientUtils.bindTexture(OWN);
-		for(int y = 5; y < woodTop; y += 65)
-			for(int x = 5; x < 171; x += 145)
-				drawTexturedModalRect(guiLeft + x, guiTop + y, 0, 0, Math.min(145, 171 - x), Math.min(65, woodTop - y));
-		ClientUtils.bindTexture(IE);
+		ClientUtils.bindTexture(SHEET);
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, SHEET_SIZE, SHEET_SIZE);
 
+		// IE's wooden inventory panel; IE's pieces, a little darker
+		ClientUtils.bindTexture(IE);
+		drawTexturedModalRect(guiLeft + PANEL_X, guiTop + PANEL_Y, 0, 77, 176, 89);
+		GuiGraphite.ieTint();
 		int[][] xy = ContainerFilterPress.SLOT_XY;
-		slotFrame(xy[1][0], xy[1][1], BLUE);
-		slotFrame(xy[2][0], xy[2][1], ORANGE);
-		slotFrame(xy[3][0], xy[3][1], BLUE);
-		slotFrame(xy[4][0], xy[4][1], ORANGE);
-		slotFrame(xy[0][0], xy[0][1], ORANGE);
+		for(int i = 0; i < xy.length; i++)
+		{
+			piece(IE_SLOT, xy[i][0] - 2, xy[i][1] - 2);
+			piece(i == 1 || i == 3 ? IE_BLUE : IE_ORANGE, xy[i][0] + 5, xy[i][1] - 5);
+		}
 		for(int i = 0; i < TileFilterPress.FILTERS; i++)
-			slotFrame(ContainerFilterPress.FILTERS_X + i % ContainerFilterPress.FILTER_COLUMNS * 18, ContainerFilterPress.FILTERS_Y + i / ContainerFilterPress.FILTER_COLUMNS * 18, null);
-		piece(TANK, STORAGE_X - 2, TANK_Y - 2);
-		piece(BLUE, STORAGE_X + 5, TANK_Y - 5);
-		piece(TANK, PRESSURE_X - 2, TANK_Y - 2);
-		piece(TANK, SOLUTION_X - 2, TANK_Y - 2);
-		piece(ORANGE, SOLUTION_X + 5, TANK_Y - 5);
-		piece(ARROW, PUMP_ARROW_X, ARROW_Y);
-		piece(ARROW, FILTER_ARROW_X, ARROW_Y);
-		frame(GAUGE_X, GAUGE_Y, GAUGE_W, GAUGE_H);
-		frame(PANEL_X, PANEL_Y, PANEL_W, PANEL_H);
-		frame(ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H);
+			piece(IE_SLOT, ContainerFilterPress.FILTERS_X + i % ContainerFilterPress.FILTER_COLUMNS * 18 - 2, ContainerFilterPress.FILTERS_Y + i / ContainerFilterPress.FILTER_COLUMNS * 18 - 2);
+		piece(IE_TANK, STORAGE_X, ROW);
+		piece(IE_BLUE, STORAGE_X + 7, ROW - 3);
+		piece(IE_TANK, SOLUTION_X, ROW);
+		piece(IE_ORANGE, SOLUTION_X + 7, ROW - 3);
+		GuiGraphite.endTint();
 
-		ClientUtils.bindTexture(OWN);
-		dark(GAUGE_X + 2, GAUGE_Y + 2, GAUGE_W - 4, GAUGE_H - 4);
-		dark(PANEL_X + 2, PANEL_Y + 2, PANEL_W - 4, PANEL_H - 4);
-		dark(ENERGY_X + 2, ENERGY_Y + 2, ENERGY_W - 4, ENERGY_H - 4);
-		drawTexturedModalRect(guiLeft + BUTTON_X, guiTop + BUTTON_Y, 0, 150, BUTTON_SIZE, BUTTON_SIZE);
-		int lit = litLight();
-		for(int i = 0; i < 4; i++)
-			drawTexturedModalRect(guiLeft + LIGHT_X, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
-		// Pump arrow: pressurising; filtering arrow: the batch passing through the cloths
-		int pump = (int)(19 * pressure());
-		if(pump > 0)
-			drawTexturedModalRect(guiLeft + PUMP_ARROW_X, guiTop + ARROW_Y, 0, 70, pump, 13);
-		int filtering = filteringDone();
-		if(filtering > 0)
-			drawTexturedModalRect(guiLeft + FILTER_ARROW_X, guiTop + ARROW_Y, 0, 70, filtering, 13);
+		// Fluid moving in the pipes
+		if(pumping())
+		{
+			flow(STORAGE_X + 20, ROW + INLET_DY, INLET_X, ROW + INLET_DY, COL_SLURRY);
+			flow(INLET_X, ROW + INLET_DY, INLET_X, ROW + PUMP_DY + PUMP_H - 2, COL_SLURRY);
+			flow(PUMP_X + PUMP_W, ROW + PIPE_DY, VESSEL_X - 1, ROW + PIPE_DY, COL_SLURRY);
+		}
+		if(releasing())
+			flow(VESSEL_X + VESSEL_W, ROW + PIPE_DY, PRESS_X - 1, ROW + PIPE_DY, COL_SLURRY);
+		if(filtering())
+			flow(PRESS_X + PRESS_W, ROW + PIPE_DY, SOLUTION_X - 1, ROW + PIPE_DY, COL_SOLUTION);
+		GlStateManager.color(1, 1, 1, 1);
 
-		// Pressure gauge, yellow to orange; energy with IE's red gradient
-		int ph = (int)((GAUGE_H - 4) * pressure());
-		if(ph > 0)
-			ClientUtils.drawGradientRect(guiLeft + GAUGE_X + 2, guiTop + GAUGE_Y + GAUGE_H - 2 - ph, guiLeft + GAUGE_X + GAUGE_W - 2, guiTop + GAUGE_Y + GAUGE_H - 2, 0xffffd640, 0xffb04000);
+		// Tanks: IE's fluid drawing and gauge
+		ClientUtils.handleGuiTank(container.storage, guiLeft + STORAGE_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+		ClientUtils.handleGuiTank(container.solution, guiLeft + SOLUTION_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+
+		drawPump(partialTicks);
+		drawVessel();
+		drawPress(partialTicks);
+
+		// Energy (IE's red gradient), button, lights
 		int eh = (int)((ENERGY_H - 4) * (container.energy / (float)TileFilterPress.ENERGY_CAPACITY));
 		if(eh > 0)
 			ClientUtils.drawGradientRect(guiLeft + ENERGY_X + 2, guiTop + ENERGY_Y + ENERGY_H - 2 - eh, guiLeft + ENERGY_X + ENERGY_W - 2, guiTop + ENERGY_Y + ENERGY_H - 2, 0xffb51500, 0xff600b00);
-		ClientUtils.handleGuiTank(container.storage, guiLeft + STORAGE_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
-		ClientUtils.handleGuiTank(container.pressure, guiLeft + PRESSURE_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
-		ClientUtils.handleGuiTank(container.solution, guiLeft + SOLUTION_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+		GlStateManager.color(1, 1, 1, 1);
+		ClientUtils.bindTexture(OWN);
+		drawTexturedModalRect(guiLeft + BUTTON_X, guiTop + BUTTON_Y, 0, 150, BUTTON_SIZE, BUTTON_SIZE);
+		int lit = litLight();
+		for(int i = 0; i < 4; i++)
+			drawTexturedModalRect(guiLeft + LIGHT_X + 1, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
 	}
 
-	int filteringDone()
+	/** Flywheel, crank and connecting rod driving the piston; the slurry in front of the piston. */
+	void drawPump(float partialTicks)
 	{
-		switch(container.phase)
+		float deg = lastCrank + (crank - lastCrank) * partialTicks;
+		double a = Math.toRadians(deg);
+		int wx = PUMP_X + WHEEL_CX, wy = ROW + PUMP_DY + WHEEL_CY;
+		// Slider-crank: the rod has a fixed length, so the piston follows the crank pin (pin right = piston forward)
+		float pinX = wx + (float)Math.cos(a) * CRANK_R, pinY = wy + (float)Math.sin(a) * CRANK_R;
+		int rodLength = PUMP_X + PUMP_WIN_X - (wx - CRANK_R);
+		int pos = Math.round(pinX + rodLength) - (PUMP_X + PUMP_WIN_X);
+		int px = PUMP_X + PUMP_WIN_X + pos, py = ROW + PUMP_DY + PUMP_WIN_Y;
+		if(container.pressure.getFluidAmount() > 0 || container.storage.getFluidAmount() > 0)
+			fluid(INContent.fluidSlurry, px + PISTON_W, py, PUMP_WIN_W - pos - PISTON_W, PUMP_WIN_H, 1);
+		ClientUtils.bindTexture(SHEET);
+		sprite(PUMP, PUMP_X, ROW + PUMP_DY);
+		sprite(PISTON, px, py);
+		int frame = Math.floorMod((int)Math.floor(deg / 22.5), 4);
+		sprite(WHEEL, wx - WHEEL_R, wy - WHEEL_R, frame * WHEEL_STEP, WHEEL[2], WHEEL[3]);
+		line(pinX, pinY, px, py + PUMP_WIN_H / 2, COL_ROD);
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	/** The vessel with the slurry level in its glass, the dial and its needle on top. */
+	void drawVessel()
+	{
+		int amount = container.pressure.getFluidAmount();
+		int lh = Math.round(GLASS_H * Math.min(1, amount / (float)TileFilterPress.BATCH));
+		int vx = VESSEL_X, vy = ROW + VESSEL_DY;
+		if(lh > 0)
+			fluid(INContent.fluidSlurry, vx + GLASS_X, vy + GLASS_Y + GLASS_H - lh, GLASS_W, lh, 1);
+		ClientUtils.bindTexture(SHEET);
+		sprite(VESSEL, vx, vy);
+		sprite(DIAL, DIAL_X, ROW + DIAL_DY);
+		// Needle over 270 degrees, from the lower left
+		float c = (DIAL_S - 1) / 2F;
+		double a = Math.toRadians(135 + 270 * pressure());
+		float cx = DIAL_X + c, cy = ROW + DIAL_DY + c;
+		line(cx, cy, cx + (float)Math.cos(a) * (c - 3), cy + (float)Math.sin(a) * (c - 3), COL_NEEDLE);
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	/** Left edge of the head, then of each plate, for a closing of 0 (open) .. 1 (closed); in GUI pixels, not rounded. */
+	float[] platePositions(float closing)
+	{
+		int base = PRESS_X + CHAMBER_X + CYL_W;
+		float[] xs = new float[PLATES + 1];
+		float head = HEAD_STROKE * closing, gap = OPEN_GAP + (CLOSED_GAP - OPEN_GAP) * closing;
+		xs[0] = base + head;
+		for(int k = 1; k <= PLATES; k++)
+			xs[k] = base + head + HEAD_W + gap * k + PLATE_W * (k - 1);
+		return xs;
+	}
+
+	/** Draws at a fractional GUI x (the screen has 2 to 4 pixels per GUI pixel, so a moving part glides). */
+	void at(float x, Runnable draw)
+	{
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x - (int)Math.floor(x), 0, 0);
+		draw.run();
+		GlStateManager.popMatrix();
+	}
+
+	/** The press: rod, head and plates; the slurry in the chambers while it filters; the cake falling when it opens. */
+	void drawPress(float partialTicks)
+	{
+		int phase = container.phase;
+		float t = (shownPhase == phase ? shownTicks : container.phaseTicks) + (container.state == TileFilterPress.STATE_RUNNING ? partialTicks : 0);
+		float[] xs = platePositions(TileFilterPress.closing(phase, t));
+		int top = ROW + PRESS_DY + CHAMBER_Y;
+		// Slurry in the chambers: they fill during the release, the cake darkens them as the filtering goes on
+		if(phase == TileFilterPress.PHASE_FILTERING)
 		{
-			case TileFilterPress.PHASE_RELEASE: return 2;
-			case TileFilterPress.PHASE_FILTERING: return 19 * container.phaseTicks / TileFilterPress.FILTER_TICKS;
-			default: return 0;
+			float fill = Math.min(1, t / TileFilterPress.RELEASE_TICKS), done = Math.min(1, t / TileFilterPress.FILTER_TICKS);
+			int fh = Math.round((CHAMBER_H - 4) * fill);
+			for(int k = 1; k <= PLATES; k++)
+			{
+				int x0 = (int)Math.floor(k == 1 ? xs[0] + HEAD_W : xs[k - 1] + PLATE_W), w = Math.round(xs[k] - (k == 1 ? xs[0] + HEAD_W : xs[k - 1] + PLATE_W));
+				fluid(INContent.fluidSlurry, x0, top + CHAMBER_H - 2 - fh, w, fh, 0.85F);
+				rect(x0, top + CHAMBER_H - 2 - fh, w, fh, (int)(0xb0 * done) << 24 | COL_CAKE & 0xffffff);
+			}
 		}
+		// Rod from the cylinder barrel to the head
+		int rodFrom = PRESS_X + CHAMBER_X + CYL_W - 3;
+		float headX = xs[0];
+		at(headX, () -> rect(rodFrom, top + CHAMBER_H / 2 - 1, (int)Math.floor(headX) - rodFrom + 1, 3, COL_ROD));
+		// Filtering progress in the strip, IE's red
+		if(phase == TileFilterPress.PHASE_FILTERING)
+		{
+			int sh = (int)(STRIP_H * Math.min(1, t / TileFilterPress.FILTER_TICKS));
+			int sx = guiLeft + PRESS_X + STRIP_X, sy = guiTop + ROW + PRESS_DY + STRIP_Y;
+			if(sh > 0)
+				ClientUtils.drawGradientRect(sx, sy + STRIP_H - sh, sx + STRIP_W, sy + STRIP_H, 0xffb51500, 0xff600b00);
+		}
+		// The cake falls down the chute while the press opens
+		if(phase == TileFilterPress.PHASE_OPENING && t >= TileFilterPress.OPEN_MOVE_TICKS)
+		{
+			float fall = (t - TileFilterPress.OPEN_MOVE_TICKS) / 20F;
+			for(int k = 0; k < 3; k++)
+			{
+				float f = fall - k * .3F;
+				if(f > 0 && f < 1)
+					rect(CHUTE_X + 5 + k * 2, CHUTE_Y + (int)(f * (CHUTE_S - 3)), 3, 3, COL_CAKE);
+			}
+		}
+		GlStateManager.color(1, 1, 1, 1);
+		ClientUtils.bindTexture(SHEET);
+		for(int k = 0; k <= PLATES; k++)
+		{
+			float x = xs[k];
+			int[] s = k == 0 ? HEAD : PLATE;
+			at(x, () -> sprite(s, (int)Math.floor(x), top));
+		}
+		sprite(PRESS, PRESS_X, ROW + PRESS_DY);
+		sprite(CHUTE, CHUTE_X, CHUTE_Y);
 	}
 
 	@Override
@@ -229,43 +421,58 @@ public class GuiFilterPress extends GuiIEContainerBase
 		return mx >= guiLeft + x && mx < guiLeft + x + w && my >= guiTop + y && my < guiTop + y + h;
 	}
 
+	static final String K = "gui.immersivenuclear.filter_press.";
+
 	@Override
 	public void drawScreen(int mx, int my, float partialTicks)
 	{
 		super.drawScreen(mx, my, partialTicks);
-		ArrayList<String> tooltip = new ArrayList<>();
-		ClientUtils.handleGuiTank(container.storage, guiLeft + STORAGE_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, tooltip);
-		ClientUtils.handleGuiTank(container.pressure, guiLeft + PRESSURE_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, tooltip);
-		ClientUtils.handleGuiTank(container.solution, guiLeft + SOLUTION_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, tooltip);
-		if(over(mx, my, STORAGE_X, TANK_Y, 16, 47))
-			tooltip.add(0, I18n.format("gui.immersivenuclear.filter_press.storage"));
-		if(over(mx, my, PRESSURE_X, TANK_Y, 16, 47))
-			tooltip.add(0, I18n.format("gui.immersivenuclear.filter_press.pressure_tank"));
-		if(over(mx, my, SOLUTION_X, TANK_Y, 16, 47))
-			tooltip.add(0, I18n.format("gui.immersivenuclear.filter_press.solution"));
-		if(over(mx, my, GAUGE_X, GAUGE_Y, GAUGE_W, GAUGE_H))
-			tooltip.add(I18n.format("gui.immersivenuclear.filter_press.pressure", Math.round(100 * pressure())));
+		ArrayList<String> tip = new ArrayList<>();
+		ClientUtils.handleGuiTank(container.storage, guiLeft + STORAGE_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		ClientUtils.handleGuiTank(container.solution, guiLeft + SOLUTION_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		if(over(mx, my, STORAGE_X, ROW, 20, 51))
+			tip.add(0, I18n.format(K + "storage"));
+		if(over(mx, my, SOLUTION_X, ROW, 20, 51))
+			tip.add(0, I18n.format(K + "solution"));
+		if(over(mx, my, PUMP_X, ROW + PUMP_DY, PUMP_W, PUMP_H))
+			tip.add(I18n.format(K + "pump"));
+		if(over(mx, my, VESSEL_X, ROW + VESSEL_DY, VESSEL_W, VESSEL_H) || over(mx, my, DIAL_X, ROW + DIAL_DY, DIAL_S, DIAL_S))
+		{
+			FluidStack f = container.pressure.getFluid();
+			tip.add(I18n.format(K + "pressure_tank"));
+			if(f != null)
+				tip.add("§7" + f.getLocalizedName());
+			tip.add("§7" + container.pressure.getFluidAmount() + " / " + TileFilterPress.BATCH + " mB");
+			tip.add("§7" + I18n.format(K + "pressure", Math.round(100 * pressure())));
+		}
+		if(over(mx, my, PRESS_X, ROW + PRESS_DY, PRESS_W, PRESS_H))
+		{
+			tip.add(I18n.format(K + "press"));
+			tip.add("§7" + I18n.format(K + "phase." + container.phase));
+			if(container.phase == TileFilterPress.PHASE_FILTERING)
+				tip.add("§7" + I18n.format(K + "filtering", Math.round(100F * Math.min(1, container.phaseTicks / (float)TileFilterPress.FILTER_TICKS))));
+		}
 		if(over(mx, my, ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H))
-			tooltip.add(container.energy + "/" + TileFilterPress.ENERGY_CAPACITY + " IF");
+			tip.add(container.energy + "/" + TileFilterPress.ENERGY_CAPACITY + " IF");
 		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))
 		{
-			tooltip.add(I18n.format("gui.immersivenuclear.redstone"));
-			tooltip.add("§7" + I18n.format(container.redstoneInverted ? "gui.immersivenuclear.redstone.inverted" : "gui.immersivenuclear.redstone.normal"));
+			tip.add(I18n.format("gui.immersivenuclear.redstone"));
+			tip.add("§7" + I18n.format(container.redstoneInverted ? "gui.immersivenuclear.redstone.inverted" : "gui.immersivenuclear.redstone.normal"));
 		}
 		int lit = litLight();
 		for(int i = 0; i < 4; i++)
-			if(over(mx, my, PANEL_X, LIGHT_Y + i * LIGHT_STEP - 1, PANEL_W, LIGHT_STEP))
+			if(over(mx, my, LIGHTS_X, LIGHT_Y + i * LIGHT_STEP - 1, LIGHTS_W, LIGHT_STEP))
 			{
 				if(i != lit)
-					tooltip.add("§7" + I18n.format("gui.immersivenuclear.filter_press.light." + i));
+					tip.add("§7" + I18n.format(K + "light." + i));
 				else if(container.state == TileFilterPress.STATE_RUNNING)
-					tooltip.add(I18n.format("gui.immersivenuclear.filter_press.phase." + container.phase));
+					tip.add(I18n.format(K + "phase." + container.phase));
 				else
-					tooltip.add(I18n.format("gui.immersivenuclear.filter_press.state." + container.state));
+					tip.add(I18n.format(K + "state." + container.state));
 			}
-		if(!tooltip.isEmpty())
+		if(!tip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
+			ClientUtils.drawHoveringText(tip, mx, my, fontRenderer, guiLeft + xSize, -1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}

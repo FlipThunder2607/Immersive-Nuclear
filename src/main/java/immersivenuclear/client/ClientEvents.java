@@ -3,6 +3,7 @@ package immersivenuclear.client;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.INContent;
 import immersivenuclear.common.block.TileChemicalProcessor;
+import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileFilterPress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -28,17 +29,20 @@ public class ClientEvents
 		OBJLoader.INSTANCE.addDomain(ImmersiveNuclear.MODID);
 		ModelLoader.setCustomModelResourceLocation(INContent.itemChemicalProcessor, 0, new ModelResourceLocation(INContent.itemChemicalProcessor.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemFilterPress, 0, new ModelResourceLocation(INContent.itemFilterPress.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemChemicalSeparator, 0, new ModelResourceLocation(INContent.itemChemicalSeparator.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
-		for(Item item : new Item[]{INContent.itemRejeito, INContent.itemCal, INContent.itemTorta, INContent.itemAgentePrecipitante,
-				INContent.itemConcentradoUmido, INContent.itemYellowcake, INContent.itemAglomerado})
+		for(Item item : new Item[]{INContent.itemResidue, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
+				INContent.itemWetConcentrate, INContent.itemYellowcake, INContent.itemAgglomerate})
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
-		// New, used and spent looks come from the "wear" property (models/item/filtro.json)
+		// New, used and spent looks come from the "wear" property (models/item/filter.json)
 		INContent.itemFilter.addWearProperty();
 		ModelLoader.setCustomModelResourceLocation(INContent.itemFilter, 0, new ModelResourceLocation(INContent.itemFilter.getRegistryName(), "inventory"));
 		// Liquid behind the tank windows
 		ClientRegistry.bindTileEntitySpecialRenderer(TileChemicalProcessor.class, new RenderChemicalProcessor());
 		// Moving plates and actuators of the filter press
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFilterPress.class, new RenderFilterPress());
+		// Liquid layers behind the settlers' sight glasses
+		ClientRegistry.bindTileEntitySpecialRenderer(TileChemicalSeparator.class, new RenderChemicalSeparator());
 	}
 
 	/** Textures are stitched by now (the item variant of the blockstate names them all). */

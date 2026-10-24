@@ -1,6 +1,9 @@
 newmtl arc_furnace_active
 map_Kd #arc_furnace_active
 
+newmtl fluid_input
+map_Kd #fluid_input
+
 newmtl metal_decoration0_radiator
 map_Kd #metal_decoration0_radiator
 

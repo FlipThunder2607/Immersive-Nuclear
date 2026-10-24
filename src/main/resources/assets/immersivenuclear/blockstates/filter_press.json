@@ -7,6 +7,7 @@
     "textures": {
       "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
       "#conveyor_off": "immersiveengineering:blocks/conveyor_off",
+      "#fluid_input": "immersivenuclear:blocks/fluid_input",
       "#metal_decoration0_radiator": "immersiveengineering:blocks/metal_decoration0_radiator",
       "#metal_device0_fluid_pump_top": "immersiveengineering:blocks/metal_device0_fluid_pump_top",
       "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",

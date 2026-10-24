@@ -24,14 +24,14 @@ import net.minecraftforge.fluids.FluidStack;
 
 /**
  * JEI page of the Filtration Unit, the upper part of its interface (GuiFilterPress) like IE's own JEI pages: the same
- * refinery pieces at the same places. The polpa bucket column shows the filters (worn, not used up), the solution
+ * refinery pieces at the same places. The slurry bucket column shows the filters (worn, not used up), the solution
  * bucket column the residue. Coordinates are the interface's minus (OX, OY), where the page cuts it.
  */
 public class FilterPressCategory implements IRecipeCategory<FilterPressRecipe>
 {
 	public static final String UID = ImmersiveNuclear.MODID + ".filter_press";
 	static final ResourceLocation IE = new ResourceLocation("immersiveengineering", "textures/gui/refinery.png");
-	static final ResourceLocation OWN = new ResourceLocation(ImmersiveNuclear.MODID, "textures/gui/processamento_quimico.png");
+	static final ResourceLocation OWN = new ResourceLocation(ImmersiveNuclear.MODID, "textures/gui/chemical_processor.png");
 	static final int OX = 5, OY = 10, W = 166, H = 76;
 	/** Line under the tanks for the energy and time of a batch. */
 	static final int TEXT_Y = 65;
@@ -143,7 +143,7 @@ public class FilterPressCategory implements IRecipeCategory<FilterPressRecipe>
 		// Only to show the step: the batch in the pressure tank (not an ingredient)
 		fluids.init(2, true, PRESSURE_X - OX, TANK_Y - OY, 16, 47, cap, false, gauge);
 		fluids.set(ingredients);
-		fluids.set(2, new FluidStack(INContent.fluidPolpa, TileFilterPress.BATCH));
+		fluids.set(2, new FluidStack(INContent.fluidSlurry, TileFilterPress.BATCH));
 	}
 
 	@Override

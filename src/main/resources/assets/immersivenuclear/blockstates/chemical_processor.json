@@ -16,7 +16,7 @@
       "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
       "#storage_steel": "immersiveengineering:blocks/storage_steel",
       "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
-      "#tanque_parede": "immersivenuclear:blocks/tanque_parede",
+      "#tank_wall": "immersivenuclear:blocks/tank_wall",
       "particle": "immersiveengineering:blocks/storage_steel"
     }
   },

@@ -42,22 +42,31 @@ import net.minecraftforge.oredict.OreDictionary;
  * The master part also holds the machine (inventory, tanks, energy, progress); the port parts hand their
  * capability, on their own face only, to the master's storage (see {@link ChemicalProcessorStructure#PORTS}).
  * Right click opens the interface (ContainerChemicalProcessor / GuiChemicalProcessor) on the master.
+ *
+ * The reactor works in batches, like a settler: 1 fill (the hopper doses the uranium powder and the reagent, the pump
+ * brings the water in), 2 react (the agitator turns, the water turns into slurry), 3 drain (the pump empties the
+ * reactor into the slurry tank). A batch only starts with its solids at hand and room for all its slurry.
+ * Sounds: the machine's own sound while the agitator turns; the mod's pump sound ({@link PumpSound}), on the pump
+ * part, while the reactor fills or drains.
  */
 public class TileChemicalProcessor extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
 {
-	// One continuous cycle: 1 uranium powder + 1 reagent + water + energy -> polpa. Gameplay values, not real chemistry.
-	public static final int CYCLE_TICKS = 100;
-	public static final int ENERGY_PER_TICK = 40;
-	public static final int WATER_PER_CYCLE = 500;
-	public static final int POLPA_PER_CYCLE = 500;
-	public static final int TANK_CAPACITY = 8000;
+	// One batch (provisional): 8000 mB of water, 16 uranium powder and 16 reagent make 8000 mB of slurry.
+	// Gameplay values, not real chemistry.
+	public static final int BATCH_WATER = 8000, BATCH_SOLIDS = 16;
+	public static final int FILL_PER_TICK = 100, DRAIN_PER_TICK = 100, REACT_TICKS = 640;
+	public static final int REACT_ENERGY = 40, PUMP_ENERGY = 16;
+	/** Fill, react and drain, for JEI. */
+	public static final int BATCH_TICKS = BATCH_WATER / FILL_PER_TICK + REACT_TICKS + BATCH_WATER / DRAIN_PER_TICK;
+	public static final int PHASE_IDLE = 0, PHASE_FILL = 1, PHASE_REACT = 2, PHASE_DRAIN = 3;
+	public static final int TANK_CAPACITY = 12000;
 	public static final int ENERGY_CAPACITY = 16000;
-	/** Pushed per tick from the polpa port into whatever is on its face (pipe, tank). */
-	public static final int POLPA_PUSH_PER_TICK = 100;
+	/** Pushed per tick from the slurry port into whatever is on its face (pipe, tank). */
+	public static final int SLURRY_PUSH_PER_TICK = 100;
 
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
-	/** Machine slots, in the order the interface shows them (design/interface-processamento-quimico-v1.png). */
-	public static final int SLOT_URANIUM = 0, SLOT_REAGENT = 1, SLOT_WATER_IN = 2, SLOT_WATER_OUT = 3, SLOT_POLPA_IN = 4, SLOT_POLPA_OUT = 5, SLOTS = 6;
+	/** Machine slots, in the order the interface shows them. */
+	public static final int SLOT_URANIUM = 0, SLOT_REAGENT = 1, SLOT_WATER_IN = 2, SLOT_WATER_OUT = 3, SLOT_SLURRY_IN = 4, SLOT_SLURRY_OUT = 5, SLOTS = 6;
 
 	int dx, dy, dz;
 	EnumFacing facing = EnumFacing.NORTH;
@@ -79,10 +88,10 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				case SLOT_WATER_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
 					return in != null && in.getFluid() == FluidRegistry.WATER;
-				case SLOT_POLPA_IN:
-					// An empty container, or one that already holds polpa
+				case SLOT_SLURRY_IN:
+					// An empty container, or one that already holds slurry
 					FluidStack held = FluidUtil.getFluidContained(stack);
-					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidPolpa);
+					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidSlurry);
 				default: return false; // the two outputs only take what the machine puts there
 			}
 		}
@@ -114,7 +123,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			markDirty();
 		}
 	};
-	final FluidTank polpa = new FluidTank(TANK_CAPACITY)
+	final FluidTank slurry = new FluidTank(TANK_CAPACITY)
 	{
 		@Override
 		protected void onContentsChanged()
@@ -123,28 +132,28 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		}
 	};
 	final Energy energy = new Energy();
-	int progress;
 	int state = STATE_IDLE;
-	/** Ticks left of the "water coming in" animation; restarted whenever the water tank gains water. */
-	int fillTicks;
-	int lastWater;
-	/** What the client last got for the tank window (see RenderChemicalProcessor); sent every SYNC_TICKS when it changes. */
-	int sentWater = -1, sentPolpa = -1;
-	boolean sentFilling;
+	/** The batch: its step, the ticks in it, the liquid in the reactor (mB). */
+	int phase = PHASE_IDLE, phaseTicks, reactor;
+	/** What moved this tick: water into the reactor, slurry out of it. */
+	boolean filling, draining;
+	/** What the client last got for the reactor window (see RenderChemicalProcessor); sent every SYNC_TICKS when it changes. */
+	int sentWindow = Integer.MIN_VALUE;
 	public static final int SYNC_TICKS = 5;
+	/** The reaction as the window shows it, in steps of 1/MIX_STEPS. */
+	public static final int MIX_STEPS = 32;
 
-	// ---------- client only: tank window ----------
-	public int clientWater, clientPolpa;
-	public boolean clientFilling, clientRunning;
-	boolean sentRunning;
-	/** Smoothed levels the renderer draws, 0..1 of the tank. */
-	public float shownWater, shownPolpa;
+	// ---------- client only: the reactor seen through the windows of the model, and the sounds ----------
+	public int clientReactor, clientPhase, clientMix;
+	public boolean clientFilling, clientDraining, clientRunning;
+	/** Smoothed level the renderer draws, 0..1 of the reactor. */
+	public float shownLevel;
 	/** IE convention: a redstone signal stops the machine; hammering the redstone port inverts that. */
 	boolean redstoneInverted;
 
 	{
 		water.setCanDrain(false);
-		polpa.setCanFill(false);
+		slurry.setCanFill(false);
 	}
 
 	class Energy extends EnergyStorage
@@ -168,9 +177,12 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			energy = Math.max(0, Math.min(capacity, value));
 		}
 
-		void use(int amount)
+		boolean use(int amount)
 		{
+			if(energy < amount)
+				return false;
 			energy -= amount;
+			return true;
 		}
 	}
 
@@ -333,7 +345,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			right = port == ChemicalProcessorStructure.PORT_URANIUM || port == ChemicalProcessorStructure.PORT_REAGENT;
 		else if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-			right = port == ChemicalProcessorStructure.PORT_WATER || port == ChemicalProcessorStructure.PORT_POLPA;
+			right = port == ChemicalProcessorStructure.PORT_WATER || port == ChemicalProcessorStructure.PORT_SLURRY;
 		else if(cap == CapabilityEnergy.ENERGY)
 			right = port == ChemicalProcessorStructure.PORT_ENERGY;
 		else
@@ -367,8 +379,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new SlotPort(m.inventory, SLOT_REAGENT));
 				if(port == ChemicalProcessorStructure.PORT_WATER)
 					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.water);
-				if(port == ChemicalProcessorStructure.PORT_POLPA)
-					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.polpa);
+				if(port == ChemicalProcessorStructure.PORT_SLURRY)
+					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.slurry);
 				if(port == ChemicalProcessorStructure.PORT_ENERGY)
 					return CapabilityEnergy.ENERGY.cast(m.energy);
 			}
@@ -385,6 +397,14 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 	// client only
 	boolean soundOn;
 	int loopDelay, offTicks;
+	final PumpSound pump = new PumpSound();
+	/** The part that plays the pump: the fluid pump of the structure (lower half). */
+	static final int PUMP_DX = 1, PUMP_DY = 0, PUMP_DZ = 0;
+
+	boolean isPumpPart()
+	{
+		return dx == PUMP_DX && dy == PUMP_DY && dz == PUMP_DZ;
+	}
 
 	@Override
 	public void update()
@@ -393,10 +413,15 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		{
 			if(isMaster())
 				updateSound();
+			else if(isPumpPart())
+			{
+				TileChemicalProcessor m = getMaster();
+				pump.update(this, m != null && m.clientRunning && (m.clientFilling || m.clientDraining));
+			}
 			return;
 		}
-		if(getPort() == ChemicalProcessorStructure.PORT_POLPA)
-			pushPolpa();
+		if(getPort() == ChemicalProcessorStructure.PORT_SLURRY)
+			pushSlurry();
 		if(isMaster())
 		{
 			handleContainers();
@@ -405,31 +430,28 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		}
 	}
 
-	/** Water and polpa levels (and whether water is coming in) for the glass of the tank, sent to the client. */
+	/** The reactor for the windows of the model and the sounds: level, step, reaction, what moves; sent when it changes. */
 	void syncTankWindow()
 	{
-		int w = water.getFluidAmount();
-		if(w > lastWater)
-			fillTicks = 20;
-		else if(fillTicks > 0)
-			fillTicks--;
-		lastWater = w;
 		if(world.getTotalWorldTime() % SYNC_TICKS != 0)
 			return;
-		boolean filling = fillTicks > 0;
-		boolean running = state == STATE_RUNNING;
-		if(w != sentWater || polpa.getFluidAmount() != sentPolpa || filling != sentFilling || running != sentRunning)
+		int key = (((reactor * 64 / BATCH_WATER * 4 + phase) * (MIX_STEPS + 1) + mix()) * 2 + (filling ? 1 : 0)) * 4
+				+ (draining ? 2 : 0) + (state == STATE_RUNNING ? 1 : 0);
+		if(key != sentWindow)
 		{
-			sentRunning = running;
-			sentWater = w;
-			sentPolpa = polpa.getFluidAmount();
-			sentFilling = filling;
+			sentWindow = key;
 			IBlockState st = world.getBlockState(pos);
 			world.notifyBlockUpdate(pos, st, st, 2);
 		}
 	}
 
-	/** Bucket slots, like IE's: a full water container is emptied into the water tank, an empty one is filled with polpa. */
+	/** How far the reactor's liquid has turned from water into slurry, 0..MIX_STEPS. */
+	int mix()
+	{
+		return phase == PHASE_DRAIN ? MIX_STEPS : phase == PHASE_REACT ? phaseTicks * MIX_STEPS / REACT_TICKS : 0;
+	}
+
+	/** Bucket slots, like IE's: a full water container is emptied into the water tank, an empty one is filled with slurry. */
 	void handleContainers()
 	{
 		ItemStack in = inventory.getStackInSlot(SLOT_WATER_IN);
@@ -444,16 +466,16 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				inventory.setStackInSlot(SLOT_WATER_IN, in);
 			}
 		}
-		in = inventory.getStackInSlot(SLOT_POLPA_IN);
-		if(!in.isEmpty() && polpa.getFluidAmount() > 0)
+		in = inventory.getStackInSlot(SLOT_SLURRY_IN);
+		if(!in.isEmpty() && slurry.getFluidAmount() > 0)
 		{
-			FluidActionResult r = FluidUtil.tryFillContainer(ItemHandlerHelper.copyStackWithSize(in, 1), polpa, Integer.MAX_VALUE, null, false);
-			if(r.isSuccess() && canOutput(SLOT_POLPA_OUT, r.getResult()))
+			FluidActionResult r = FluidUtil.tryFillContainer(ItemHandlerHelper.copyStackWithSize(in, 1), slurry, Integer.MAX_VALUE, null, false);
+			if(r.isSuccess() && canOutput(SLOT_SLURRY_OUT, r.getResult()))
 			{
-				r = FluidUtil.tryFillContainer(ItemHandlerHelper.copyStackWithSize(in, 1), polpa, Integer.MAX_VALUE, null, true);
-				output(SLOT_POLPA_OUT, r.getResult());
+				r = FluidUtil.tryFillContainer(ItemHandlerHelper.copyStackWithSize(in, 1), slurry, Integer.MAX_VALUE, null, true);
+				output(SLOT_SLURRY_OUT, r.getResult());
 				in.shrink(1);
-				inventory.setStackInSlot(SLOT_POLPA_IN, in);
+				inventory.setStackInSlot(SLOT_SLURRY_IN, in);
 			}
 		}
 	}
@@ -480,40 +502,92 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 
 	void process()
 	{
-		boolean powered = world.isBlockPowered(getTriggerPos());
 		int before = state;
-		if(powered != redstoneInverted)
-			state = STATE_DISABLED;
-		else if(water.getFluidAmount() < WATER_PER_CYCLE || inventory.getStackInSlot(SLOT_URANIUM).isEmpty() || inventory.getStackInSlot(SLOT_REAGENT).isEmpty())
-			state = STATE_NO_INPUT;
-		else if(polpa.getCapacity() - polpa.getFluidAmount() < POLPA_PER_CYCLE)
-			state = STATE_OUTPUT_FULL;
-		else if(energy.getEnergyStored() < ENERGY_PER_TICK)
-			state = STATE_NO_POWER;
-		else
+		filling = draining = false;
+		if(world.isBlockPowered(getTriggerPos()) != redstoneInverted)
 		{
-			state = STATE_RUNNING;
-			energy.use(ENERGY_PER_TICK);
-			if(++progress >= CYCLE_TICKS)
-			{
-				progress = 0;
-				inventory.extractItem(SLOT_URANIUM, 1, false);
-				inventory.extractItem(SLOT_REAGENT, 1, false);
-				water.drainInternal(WATER_PER_CYCLE, true);
-				polpa.fillInternal(new FluidStack(INContent.fluidPolpa, POLPA_PER_CYCLE), true);
-			}
-			markDirty();
+			state = STATE_DISABLED;
+			if(state != before)
+				markDirty();
+			return;
 		}
-		if(state != before)
+		switch(phase)
+		{
+			case PHASE_IDLE:
+				// A new batch: the hopper doses the solids, then the reactor fills
+				if(inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < BATCH_SOLIDS
+						|| water.getFluidAmount() < FILL_PER_TICK)
+					state = STATE_NO_INPUT;
+				else if(slurry.getCapacity() - slurry.getFluidAmount() < BATCH_WATER)
+					state = STATE_OUTPUT_FULL;
+				else
+				{
+					inventory.extractItem(SLOT_URANIUM, BATCH_SOLIDS, false);
+					inventory.extractItem(SLOT_REAGENT, BATCH_SOLIDS, false);
+					next(PHASE_FILL);
+					state = STATE_RUNNING;
+				}
+				break;
+			case PHASE_FILL:
+				int in = Math.min(FILL_PER_TICK, BATCH_WATER - reactor);
+				if(water.getFluidAmount() < in)
+					state = STATE_NO_INPUT;
+				else if(!energy.use(PUMP_ENERGY))
+					state = STATE_NO_POWER;
+				else
+				{
+					water.drainInternal(in, true);
+					reactor += in;
+					filling = true;
+					phaseTicks++;
+					state = STATE_RUNNING;
+					if(reactor >= BATCH_WATER)
+						next(PHASE_REACT);
+				}
+				break;
+			case PHASE_REACT:
+				if(!energy.use(REACT_ENERGY))
+					state = STATE_NO_POWER;
+				else
+				{
+					state = STATE_RUNNING;
+					if(++phaseTicks >= REACT_TICKS)
+						next(PHASE_DRAIN);
+				}
+				break;
+			default:
+				if(!energy.use(PUMP_ENERGY))
+					state = STATE_NO_POWER;
+				else
+				{
+					int out = slurry.fillInternal(new FluidStack(INContent.fluidSlurry, Math.min(DRAIN_PER_TICK, reactor)), true);
+					reactor -= out;
+					draining = out > 0;
+					phaseTicks++;
+					state = out > 0 ? STATE_RUNNING : STATE_OUTPUT_FULL;
+					if(reactor <= 0)
+					{
+						reactor = 0;
+						next(PHASE_IDLE);
+					}
+				}
+		}
+		if(state != before || state == STATE_RUNNING)
 			markDirty();
 	}
 
-	/** The polpa port empties the tank into whatever accepts fluid on its face. */
-	void pushPolpa()
+	void next(int phase)
+	{
+		this.phase = phase;
+		phaseTicks = 0;
+	}
+
+	/** The slurry port empties the tank into whatever accepts fluid on its face. */
+	void pushSlurry()
 	{
 		TileChemicalProcessor m = getMaster();
 		EnumFacing face = portWorldFace();
-		if(m == null || face == null || m.polpa.getFluidAmount() <= 0)
+		if(m == null || face == null || m.slurry.getFluidAmount() <= 0)
 			return;
 		TileEntity out = world.getTileEntity(pos.offset(face));
 		if(out == null || !out.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite()))
@@ -521,10 +595,10 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		IFluidHandler target = out.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite());
 		if(target == null)
 			return;
-		FluidStack offer = m.polpa.drainInternal(POLPA_PUSH_PER_TICK, false);
+		FluidStack offer = m.slurry.drainInternal(SLURRY_PUSH_PER_TICK, false);
 		int taken = offer == null ? 0 : target.fill(offer, true);
 		if(taken > 0)
-			m.polpa.drainInternal(taken, true);
+			m.slurry.drainInternal(taken, true);
 	}
 
 	/** Hammer on the redstone port: invert the redstone control, like IE's machines. */
@@ -555,9 +629,9 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		return water.getFluidAmount();
 	}
 
-	public int getPolpa()
+	public int getSlurry()
 	{
-		return polpa.getFluidAmount();
+		return slurry.getFluidAmount();
 	}
 
 	public int getEnergy()
@@ -565,9 +639,25 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		return energy.getEnergyStored();
 	}
 
-	public int getProgress()
+	public int getPhase()
 	{
-		return progress;
+		return phase;
+	}
+
+	public int getPhaseTicks()
+	{
+		return phaseTicks;
+	}
+
+	public int getReactor()
+	{
+		return reactor;
+	}
+
+	/** Bits: water coming in, slurry going out. */
+	public int getMoving()
+	{
+		return (filling ? 1 : 0) | (draining ? 2 : 0);
 	}
 
 	public int getState()
@@ -612,9 +702,11 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			inv.setInteger("Size", SLOTS); // 0.6.0 saved 2 slots; keep the handler at full size
 			inventory.deserializeNBT(inv);
 			water.readFromNBT(m.getCompoundTag("water"));
-			polpa.readFromNBT(m.getCompoundTag("polpa"));
+			slurry.readFromNBT(m.getCompoundTag("slurry"));
 			energy.set(m.getInteger("energy"));
-			progress = m.getInteger("progress");
+			phase = m.getInteger("phase");
+			phaseTicks = m.getInteger("phaseTicks");
+			reactor = m.getInteger("reactor");
 			state = m.getInteger("state");
 			redstoneInverted = m.getBoolean("redstoneInverted");
 		}
@@ -634,9 +726,11 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			NBTTagCompound m = new NBTTagCompound();
 			m.setTag("inventory", inventory.serializeNBT());
 			m.setTag("water", water.writeToNBT(new NBTTagCompound()));
-			m.setTag("polpa", polpa.writeToNBT(new NBTTagCompound()));
+			m.setTag("slurry", slurry.writeToNBT(new NBTTagCompound()));
 			m.setInteger("energy", energy.getEnergyStored());
-			m.setInteger("progress", progress);
+			m.setInteger("phase", phase);
+			m.setInteger("phaseTicks", phaseTicks);
+			m.setInteger("reactor", reactor);
 			m.setInteger("state", state);
 			m.setBoolean("redstoneInverted", redstoneInverted);
 			nbt.setTag("machine", m);
@@ -703,9 +797,11 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		writePart(nbt);
 		if(isMaster())
 		{
-			nbt.setInteger("water", water.getFluidAmount());
-			nbt.setInteger("polpa", polpa.getFluidAmount());
-			nbt.setBoolean("filling", fillTicks > 0);
+			nbt.setInteger("reactor", reactor);
+			nbt.setInteger("phase", phase);
+			nbt.setInteger("mix", mix());
+			nbt.setBoolean("filling", filling);
+			nbt.setBoolean("draining", draining);
 			nbt.setBoolean("running", state == STATE_RUNNING);
 		}
 	}
@@ -713,16 +809,20 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 	void readClient(NBTTagCompound nbt)
 	{
 		readPart(nbt);
-		clientWater = nbt.getInteger("water");
-		clientPolpa = nbt.getInteger("polpa");
+		clientReactor = nbt.getInteger("reactor");
+		clientPhase = nbt.getInteger("phase");
+		clientMix = nbt.getInteger("mix");
 		clientFilling = nbt.getBoolean("filling");
+		clientDraining = nbt.getBoolean("draining");
 		clientRunning = nbt.getBoolean("running");
 	}
 
+	/** The machine's own sound runs while the agitator turns. */
 	void updateSound()
 	{
-		offTicks = clientRunning ? 0 : offTicks + 1;
-		boolean on = clientRunning || soundOn && offTicks < STOP_GRACE_TICKS;
+		boolean running = clientRunning && clientPhase == PHASE_REACT;
+		offTicks = running ? 0 : offTicks + 1;
+		boolean on = running || soundOn && offTicks < STOP_GRACE_TICKS;
 		if(on && !soundOn)
 		{
 			playOnce(INContent.soundStart);
@@ -740,6 +840,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 	@Override
 	public boolean shoudlPlaySound(String sound)
 	{
+		if(isPumpPart())
+			return pump.shouldPlay(this, sound);
 		return isMaster() && !isInvalid() && soundOn && loopDelay == 0 && INContent.soundLoop.getSoundName().toString().equals(sound);
 	}
 
@@ -755,6 +857,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		super.invalidate();
 		if(world != null && world.isRemote && isMaster())
 			ImmersiveEngineering.proxy.handleTileSound(INContent.soundLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
+		if(world != null && world.isRemote && isPumpPart())
+			pump.stop(this);
 	}
 
 	@Override
@@ -763,6 +867,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		super.onChunkUnload();
 		if(world != null && world.isRemote && isMaster())
 			ImmersiveEngineering.proxy.handleTileSound(INContent.soundLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
+		if(world != null && world.isRemote && isPumpPart())
+			pump.stop(this);
 	}
 
 	/** The master draws the liquid in the tank windows, which reach well outside its own block. */

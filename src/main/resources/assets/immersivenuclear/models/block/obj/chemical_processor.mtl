@@ -31,6 +31,6 @@ map_Kd #storage_steel
 newmtl storage_uranium_top
 map_Kd #storage_uranium_top
 
-newmtl tanque_parede
-map_Kd #tanque_parede
+newmtl tank_wall
+map_Kd #tank_wall
 

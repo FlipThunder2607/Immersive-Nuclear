@@ -1,16 +1,13 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Chemical Processing Unit, read block by block from the user's build in the dev world
- * (New World, x 193..195, y 4..9, z 413..415), 3 wide x 6 high x 3 deep, 45 blocks (the user removed the ladder
- * column at z 412, the heavy engineering column above y5, and the front-right fences at x 193 z 415 y 6..9 and
- * x 194 z 415 y 9).
+ * Chemical Processing Unit, block by block: 3 wide x 6 high x 3 deep, 45 blocks.
  *
  * Offsets are relative to the trigger (redstone engineering block, layer 2, hit with the hammer on its front face),
  * in the reference orientation (facing NORTH): the front is WEST, so the player stands west of the structure
  * looking east; right = south, back = east, left = north. dx grows east, dz grows south.
- * Ports (as in the user's model.bbmodel): right water (1,-1,0), back uranium powder (2,-1,-2) and reagent (2,-1,-1),
- * left polpa output (1,-1,-2), energy on the heavy engineering column (2,-1..0,0). No Minecraft classes here, so it can be tested on its own.
+ * Ports: right water (1,-1,0), back uranium powder (2,-1,-2) and reagent (2,-1,-1),
+ * left slurry output (1,-1,-2), energy on the heavy engineering column (2,-1..0,0). No Minecraft classes here, so it can be tested on its own.
  */
 public final class ChemicalProcessorStructure
 {
@@ -57,12 +54,12 @@ public final class ChemicalProcessorStructure
 	public static final char TRIGGER = 'R';
 
 	/** What a part does besides being structure. */
-	public static final int PORT_NONE = 0, PORT_WATER = 1, PORT_URANIUM = 2, PORT_REAGENT = 3, PORT_POLPA = 4, PORT_ENERGY = 5, PORT_REDSTONE = 6;
+	public static final int PORT_NONE = 0, PORT_WATER = 1, PORT_URANIUM = 2, PORT_REAGENT = 3, PORT_SLURRY = 4, PORT_ENERGY = 5, PORT_REDSTONE = 6;
 
 	/**
 	 * Port parts and the face they work on, as a reference-orientation {dx, dz} step out of the part
-	 * ({0, 0} = every side). Faces follow the user's model: water on the right (south), the two item inputs on the
-	 * back (east), polpa on the left (north); energy takes any side of both heavy engineering blocks; the redstone
+	 * ({0, 0} = every side). Faces follow the model: water on the right (south), the two item inputs on the
+	 * back (east), slurry on the left (north); energy takes any side of both heavy engineering blocks; the redstone
 	 * port is the trigger block.
 	 */
 	static final int[][] PORTS = {
@@ -70,7 +67,7 @@ public final class ChemicalProcessorStructure
 			{1, -1, 0, PORT_WATER, 0, 1},
 			{2, -1, -2, PORT_URANIUM, 1, 0},
 			{2, -1, -1, PORT_REAGENT, 1, 0},
-			{1, -1, -2, PORT_POLPA, 0, -1},
+			{1, -1, -2, PORT_SLURRY, 0, -1},
 			{2, -1, 0, PORT_ENERGY, 0, 0},
 			{2, 0, 0, PORT_ENERGY, 0, 0},
 			{0, 0, 0, PORT_REDSTONE, 0, 0},

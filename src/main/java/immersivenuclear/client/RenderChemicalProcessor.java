@@ -18,10 +18,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 /**
- * The liquid seen through the two tank windows of the Chemical Processing Unit (drawn by the master only).
- * The polpa fills from the bottom and takes the place of the water as it grows; while water is coming in, a
- * stream falls from the top of the window to the surface. Positions are the windows of the model
- * (model-realista.bbmodel, converted like bb2obj.py does), in the master's model space before the blockstate turn.
+ * The reactor's liquid seen through the two tank windows of the Chemical Processing Unit (drawn by the master only).
+ * The batch's water rises while it fills (a stream falls from the top of the window to the surface), turns into
+ * slurry while the agitator turns, and goes down as it drains. Positions are the windows of the OBJ model, in the
+ * master's model space before the blockstate turn.
  */
 public class RenderChemicalProcessor extends TileEntitySpecialRenderer<TileChemicalProcessor>
 {
@@ -41,18 +41,13 @@ public class RenderChemicalProcessor extends TileEntitySpecialRenderer<TileChemi
 	{
 		if(!te.isMaster())
 			return;
-		float cap = TileChemicalProcessor.TANK_CAPACITY;
 		// Ease towards the synced level so it rises and falls smoothly
-		te.shownWater += (te.clientWater / cap - te.shownWater) * 0.05F;
-		te.shownPolpa += (te.clientPolpa / cap - te.shownPolpa) * 0.05F;
-		float polpa = Math.min(1, te.shownPolpa);
-		float water = Math.max(0, Math.min(te.shownWater, 1 - polpa));
-		if(polpa < 0.002F && water < 0.002F && !te.clientFilling)
+		te.shownLevel += (te.clientReactor / (float)TileChemicalProcessor.BATCH_WATER - te.shownLevel) * 0.1F;
+		float level = Math.min(1, te.shownLevel);
+		if(level < 0.002F && !te.clientFilling)
 			return;
-
-		float h = Y1 - Y0;
-		float polpaTop = Y0 + h * polpa;
-		float waterTop = polpaTop + h * water;
+		float mix = te.clientMix / (float)TileChemicalProcessor.MIX_STEPS;
+		float waterTop = Y0 + (Y1 - Y0) * level;
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
@@ -74,16 +69,14 @@ public class RenderChemicalProcessor extends TileEntitySpecialRenderer<TileChemi
 		int light = te.getWorld().getCombinedLight(te.getPos().up(4), 0);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light & 0xFFFF, light >> 16);
 
-		Fluid polpaFluid = INContent.fluidPolpa;
-		if(polpa > 0.002F)
+		Fluid slurryFluid = INContent.fluidSlurry;
+		if(level > 0.002F)
 		{
-			TextureAtlasSprite s = sprite(polpaFluid.getStill().toString());
-			windows(s, Y0, polpaTop, 0xFFFFFF, 1);
-		}
-		if(water > 0.002F)
-		{
-			TextureAtlasSprite s = sprite(FluidRegistry.WATER.getStill().toString());
-			windows(s, polpaTop, waterTop, WATER_COLOR, WATER_ALPHA);
+			// The water, then the slurry over it as the reaction goes on
+			if(mix < 1)
+				windows(sprite(FluidRegistry.WATER.getStill().toString()), Y0, waterTop, WATER_COLOR, WATER_ALPHA);
+			if(mix > 0)
+				windows(sprite(slurryFluid.getStill().toString()), Y0, waterTop, 0xFFFFFF, mix);
 		}
 		if(te.clientFilling && waterTop < Y1)
 		{

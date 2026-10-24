@@ -218,7 +218,7 @@ public class RenderFilterPress extends TileEntitySpecialRenderer<TileFilterPress
 	void drawSolids(float t, boolean mirrored)
 	{
 		if(residue == null)
-			residue = new ItemStack(INContent.itemRejeito);
+			residue = new ItemStack(INContent.itemResidue);
 		for(float[] p : PIECES)
 		{
 			float py, pz = p[1];

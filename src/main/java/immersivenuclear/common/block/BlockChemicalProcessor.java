@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 
 /**
  * Every part of a formed Chemical Processing Unit. The master part draws the whole unit
- * (models/block/obj/chemical_processor*.obj, generated from design/modelo-processamento-quimico);
+ * (models/block/obj/chemical_processor*.obj);
  * the other parts are invisible. The properties only come from the tile entity, nothing is stored in meta.
  */
 public class BlockChemicalProcessor extends Block

@@ -44,7 +44,8 @@ Fix filter wear not saving on world reload
 - Java 8. Indent with **tabs**. Braces go on their own line, following the existing code.
 - Code is organised by side and role: `common/block`, `common/multiblock`, `common/gui`, `common/item`, `client`, `client/jei`.
 - Every new player-facing string goes into **both** `en_us.lang` and `pt_br.lang`.
-- **Do not rename registry names** of existing blocks, items or fluids. That breaks existing worlds. Some registry names are in Portuguese (for example `reagente_processamento`), and that is intentional.
+- Registry names, file names, identifiers and comments are in English, with registry and file names in `snake_case`.
+- **Do not rename registry names** of existing blocks, items or fluids. That breaks existing worlds. If a rename is really needed, add the old name to the remap table in `INContent`.
 
 ## Design conventions
 

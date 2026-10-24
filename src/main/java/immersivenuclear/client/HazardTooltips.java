@@ -22,8 +22,8 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod.EventBusSubscriber(modid = ImmersiveNuclear.MODID, value = Side.CLIENT)
 public class HazardTooltips
 {
-	static final String RAD = "radioativo", TRACE = "radioativo_tracos", CORR = "corrosivo", FIRE = "inflamavel",
-			TOXIC = "toxico", OXID = "oxidante", CAUSTIC = "caustico";
+	static final String RAD = "radioactive", TRACE = "radioactive_traces", CORR = "corrosive", FIRE = "flammable",
+			TOXIC = "toxic", OXID = "oxidizer", CAUSTIC = "caustic";
 	static Map<Item, String[]> items;
 	static Map<String, String[]> fluids;
 
@@ -31,20 +31,20 @@ public class HazardTooltips
 	{
 		items = new HashMap<>();
 		items.put(INContent.itemReagent, new String[]{OXID});
-		items.put(INContent.itemRejeito, new String[]{RAD});
-		items.put(INContent.itemCal, new String[]{CAUSTIC});
-		items.put(INContent.itemTorta, new String[]{TRACE});
-		items.put(INContent.itemAglomerado, new String[]{TRACE});
-		items.put(INContent.itemConcentradoUmido, new String[]{RAD, TOXIC});
+		items.put(INContent.itemResidue, new String[]{RAD});
+		items.put(INContent.itemQuicklime, new String[]{CAUSTIC});
+		items.put(INContent.itemCake, new String[]{TRACE});
+		items.put(INContent.itemAgglomerate, new String[]{TRACE});
+		items.put(INContent.itemWetConcentrate, new String[]{RAD, TOXIC});
 		items.put(INContent.itemYellowcake, new String[]{RAD, TOXIC});
 		fluids = new HashMap<>();
-		fluids.put(INContent.fluidPolpa.getName(), new String[]{CORR, RAD});
-		fluids.put(INContent.fluidSolucaoBruta.getName(), new String[]{CORR, RAD});
-		fluids.put(INContent.fluidPurificada.getName(), new String[]{CORR, RAD});
-		fluids.put(INContent.fluidEfluente.getName(), new String[]{CORR, TRACE});
-		fluids.put(INContent.fluidEfluentePobre.getName(), new String[]{CORR});
-		fluids.put(INContent.fluidSolvente.getName(), new String[]{FIRE});
-		fluids.put(INContent.fluidLama.getName(), new String[]{TRACE});
+		fluids.put(INContent.fluidSlurry.getName(), new String[]{CORR, RAD});
+		fluids.put(INContent.fluidCrudeSolution.getName(), new String[]{CORR, RAD});
+		fluids.put(INContent.fluidPurifiedSolution.getName(), new String[]{CORR, RAD});
+		fluids.put(INContent.fluidEffluent.getName(), new String[]{CORR, TRACE});
+		fluids.put(INContent.fluidDepletedEffluent.getName(), new String[]{CORR});
+		fluids.put(INContent.fluidSolvent.getName(), new String[]{FIRE});
+		fluids.put(INContent.fluidSludge.getName(), new String[]{TRACE});
 	}
 
 	@SubscribeEvent

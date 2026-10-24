@@ -1,8 +1,0 @@
-{
-    "parent": "item/generated",
-    "textures": { "layer0": "immersivenuclear:items/filtro" },
-    "overrides": [
-        { "predicate": { "immersivenuclear:wear": 0.34 }, "model": "immersivenuclear:item/filtro_usado" },
-        { "predicate": { "immersivenuclear:wear": 1.0 }, "model": "immersivenuclear:item/filtro_esgotado" }
-    ]
-}

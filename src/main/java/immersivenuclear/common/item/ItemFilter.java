@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Filtro (filter cloth in a frame) of the Filtration Unit, one per slot, 28 in the machine. Every batch wears each
  * filter by one; a filter worn to the end is spent ("esgotado"): it stays in its slot, no longer filters, and has
- * to be replaced. The model shows new / used / spent from the "wear" property (models/item/filtro.json).
+ * to be replaced. The model shows new / used / spent from the "wear" property (models/item/filter.json).
  */
 public class ItemFilter extends Item
 {
@@ -27,8 +27,8 @@ public class ItemFilter extends Item
 
 	public ItemFilter()
 	{
-		setRegistryName(ImmersiveNuclear.MODID, "filtro");
-		setTranslationKey(ImmersiveNuclear.MODID + ".filtro");
+		setRegistryName(ImmersiveNuclear.MODID, "filter");
+		setTranslationKey(ImmersiveNuclear.MODID + ".filter");
 		setCreativeTab(INContent.TAB);
 		setMaxStackSize(1);
 		setMaxDamage(LIFE);
@@ -70,6 +70,6 @@ public class ItemFilter extends Item
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag)
 	{
 		int left = LIFE - stack.getItemDamage();
-		tooltip.add(left > 0 ? I18n.format("item.immersivenuclear.filtro.life", left, LIFE) : "§c" + I18n.format("item.immersivenuclear.filtro.spent"));
+		tooltip.add(left > 0 ? I18n.format("item.immersivenuclear.filter.life", left, LIFE) : "§c" + I18n.format("item.immersivenuclear.filter.spent"));
 	}
 }

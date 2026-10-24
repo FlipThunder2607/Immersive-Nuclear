@@ -25,8 +25,8 @@ public class FilterPressStructureTest
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'F', "master is the middle fence");
-		// Ports from the user's filtro-prensa.bbmodel
-		expect(get(0, -1, -8), 'l', "polpa input, front of the pump end");
+		// Ports, as on the model
+		expect(get(0, -1, -8), 'l', "slurry input, front of the pump end");
 		expect(get(0, -1, 0), 'l', "crude solution output, front of the outlet end");
 		expect(get(1, -1, 0), 'l', "residue output, end of the conveyor");
 		expect(get(1, -1, -1), 'l', "conveyor feeds the residue port");
@@ -34,10 +34,10 @@ public class FilterPressStructureTest
 		expect(get(2, -1, -5), 'l', "spent filter output, back");
 		expect(get(2, -1, -4), 'a', "plain slab between the two filter ports");
 		expect(get(2, -1, 0), 'H', "energy input, heavy engineering column");
-		expect(get(1, 0, -8), 'P', "pump at the polpa end");
+		expect(get(1, 0, -8), 'P', "pump at the slurry end");
 		expect(get(1, 1, -8), 'P', "pump top half");
-		expect(portAt(0, -1, -8), PORT_POLPA, "polpa port");
-		expect(portFace(0, -1, -8)[0], -1, "polpa on the west face");
+		expect(portAt(0, -1, -8), PORT_SLURRY, "slurry port");
+		expect(portFace(0, -1, -8)[0], -1, "slurry on the west face");
 		expect(portAt(0, -1, 0), PORT_SOLUTION, "solution port");
 		expect(portFace(0, -1, 0)[0], -1, "solution on the west face");
 		expect(portAt(1, -1, 0), PORT_RESIDUE, "residue port");

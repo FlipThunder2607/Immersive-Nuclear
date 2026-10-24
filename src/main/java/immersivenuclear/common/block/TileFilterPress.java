@@ -41,33 +41,37 @@ import net.minecraftforge.items.ItemStackHandler;
  * The master part also holds the machine; the port parts hand their capability, on their own face only, to the
  * master's storage (see {@link FilterPressStructure#PORTS}).
  *
- * The press works in batches, in the user's five steps (sounds/filtro-prensa):
- * 1 the pump moves a batch of polpa from the storage tank into the pressure tank and pressurises it,
+ * The press works in batches, in four steps:
+ * 1 the pump moves a batch of slurry from the storage tank into the pressure tank and pressurises it,
  * 2 at the same time the two actuators close the plates, 3 with the press closed and the pressure up, the
- * pressurised polpa is released into the plates, 4 it passes through the filters (the crude solution comes out
- * little by little), 5 the actuators open and the solids (wet mineral residue) fall on the conveyor.
+ * pressure is released and the slurry goes through the filters at once: the pressure tank empties into the plates
+ * over the first RELEASE_TICKS while the crude solution already comes out little by little, 4 the actuators open
+ * and the solids (wet mineral residue) fall on the conveyor.
  * The pump works on its own: as soon as a batch is released the pressure tank is free and the next batch is
  * pressurised while this one filters, so only the first batch waits for the pump.
  * The 28 filter slots must all hold a usable filter; every batch wears each filter by one.
  */
 public class TileFilterPress extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
 {
-	// Gameplay values (provisional), the step lengths follow the user's sounds
+	// Gameplay values (provisional), the step lengths follow the length of each step's sound
 	public static final int PRESSURIZE_TICKS = 100, CLOSE_TICKS = 60, RELEASE_TICKS = 40, FILTER_TICKS = 200, OPEN_TICKS = 120;
 	/** During the opening: the plates are apart after this many ticks, the solids fall from then on. */
 	public static final int OPEN_MOVE_TICKS = 60;
 	public static final int BATCH = 1000, SOLUTION_PER_BATCH = 800, RESIDUE_PER_BATCH = 1;
-	public static final int TANK_CAPACITY = 8000, ENERGY_CAPACITY = 32000;
+	public static final int TANK_CAPACITY = 12000, ENERGY_CAPACITY = 32000;
 	public static final int PUMP_ENERGY = 32, ACTUATOR_ENERGY = 16, FILTER_ENERGY = 8;
 	public static final int FILTERS = 28;
 	public static final int SOLUTION_PUSH_PER_TICK = 100;
 
-	/** Press steps; the pump (step 1) runs on its own, see {@link #pumpTicks}. */
+	/**
+	 * Press steps; the pump (step 1) runs on its own, see {@link #pumpTicks}. PHASE_RELEASE (3) is no longer a step of
+	 * its own (the release is the start of the filtering): only presses saved during it still read it, as filtering.
+	 */
 	public static final int PHASE_OPEN = 0, PHASE_CLOSING = 1, PHASE_CLOSED = 2, PHASE_RELEASE = 3, PHASE_FILTERING = 4, PHASE_OPENING = 5;
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5, STATE_NO_FILTERS = 6;
 
-	/** Machine slots: 28 filters, the residue output, then the bucket slots (polpa in / out, solution in / out). */
-	public static final int SLOT_RESIDUE = FILTERS, SLOT_POLPA_IN = FILTERS + 1, SLOT_POLPA_OUT = FILTERS + 2, SLOT_SOLUTION_IN = FILTERS + 3, SLOT_SOLUTION_OUT = FILTERS + 4, SLOTS = FILTERS + 5;
+	/** Machine slots: 28 filters, the residue output, then the bucket slots (slurry in / out, solution in / out). */
+	public static final int SLOT_RESIDUE = FILTERS, SLOT_SLURRY_IN = FILTERS + 1, SLOT_SLURRY_OUT = FILTERS + 2, SLOT_SOLUTION_IN = FILTERS + 3, SLOT_SOLUTION_OUT = FILTERS + 4, SLOTS = FILTERS + 5;
 
 	int dx, dy, dz;
 	EnumFacing facing = EnumFacing.NORTH;
@@ -86,12 +90,12 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 				return ItemFilter.isFilter(stack);
 			switch(slot)
 			{
-				case SLOT_POLPA_IN:
+				case SLOT_SLURRY_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
-					return in != null && in.getFluid() == INContent.fluidPolpa;
+					return in != null && in.getFluid() == INContent.fluidSlurry;
 				case SLOT_SOLUTION_IN:
 					FluidStack held = FluidUtil.getFluidContained(stack);
-					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidSolucaoBruta);
+					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidCrudeSolution);
 				default: return false; // outputs only take what the machine puts there
 			}
 		}
@@ -114,13 +118,13 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 			markDirty();
 		}
 	};
-	/** Storage tank: polpa coming in. */
+	/** Storage tank: slurry coming in. */
 	final FluidTank storage = new FluidTank(TANK_CAPACITY)
 	{
 		@Override
 		public boolean canFillFluidType(FluidStack fluid)
 		{
-			return fluid != null && fluid.getFluid() == INContent.fluidPolpa;
+			return fluid != null && fluid.getFluid() == INContent.fluidSlurry;
 		}
 
 		@Override
@@ -144,7 +148,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	/** Pump progress on the batch in the pressure tank, 0..PRESSURIZE_TICKS (full = pressurised). */
 	int pumpTicks;
 	int phase = PHASE_OPEN, phaseTicks;
-	/** Polpa between the plates (released, not yet filtered) and the solution already given for this batch. */
+	/** Slurry between the plates (released, not yet filtered) and the solution already given for this batch. */
 	int inPlates, solutionGiven;
 	int state = STATE_IDLE;
 	/** IE convention: a redstone signal stops the machine; hammering the redstone port inverts that. */
@@ -164,7 +168,9 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	/** False while the machine is stopped (redstone, power): the animation and the sounds hold where they are. */
 	public boolean clientRunning;
 	int playedPhase = -1;
-	boolean playedPumping;
+	/** The mod's pump sound, played by the pump part while the slurry moves (pressurising, then into and through the plates). */
+	final PumpSound pump = new PumpSound();
+	static final int PUMP_DX = 1, PUMP_DY = 0, PUMP_DZ = -8;
 
 	{
 		storage.setCanDrain(false);
@@ -432,7 +438,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			right = port == FilterPressStructure.PORT_FILTER || port == FilterPressStructure.PORT_FILTER_OUT || port == FilterPressStructure.PORT_RESIDUE;
 		else if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-			right = port == FilterPressStructure.PORT_POLPA || port == FilterPressStructure.PORT_SOLUTION;
+			right = port == FilterPressStructure.PORT_SLURRY || port == FilterPressStructure.PORT_SOLUTION;
 		else if(cap == CapabilityEnergy.ENERGY)
 			right = port == FilterPressStructure.PORT_ENERGY;
 		else
@@ -466,7 +472,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(m.new SpentFilterPort());
 				if(port == FilterPressStructure.PORT_RESIDUE)
 					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(m.new ResiduePort());
-				if(port == FilterPressStructure.PORT_POLPA)
+				if(port == FilterPressStructure.PORT_SLURRY)
 					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.storage);
 				if(port == FilterPressStructure.PORT_SOLUTION)
 					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.solution);
@@ -484,6 +490,11 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		{
 			if(isMaster())
 				updateClient();
+			else if(isPumpPart())
+			{
+				TileFilterPress m = getMaster();
+				pump.update(this, m != null && m.clientRunning && (m.clientPumping || m.clientPhase == PHASE_FILTERING));
+			}
 			return;
 		}
 		int port = getPort();
@@ -557,29 +568,30 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 				if(pumpTicks >= PRESSURIZE_TICKS)
 				{
 					inPlates = 0;
-					next(PHASE_RELEASE);
-				}
-				break;
-			case PHASE_RELEASE:
-				// The pressurised polpa flows into the plates over the step: tank and gauge go down together
-				FluidStack flow = pressureTank.drainInternal(++phaseTicks >= RELEASE_TICKS ? BATCH : BATCH / RELEASE_TICKS, true);
-				if(flow != null)
-					inPlates += flow.amount;
-				if(phaseTicks >= RELEASE_TICKS)
-				{
-					pumpTicks = 0;
 					solutionGiven = 0;
 					next(PHASE_FILTERING);
 				}
 				break;
+			case PHASE_RELEASE:
 			case PHASE_FILTERING:
+				phase = PHASE_FILTERING;
+				// Released: the pressurised slurry flows into the plates over the first ticks (tank and gauge go down
+				// together) and goes through the cloths from the first tick
+				if(phaseTicks < RELEASE_TICKS && pressureTank.getFluidAmount() > 0)
+				{
+					FluidStack flow = pressureTank.drainInternal(phaseTicks + 1 >= RELEASE_TICKS ? BATCH : BATCH / RELEASE_TICKS, true);
+					if(flow != null)
+						inPlates += flow.amount;
+					if(pressureTank.getFluidAmount() == 0)
+						pumpTicks = 0;
+				}
 				if(energy.use(FILTER_ENERGY))
 				{
 					phaseTicks++;
-					// The solution comes out little by little while the polpa passes through the cloths
+					// The solution comes out little by little while the slurry passes through the cloths
 					int due = SOLUTION_PER_BATCH * phaseTicks / FILTER_TICKS - solutionGiven;
 					if(due > 0)
-						solutionGiven += solution.fillInternal(new FluidStack(INContent.fluidSolucaoBruta, due), true);
+						solutionGiven += solution.fillInternal(new FluidStack(INContent.fluidCrudeSolution, due), true);
 					if(phaseTicks >= FILTER_TICKS)
 					{
 						inPlates = 0;
@@ -636,7 +648,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	/** The plates are apart: the cake falls on the conveyor (into the residue slot) and every filter wears. */
 	void dropResidue()
 	{
-		output(SLOT_RESIDUE, new ItemStack(INContent.itemRejeito, RESIDUE_PER_BATCH));
+		output(SLOT_RESIDUE, new ItemStack(INContent.itemResidue, RESIDUE_PER_BATCH));
 		for(int i = 0; i < FILTERS; i++)
 		{
 			ItemStack f = inventory.getStackInSlot(i);
@@ -650,19 +662,19 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	}
 
 	// ---------- containers and ports ----------
-	/** Bucket slots, like IE's: polpa containers are emptied into the storage tank, empty ones are filled with solution. */
+	/** Bucket slots, like IE's: slurry containers are emptied into the storage tank, empty ones are filled with solution. */
 	void handleContainers()
 	{
-		ItemStack in = inventory.getStackInSlot(SLOT_POLPA_IN);
+		ItemStack in = inventory.getStackInSlot(SLOT_SLURRY_IN);
 		if(!in.isEmpty())
 		{
 			FluidActionResult r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), storage, Integer.MAX_VALUE, null, false);
-			if(r.isSuccess() && canOutput(SLOT_POLPA_OUT, r.getResult()))
+			if(r.isSuccess() && canOutput(SLOT_SLURRY_OUT, r.getResult()))
 			{
 				r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), storage, Integer.MAX_VALUE, null, true);
-				output(SLOT_POLPA_OUT, r.getResult());
+				output(SLOT_SLURRY_OUT, r.getResult());
 				in.shrink(1);
-				inventory.setStackInSlot(SLOT_POLPA_IN, in);
+				inventory.setStackInSlot(SLOT_SLURRY_IN, in);
 			}
 		}
 		in = inventory.getStackInSlot(SLOT_SOLUTION_IN);
@@ -820,12 +832,16 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	/** How closed the plates are (0 open, as modelled; 1 pressed), from the client's step and its tick count. */
 	public float closing(float partialTicks)
 	{
-		float t = clientPhaseTicks + partialTicks;
-		switch(clientPhase)
+		return closing(clientPhase, clientPhaseTicks + partialTicks);
+	}
+
+	/** How closed the plates are at tick t of a step (also for the interface). */
+	public static float closing(int phase, float t)
+	{
+		switch(phase)
 		{
 			case PHASE_CLOSING: return smooth(Math.min(1, t / CLOSE_TICKS));
 			case PHASE_CLOSED:
-			case PHASE_RELEASE:
 			case PHASE_FILTERING: return 1;
 			case PHASE_OPENING: return 1 - smooth(Math.min(1, t / OPEN_MOVE_TICKS));
 			default: return 0;
@@ -845,19 +861,16 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 
 	void updateClient()
 	{
-		int max = clientPhase == PHASE_CLOSING ? CLOSE_TICKS : clientPhase == PHASE_RELEASE ? RELEASE_TICKS
-				: clientPhase == PHASE_FILTERING ? FILTER_TICKS : clientPhase == PHASE_OPENING ? OPEN_TICKS : 0;
+		int max = clientPhase == PHASE_CLOSING ? CLOSE_TICKS : clientPhase == PHASE_FILTERING ? FILTER_TICKS : clientPhase == PHASE_OPENING ? OPEN_TICKS : 0;
 		if(clientRunning && clientPhaseTicks < max)
 			clientPhaseTicks++;
-		// One sound per step, as the user made them; the filtering one loops (IE's tile sound)
-		if(clientPumping && clientRunning && !playedPumping)
-			playOnce(INContent.soundFpPressurize);
-		playedPumping = clientPumping;
+		// One sound per step; the filtering one loops (IE's tile sound) and starts with the release. The pumping is
+		// the mod's pump sound, on the pump part.
 		if(clientPhase != playedPhase)
 		{
 			if(clientPhase == PHASE_CLOSING)
 				playOnce(INContent.soundFpClose);
-			else if(clientPhase == PHASE_RELEASE)
+			else if(clientPhase == PHASE_FILTERING)
 				playOnce(INContent.soundFpRelease);
 			else if(clientPhase == PHASE_OPENING)
 				playOnce(INContent.soundFpOpen);
@@ -870,7 +883,14 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	@Override
 	public boolean shoudlPlaySound(String sound)
 	{
+		if(isPumpPart())
+			return pump.shouldPlay(this, sound);
 		return isMaster() && filterLoopOn() && INContent.soundFpFilterLoop.getSoundName().toString().equals(sound);
+	}
+
+	boolean isPumpPart()
+	{
+		return dx == PUMP_DX && dy == PUMP_DY && dz == PUMP_DZ;
 	}
 
 	boolean filterLoopOn()
@@ -889,6 +909,8 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		super.invalidate();
 		if(world != null && world.isRemote && isMaster())
 			ImmersiveEngineering.proxy.handleTileSound(INContent.soundFpFilterLoop, this, false, 1, 1);
+		if(world != null && world.isRemote && isPumpPart())
+			pump.stop(this);
 	}
 
 	@Override
@@ -897,6 +919,8 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		super.onChunkUnload();
 		if(world != null && world.isRemote && isMaster())
 			ImmersiveEngineering.proxy.handleTileSound(INContent.soundFpFilterLoop, this, false, 1, 1);
+		if(world != null && world.isRemote && isPumpPart())
+			pump.stop(this);
 	}
 
 	// ---------- for the interface (master only) ----------
@@ -989,6 +1013,8 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 			pumpTicks = m.getInteger("pumpTicks");
 			phase = m.getInteger("phase");
 			phaseTicks = m.getInteger("phaseTicks");
+			if(phase == PHASE_RELEASE)
+				phase = PHASE_FILTERING;
 			inPlates = m.getInteger("inPlates");
 			solutionGiven = m.getInteger("solutionGiven");
 			state = m.getInteger("state");

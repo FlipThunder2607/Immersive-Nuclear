@@ -1,17 +1,15 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Filtration Unit (filter press), read block by block from the user's build in the dev world
- * (New World, x 194..196, y 4..6, z 425..433, the user's third version: under the plates, steel scaffolding slabs
- * instead of iron sheetmetal and light engineering for the two filter ports at the back), 3 wide x 3 high x 9 long,
- * 56 blocks.
+ * Filtration Unit (filter press), block by block: 3 wide x 3 high x 9 long, 56 blocks. Steel scaffolding slabs
+ * under the plates, light engineering for the two filter ports at the back.
  *
  * Offsets are relative to the trigger (redstone engineering block, layer 2, hit with the hammer on its front face),
  * in the reference orientation (facing NORTH): the front is WEST, so the player stands west of the structure
  * looking east; right = south, back = east, left = north. dx grows east, dz grows south.
- * The press runs along dz: the pump end (polpa in) at dz -8, the plates over the conveyor at dz -7..-1, the
+ * The press runs along dz: the pump end (slurry in) at dz -8, the plates over the conveyor at dz -7..-1, the
  * outputs and the redstone at dz 0.
- * Ports (as in the user's filtro-prensa.bbmodel): polpa input front-left (0,-1,-8), crude solution output
+ * Ports: slurry input front-left (0,-1,-8), crude solution output
  * front-right (0,-1,0), residue output at the end of the conveyor (1,-1,0) on the right side, on the back the filter
  * input (2,-1,-3) and the spent filter output (2,-1,-5) for automating the filter swap, energy on the heavy
  * engineering column (2,-1..0,0).
@@ -68,18 +66,18 @@ public final class FilterPressStructure
 	public static final char TRIGGER = 'R';
 
 	/** What a part does besides being structure. */
-	public static final int PORT_NONE = 0, PORT_POLPA = 1, PORT_SOLUTION = 2, PORT_RESIDUE = 3, PORT_FILTER = 4, PORT_ENERGY = 5, PORT_REDSTONE = 6, PORT_FILTER_OUT = 7;
+	public static final int PORT_NONE = 0, PORT_SLURRY = 1, PORT_SOLUTION = 2, PORT_RESIDUE = 3, PORT_FILTER = 4, PORT_ENERGY = 5, PORT_REDSTONE = 6, PORT_FILTER_OUT = 7;
 
 	/**
 	 * Port parts and the face they work on, as a reference-orientation {dx, dz} step out of the part
-	 * ({0, 0} = every side). Faces follow the user's model: polpa in and crude solution out on the front (west),
+	 * ({0, 0} = every side). Faces follow the model: slurry in and crude solution out on the front (west),
 	 * residue out on the right side (south) where the conveyor ends, filters in and spent filters out on the back
-	 * (east, the user's filtro-prensa-v2-abertura.bbmodel: blue at z 443, orange at z 441 of the build); energy takes
+	 * (east); energy takes
 	 * any side of both heavy engineering blocks; the redstone port is the trigger block.
 	 */
 	static final int[][] PORTS = {
 			// dx, dy, dz, port, face dx, face dz
-			{0, -1, -8, PORT_POLPA, -1, 0},
+			{0, -1, -8, PORT_SLURRY, -1, 0},
 			{0, -1, 0, PORT_SOLUTION, -1, 0},
 			{1, -1, 0, PORT_RESIDUE, 0, 1},
 			{2, -1, -3, PORT_FILTER, 1, 0},

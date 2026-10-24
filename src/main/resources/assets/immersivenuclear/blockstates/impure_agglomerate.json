@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "normal": { "model": "immersivenuclear:impure_agglomerate" },
+        "inventory": { "model": "immersivenuclear:impure_agglomerate" }
+    }
+}

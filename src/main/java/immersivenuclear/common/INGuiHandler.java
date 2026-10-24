@@ -1,10 +1,13 @@
 package immersivenuclear.common;
 
 import immersivenuclear.client.GuiChemicalProcessor;
+import immersivenuclear.client.GuiChemicalSeparator;
 import immersivenuclear.client.GuiFilterPress;
 import immersivenuclear.common.block.TileChemicalProcessor;
+import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileFilterPress;
 import immersivenuclear.common.gui.ContainerChemicalProcessor;
+import immersivenuclear.common.gui.ContainerChemicalSeparator;
 import immersivenuclear.common.gui.ContainerFilterPress;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -15,7 +18,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 /** Opened with the master's position; the client class is only touched on the client. */
 public class INGuiHandler implements IGuiHandler
 {
-	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1;
+	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2;
 
 	static TileChemicalProcessor master(World world, int x, int y, int z)
 	{
@@ -29,9 +32,20 @@ public class INGuiHandler implements IGuiHandler
 		return te instanceof TileFilterPress && ((TileFilterPress)te).isMaster() ? (TileFilterPress)te : null;
 	}
 
+	static TileChemicalSeparator separator(World world, int x, int y, int z)
+	{
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+		return te instanceof TileChemicalSeparator && ((TileChemicalSeparator)te).isMaster() ? (TileChemicalSeparator)te : null;
+	}
+
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
+		if(id == CHEMICAL_SEPARATOR)
+		{
+			TileChemicalSeparator s = separator(world, x, y, z);
+			return s == null ? null : new ContainerChemicalSeparator(player.inventory, s);
+		}
 		if(id == FILTER_PRESS)
 		{
 			TileFilterPress f = filterPress(world, x, y, z);
@@ -44,6 +58,11 @@ public class INGuiHandler implements IGuiHandler
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
+		if(id == CHEMICAL_SEPARATOR)
+		{
+			TileChemicalSeparator s = separator(world, x, y, z);
+			return s == null ? null : new GuiChemicalSeparator(new ContainerChemicalSeparator(player.inventory, s));
+		}
 		if(id == FILTER_PRESS)
 		{
 			TileFilterPress f = filterPress(world, x, y, z);

@@ -5,50 +5,129 @@ import java.util.ArrayList;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import immersivenuclear.ImmersiveNuclear;
+import immersivenuclear.common.INContent;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.gui.ContainerChemicalProcessor;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 /**
- * Interface of the Chemical Processing Unit, in IE's style and drawn from IE's own refinery GUI at run time
- * (frames, markers, arrow, tank gauge, energy bar, player inventory). Our sheet (textures/gui/processamento_quimico.png,
- * ferramentas/textura_gui.py) only covers the refinery's layout and holds the arrow fill and the status lights.
- * Left to right: water buckets, water tank, uranium powder / arrow / reagent, polpa tank, polpa buckets,
- * redstone mode button over the status lights, energy.
+ * Interface of the Chemical Processing Unit, in the finish of machines 2 and 3 (graphite brushed steel, IE's own
+ * slots, tanks and markers drawn at run time a little darker, the same right column), around its batch reactor:
+ *   water buckets | water tank > REACTOR > slurry tank | slurry buckets
+ * On the reactor's lid, the hopper with the uranium powder and reagent slots and the agitator's motor. In the
+ * window: the batch's water rising while it fills (a stream from the inlet, the solids falling from the hopper), the
+ * impeller turning while it reacts and the water turning into slurry, the level going down while it drains. Our sheet
+ * (textures/gui/reactor.png, made by ferramentas/gui_processamento.py with the same constants) holds the background
+ * and those parts; the button and the lights are machine 1's own sheet (chemical_processor.png).
  */
 public class GuiChemicalProcessor extends GuiIEContainerBase
 {
 	static final String IE = "immersiveengineering:textures/gui/refinery.png";
-	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/processamento_quimico.png";
+	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/chemical_processor.png";
+	static final String SHEET = ImmersiveNuclear.MODID + ":textures/gui/reactor.png";
+	static final int SHEET_SIZE = 512;
 
-	// Pieces of refinery.png: {u, v, w, h}
-	static final int[] SLOT = {35, 13, 20, 20}, TANK = {11, 18, 20, 51}, BLUE = {42, 10, 6, 3}, ORANGE = {42, 49, 6, 3}, ARROW = {83, 36, 19, 13};
-	// Our layout: tanks (inside of the gauge), arrow, redstone button and status panel
-	static final int WATER_X = 34, POLPA_X = 82, TANK_Y = 20;
-	/** Also JEI's click area for the recipes (INJeiPlugin). */
-	public static final int ARROW_X = 56, ARROW_Y = 37;
-	// Redstone button (IE assembler style, 16x16) and the status panel share one 16 px column between the polpa
-	// buckets and the energy bar: the button centred on the top slots, the panel down to the bottom slots' edge
-	static final int BUTTON_X = 131, BUTTON_Y = 15, BUTTON_SIZE = 16;
-	static final int PANEL_X = 131, PANEL_Y = 36, PANEL_W = 16, PANEL_H = 36;
-	static final int LIGHT_X = 136, LIGHT_Y = 40, LIGHT_STEP = 8;
+	// Layout (same as gui_processamento.py)
+	static final int ROW = 52, WATER_X = 32, SLURRY_X = 195;
+	/** The reactor's well; also JEI's click area for the recipe (INJeiPlugin). */
+	public static final int REACTOR_X = 62, REACTOR_Y = 42, REACTOR_W = 128, REACTOR_H = 70;
+	static final int WIN_X = 4, WIN_Y = 8, WIN_W = 104, WIN_H = 56;
+	static final int STRIP_X = 113, STRIP_Y = 8, STRIP_W = 5, STRIP_H = 56;
+	static final int MOTOR_X = 48, MOTOR_UP = 14, MOTOR_W = 24, MOTOR_H = 18;
+	static final int SHAFT_X = REACTOR_X + MOTOR_X + 11;
+	static final int IMPELLER_W = 40, IMPELLER_H = 10, IMPELLER_STEP = 12;
+	static final int HOPPER_X = 68, HOPPER_Y = 30, HOPPER_W = 40, HOPPER_H = 12;
+	/** Water in and slurry out, both at the tanks' middle. */
+	static final int PIPE_DY = 35;
+	/** A full batch fills this much of the window. */
+	static final float BATCH_LEVEL = 0.8F;
+	static final int ENERGY_X = 248, ENERGY_Y = 16, ENERGY_W = 14, ENERGY_H = 64;
+	static final int BUTTON_X = 247, BUTTON_Y = 86, BUTTON_SIZE = 16;
+	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 112, LIGHT_STEP = 8;
+	static final int PANEL_X = ContainerChemicalProcessor.INV_X - 8, PANEL_Y = ContainerChemicalProcessor.INV_Y - 8;
+
+	// Our sprites in the sheet: {u, v, w, h}
+	static final int[] REACTOR = {0, 260, REACTOR_W, REACTOR_H}, MOTOR = {130, 260, MOTOR_W, MOTOR_H}, IMPELLER = {160, 260, IMPELLER_W, IMPELLER_H},
+			HOPPER = {0, 340, HOPPER_W, HOPPER_H};
+	// IE's pieces in refinery.png
+	static final int[] IE_SLOT = {35, 13, 20, 20}, IE_TANK = {11, 18, 20, 51}, IE_BLUE = {42, 10, 6, 3}, IE_ORANGE = {42, 49, 6, 3};
+
+	static final int COL_WATER = 0xff3f76e4, COL_SLURRY = 0xff968060, COL_SHAFT = 0xff96999e, COL_DUST = 0xff8a9a6a;
 
 	final ContainerChemicalProcessor container;
+	/** Client counters: the agitator's turn, and the ticks for the swirl and the falling solids. */
+	int turn, ticks;
 
 	public GuiChemicalProcessor(ContainerChemicalProcessor container)
 	{
 		super(container);
 		this.container = container;
-		xSize = 176;
-		ySize = 166;
+		xSize = ContainerChemicalProcessor.WIDTH;
+		ySize = ContainerChemicalProcessor.HEIGHT;
+	}
+
+	boolean running()
+	{
+		return container.state == TileChemicalProcessor.STATE_RUNNING;
+	}
+
+	boolean agitating()
+	{
+		return running() && container.phase == TileChemicalProcessor.PHASE_REACT;
+	}
+
+	boolean filling()
+	{
+		return (container.moving & 1) != 0;
+	}
+
+	boolean draining()
+	{
+		return (container.moving & 2) != 0;
+	}
+
+	/** How far the batch has turned from water into slurry, 0..1. */
+	float reacted()
+	{
+		if(container.phase == TileChemicalProcessor.PHASE_DRAIN)
+			return 1;
+		return container.phase == TileChemicalProcessor.PHASE_REACT ? Math.min(1, container.phaseTicks / (float)TileChemicalProcessor.REACT_TICKS) : 0;
+	}
+
+	@Override
+	public void updateScreen()
+	{
+		super.updateScreen();
+		ticks++;
+		if(agitating())
+			turn++;
+	}
+
+	// ---------- drawing helpers ----------
+	void sprite(int[] s, int x, int y, int dv, int w, int h)
+	{
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft + x, guiTop + y, s[0], s[1] + dv, w, h, SHEET_SIZE, SHEET_SIZE);
+	}
+
+	void sprite(int[] s, int x, int y)
+	{
+		sprite(s, x, y, 0, s[2], s[3]);
 	}
 
 	void piece(int[] p, int x, int y)
@@ -56,37 +135,50 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 		drawTexturedModalRect(guiLeft + x, guiTop + y, p[0], p[1], p[2], p[3]);
 	}
 
-	/** A slot frame, with the IE marker above it (blue = input, orange = output, null = none). */
-	void slotFrame(int itemX, int itemY, int[] marker)
+	void rect(int x, int y, int w, int h, int argb)
 	{
-		piece(SLOT, itemX - 2, itemY - 2);
-		if(marker != null)
-			piece(marker, itemX + 5, itemY - 5);
+		if(w > 0 && h > 0)
+			drawRect(guiLeft + x, guiTop + y, guiLeft + x + w, guiTop + y + h, argb);
 	}
 
-	/** A frame of any size, cut from the refinery's slot frame (2 px light border). */
-	void frame(int x, int y, int w, int h)
+	/** Moving fluid inside a pipe of the background (3 px core), one pixel past each end so the elbows join. */
+	void flow(int x0, int y0, int x1, int y1, int argb)
 	{
-		int u = SLOT[0], v = SLOT[1];
-		for(int i = 2; i < w - 2; i += 16)
-		{
-			int len = Math.min(16, w - 2 - i);
-			drawTexturedModalRect(guiLeft + x + i, guiTop + y, u + 2, v, len, 2);
-			drawTexturedModalRect(guiLeft + x + i, guiTop + y + h - 2, u + 2, v + 18, len, 2);
-		}
-		for(int j = 2; j < h - 2; j += 16)
-		{
-			int len = Math.min(16, h - 2 - j);
-			drawTexturedModalRect(guiLeft + x, guiTop + y + j, u, v + 2, 2, len);
-			drawTexturedModalRect(guiLeft + x + w - 2, guiTop + y + j, u + 18, v + 2, 2, len);
-		}
-		drawTexturedModalRect(guiLeft + x, guiTop + y, u, v, 2, 2);
-		drawTexturedModalRect(guiLeft + x + w - 2, guiTop + y, u + 18, v, 2, 2);
-		drawTexturedModalRect(guiLeft + x, guiTop + y + h - 2, u, v + 18, 2, 2);
-		drawTexturedModalRect(guiLeft + x + w - 2, guiTop + y + h - 2, u + 18, v + 18, 2, 2);
+		if(y0 == y1)
+			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, argb);
+		else
+			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, argb);
 	}
 
-	/** Which status light is on: 0 green running, 1 yellow missing input, 2 red no power / output full, 3 grey disabled. */
+	/** Part of a fluid's still sprite (tiled from the top left), tinted; binds the blocks atlas. */
+	void fluid(Fluid f, int x, int y, int w, int h, int argb)
+	{
+		if(f == null || w <= 0 || h <= 0)
+			return;
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		TextureAtlasSprite sp = mc.getTextureMapBlocks().getAtlasSprite(f.getStill().toString());
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.color((argb >> 16 & 255) / 255F, (argb >> 8 & 255) / 255F, (argb & 255) / 255F, (argb >>> 24) / 255F);
+		Tessellator t = Tessellator.getInstance();
+		BufferBuilder b = t.getBuffer();
+		b.begin(7, DefaultVertexFormats.POSITION_TEX);
+		for(int j = 0; j < h; j += 16)
+			for(int i = 0; i < w; i += 16)
+			{
+				int tw = Math.min(16, w - i), th = Math.min(16, h - j);
+				float u0 = sp.getMinU(), u1 = sp.getInterpolatedU(tw), v0 = sp.getMinV(), v1 = sp.getInterpolatedV(th);
+				double px = guiLeft + x + i, py = guiTop + y + j;
+				b.pos(px, py + th, zLevel).tex(u0, v1).endVertex();
+				b.pos(px + tw, py + th, zLevel).tex(u1, v1).endVertex();
+				b.pos(px + tw, py, zLevel).tex(u1, v0).endVertex();
+				b.pos(px, py, zLevel).tex(u0, v0).endVertex();
+			}
+		t.draw();
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	/** 0 green running, 1 yellow waiting for input, 2 red stopped (power, full output), 3 grey disabled; -1 idle. */
 	int litLight()
 	{
 		switch(container.state)
@@ -104,41 +196,101 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my)
 	{
 		GlStateManager.color(1, 1, 1, 1);
-		ClientUtils.bindTexture(IE);
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-		ClientUtils.bindTexture(OWN);
-		drawTexturedModalRect(guiLeft + 9, guiTop + 8, 0, 0, 145, 65);
+		ClientUtils.bindTexture(SHEET);
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, SHEET_SIZE, SHEET_SIZE);
 
+		// IE's wooden inventory panel; IE's pieces, a little darker
 		ClientUtils.bindTexture(IE);
+		drawTexturedModalRect(guiLeft + PANEL_X, guiTop + PANEL_Y, 0, 77, 176, 89);
+		GuiGraphite.ieTint();
 		int[][] xy = ContainerChemicalProcessor.SLOT_XY;
-		slotFrame(xy[TileChemicalProcessor.SLOT_WATER_IN][0], xy[TileChemicalProcessor.SLOT_WATER_IN][1], BLUE);
-		slotFrame(xy[TileChemicalProcessor.SLOT_WATER_OUT][0], xy[TileChemicalProcessor.SLOT_WATER_OUT][1], ORANGE);
-		slotFrame(xy[TileChemicalProcessor.SLOT_URANIUM][0], xy[TileChemicalProcessor.SLOT_URANIUM][1], BLUE);
-		slotFrame(xy[TileChemicalProcessor.SLOT_REAGENT][0], xy[TileChemicalProcessor.SLOT_REAGENT][1], BLUE);
-		slotFrame(xy[TileChemicalProcessor.SLOT_POLPA_IN][0], xy[TileChemicalProcessor.SLOT_POLPA_IN][1], BLUE);
-		slotFrame(xy[TileChemicalProcessor.SLOT_POLPA_OUT][0], xy[TileChemicalProcessor.SLOT_POLPA_OUT][1], ORANGE);
-		piece(TANK, WATER_X - 2, TANK_Y - 2);
-		piece(BLUE, WATER_X + 5, TANK_Y - 5);
-		piece(TANK, POLPA_X - 2, TANK_Y - 2);
-		piece(ORANGE, POLPA_X + 5, TANK_Y - 5);
-		piece(ARROW, ARROW_X, ARROW_Y);
-		frame(PANEL_X, PANEL_Y, PANEL_W, PANEL_H);
+		for(int i = 0; i < xy.length; i++)
+		{
+			piece(IE_SLOT, xy[i][0] - 2, xy[i][1] - 2);
+			if(i >= TileChemicalProcessor.SLOT_WATER_IN)
+				piece(i == TileChemicalProcessor.SLOT_WATER_IN || i == TileChemicalProcessor.SLOT_SLURRY_IN ? IE_BLUE : IE_ORANGE, xy[i][0] + 5, xy[i][1] - 5);
+		}
+		piece(IE_TANK, WATER_X, ROW);
+		piece(IE_BLUE, WATER_X + 7, ROW - 3);
+		piece(IE_TANK, SLURRY_X, ROW);
+		piece(IE_ORANGE, SLURRY_X + 7, ROW - 3);
+		GuiGraphite.endTint();
 
+		// Fluid moving in the pipes
+		if(filling())
+			flow(WATER_X + 20, REACTOR_Y + PIPE_DY, REACTOR_X - 1, REACTOR_Y + PIPE_DY, COL_WATER);
+		if(draining())
+			flow(REACTOR_X + REACTOR_W, REACTOR_Y + PIPE_DY, SLURRY_X - 1, REACTOR_Y + PIPE_DY, COL_SLURRY);
+		GlStateManager.color(1, 1, 1, 1);
+
+		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+		ClientUtils.handleGuiTank(container.slurry, guiLeft + SLURRY_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+
+		drawReactor(partialTicks);
+
+		// Energy (IE's red gradient), button, lights
+		int eh = (int)((ENERGY_H - 4) * (container.energy / (float)TileChemicalProcessor.ENERGY_CAPACITY));
+		if(eh > 0)
+			ClientUtils.drawGradientRect(guiLeft + ENERGY_X + 2, guiTop + ENERGY_Y + ENERGY_H - 2 - eh, guiLeft + ENERGY_X + ENERGY_W - 2, guiTop + ENERGY_Y + ENERGY_H - 2, 0xffb51500, 0xff600b00);
+		GlStateManager.color(1, 1, 1, 1);
 		ClientUtils.bindTexture(OWN);
 		drawTexturedModalRect(guiLeft + BUTTON_X, guiTop + BUTTON_Y, 0, 150, BUTTON_SIZE, BUTTON_SIZE);
-		drawTexturedModalRect(guiLeft + PANEL_X + 2, guiTop + PANEL_Y + 2, 0, 110, PANEL_W - 4, PANEL_H - 4);
 		int lit = litLight();
 		for(int i = 0; i < 4; i++)
-			drawTexturedModalRect(guiLeft + LIGHT_X, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
-		int done = 19 * container.progress / TileChemicalProcessor.CYCLE_TICKS;
-		if(done > 0)
-			drawTexturedModalRect(guiLeft + ARROW_X, guiTop + ARROW_Y, 0, 70, done, 13);
+			drawTexturedModalRect(guiLeft + LIGHT_X + 1, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
+	}
 
-		// Energy and tanks exactly as IE's refinery draws them
-		int stored = (int)(46 * (container.energy / (float)TileChemicalProcessor.ENERGY_CAPACITY));
-		ClientUtils.drawGradientRect(guiLeft + 157, guiTop + 21 + (46 - stored), guiLeft + 164, guiTop + 67, 0xffb51500, 0xff600b00);
-		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
-		ClientUtils.handleGuiTank(container.polpa, guiLeft + POLPA_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+	/** The batch in the window, the stream and the solids while it fills, the agitator, the reaction strip. */
+	void drawReactor(float partialTicks)
+	{
+		int wx = REACTOR_X + WIN_X, wy = REACTOR_Y + WIN_Y, floor = wy + WIN_H;
+		int lh = Math.round(WIN_H * BATCH_LEVEL * Math.min(1, container.reactor / (float)TileChemicalProcessor.BATCH_WATER));
+		int surface = floor - lh;
+		float reacted = reacted();
+		if(lh > 0)
+		{
+			// The water, the slurry over it as the reaction goes on, a light line at the surface
+			if(reacted < 1)
+				fluid(FluidRegistry.WATER, wx, surface, WIN_W, lh, COL_WATER);
+			if(reacted > 0)
+				fluid(INContent.fluidSlurry, wx, surface, WIN_W, lh, (int)(255 * reacted) << 24 | 0xffffff);
+			rect(wx, surface, WIN_W, 1, 0x46ffffff);
+			// The swirl round the impeller, moving with it
+			if(agitating() && lh > 12)
+				for(int k = 0; k < 9; k++)
+				{
+					int sx = wx + 10 + Math.floorMod(k * 37 + turn * 3 * (k % 2 == 0 ? 1 : -1), WIN_W - 24);
+					int sy = surface + 4 + (k * 13) % Math.max(1, lh - 8);
+					rect(sx, sy, 5, 1, 0x28ffffff);
+				}
+		}
+		// While it fills: the water falls from the inlet, the solids from the hopper
+		if(filling())
+		{
+			int inletY = REACTOR_Y + PIPE_DY;
+			rect(wx + 1, inletY, 2, surface - inletY, 0xcc3f76e4);
+			for(int k = 0; k < 4; k++)
+			{
+				int y = wy + Math.floorMod(ticks * 2 + k * 7, Math.max(1, surface - wy));
+				rect(HOPPER_X + HOPPER_W / 2 - 4 + k * 2, y, 2, 2, COL_DUST);
+			}
+		}
+		// Shaft and impeller near the floor
+		rect(SHAFT_X, REACTOR_Y + 2, 2, WIN_Y + WIN_H - 10, COL_SHAFT);
+		GlStateManager.color(1, 1, 1, 1);
+		ClientUtils.bindTexture(SHEET);
+		sprite(IMPELLER, SHAFT_X + 1 - IMPELLER_W / 2, floor - 16, Math.floorMod(turn, 4) * IMPELLER_STEP, IMPELLER_W, IMPELLER_H);
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		sprite(REACTOR, REACTOR_X, REACTOR_Y);
+		sprite(MOTOR, REACTOR_X + MOTOR_X, REACTOR_Y - MOTOR_UP + 2);
+		sprite(HOPPER, HOPPER_X, HOPPER_Y);
+		// The reaction in the strip, IE's red
+		int sh = (int)(STRIP_H * reacted);
+		int sx = guiLeft + REACTOR_X + STRIP_X, sy = guiTop + REACTOR_Y + STRIP_Y;
+		if(sh > 0)
+			ClientUtils.drawGradientRect(sx, sy + STRIP_H - sh, sx + STRIP_W, sy + STRIP_H, 0xffb51500, 0xff600b00);
+		GlStateManager.color(1, 1, 1, 1);
 	}
 
 	@Override
@@ -160,30 +312,43 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 		return mx >= guiLeft + x && mx < guiLeft + x + w && my >= guiTop + y && my < guiTop + y + h;
 	}
 
+	static final String K = "gui.immersivenuclear.chemical_processor.";
+
 	@Override
 	public void drawScreen(int mx, int my, float partialTicks)
 	{
 		super.drawScreen(mx, my, partialTicks);
-		ArrayList<String> tooltip = new ArrayList<>();
-		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, tooltip);
-		ClientUtils.handleGuiTank(container.polpa, guiLeft + POLPA_X, guiTop + TANK_Y, 16, 47, 177, 31, 20, 51, mx, my, IE, tooltip);
-		if(over(mx, my, 157, 21, 7, 46))
-			tooltip.add(container.energy + "/" + TileChemicalProcessor.ENERGY_CAPACITY + " IF");
+		ArrayList<String> tip = new ArrayList<>();
+		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		ClientUtils.handleGuiTank(container.slurry, guiLeft + SLURRY_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		if(over(mx, my, REACTOR_X, REACTOR_Y, REACTOR_W, REACTOR_H) || over(mx, my, REACTOR_X + MOTOR_X, REACTOR_Y - MOTOR_UP + 2, MOTOR_W, MOTOR_H))
+		{
+			tip.add(I18n.format(K + "reactor"));
+			tip.add("§7" + I18n.format(K + "phase." + container.phase));
+			if(container.phase == TileChemicalProcessor.PHASE_REACT)
+				tip.add("§7" + I18n.format(K + "reaction", Math.round(100 * reacted())));
+			if(container.reactor > 0)
+				tip.add("§7" + container.reactor + " / " + TileChemicalProcessor.BATCH_WATER + " mB");
+		}
+		if(over(mx, my, HOPPER_X, HOPPER_Y, HOPPER_W, HOPPER_H))
+			tip.add(I18n.format(K + "hopper", TileChemicalProcessor.BATCH_SOLIDS, TileChemicalProcessor.BATCH_SOLIDS));
+		if(over(mx, my, ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H))
+			tip.add(container.energy + "/" + TileChemicalProcessor.ENERGY_CAPACITY + " IF");
 		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))
 		{
-			tooltip.add(I18n.format("gui.immersivenuclear.redstone"));
-			tooltip.add("§7" + I18n.format(container.redstoneInverted ? "gui.immersivenuclear.redstone.inverted" : "gui.immersivenuclear.redstone.normal"));
+			tip.add(I18n.format("gui.immersivenuclear.redstone"));
+			tip.add("§7" + I18n.format(container.redstoneInverted ? "gui.immersivenuclear.redstone.inverted" : "gui.immersivenuclear.redstone.normal"));
 		}
 		for(int i = 0; i < 4; i++)
-			if(over(mx, my, PANEL_X, LIGHT_Y + i * LIGHT_STEP - 1, PANEL_W, LIGHT_STEP))
+			if(over(mx, my, LIGHTS_X, LIGHT_Y + i * LIGHT_STEP - 1, LIGHTS_W, LIGHT_STEP))
 			{
-				boolean on = i == litLight();
 				// The lit light names the exact state (red covers two)
-				tooltip.add(on ? I18n.format("gui.immersivenuclear.state." + container.state) : "§7" + I18n.format("gui.immersivenuclear.light." + i));
+				boolean on = i == litLight();
+				tip.add(on ? I18n.format("gui.immersivenuclear.state." + container.state) : "§7" + I18n.format("gui.immersivenuclear.light." + i));
 			}
-		if(!tooltip.isEmpty())
+		if(!tip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
+			ClientUtils.drawHoveringText(tip, mx, my, fontRenderer, guiLeft + xSize, -1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}

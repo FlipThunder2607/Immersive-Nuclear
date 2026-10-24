@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1.0-alpha.17"
+version = "0.1.1-alpha"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -23,7 +23,7 @@ tasks.withType(JavaCompile) {
 }
 
 minecraft {
-    // 14.23.5.2864 (instancia de teste) nao publica userdev; 2847 e a mais proxima
+    // Built against 2847 (14.23.5.2864 has no userdev package); the mod also runs on later 1.12.2 builds
     version = "1.12.2-14.23.5.2847"
     runDir = "run"
     mappings = "stable_39"
@@ -72,3 +72,9 @@ task filterPressStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn filterPressStructureTest
+
+task chemicalSeparatorStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.ChemicalSeparatorStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn chemicalSeparatorStructureTest
