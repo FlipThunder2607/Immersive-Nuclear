@@ -46,6 +46,8 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 
 	// Layout (same as gui_processamento.py)
 	static final int ROW = 52, WATER_X = 32, SLURRY_X = 195;
+	/** Recycled liquor tank and its pipe under the water tank into the water pipe (same as gui_processamento.py). */
+	static final int RECYCLED_X = 10, RECYCLED_PIPE_Y = 108, RECYCLED_JOIN_X = 57;
 	/** The reactor's well; also JEI's click area for the recipe (INJeiPlugin). */
 	public static final int REACTOR_X = 62, REACTOR_Y = 42, REACTOR_W = 128, REACTOR_H = 70;
 	static final int WIN_X = 4, WIN_Y = 8, WIN_W = 104, WIN_H = 56;
@@ -69,7 +71,7 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 	// IE's pieces in refinery.png
 	static final int[] IE_SLOT = {35, 13, 20, 20}, IE_TANK = {11, 18, 20, 51}, IE_BLUE = {42, 10, 6, 3}, IE_ORANGE = {42, 49, 6, 3};
 
-	static final int COL_WATER = 0xff3f76e4, COL_SLURRY = 0xff968060, COL_SHAFT = 0xff96999e, COL_DUST = 0xff8a9a6a;
+	static final int COL_EFFLUENT = 0xff706a58, COL_WATER = 0xff3f76e4, COL_SLURRY = 0xff968060, COL_SHAFT = 0xff96999e, COL_DUST = 0xff8a9a6a;
 
 	final ContainerChemicalProcessor container;
 	/** Client counters: the agitator's turn, and the ticks for the swirl and the falling solids. */
@@ -96,6 +98,12 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 	boolean filling()
 	{
 		return (container.moving & 1) != 0;
+	}
+
+	/** Filling with the recycled liquor (the first part of a batch that takes it), not the water. */
+	boolean fillingRecycled()
+	{
+		return filling() && container.reactor < container.batchRecycled;
 	}
 
 	boolean draining()
@@ -211,6 +219,8 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 			if(i >= TileChemicalProcessor.SLOT_WATER_IN)
 				piece(i == TileChemicalProcessor.SLOT_WATER_IN || i == TileChemicalProcessor.SLOT_SLURRY_IN ? IE_BLUE : IE_ORANGE, xy[i][0] + 5, xy[i][1] - 5);
 		}
+		piece(IE_TANK, RECYCLED_X, ROW);
+		piece(IE_BLUE, RECYCLED_X + 7, ROW - 3);
 		piece(IE_TANK, WATER_X, ROW);
 		piece(IE_BLUE, WATER_X + 7, ROW - 3);
 		piece(IE_TANK, SLURRY_X, ROW);
@@ -218,12 +228,21 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 		GuiGraphite.endTint();
 
 		// Fluid moving in the pipes
-		if(filling())
+		if(fillingRecycled())
+		{
+			int rx = RECYCLED_X + 10;
+			flow(rx, ROW + 51, rx, RECYCLED_PIPE_Y, COL_EFFLUENT);
+			flow(rx, RECYCLED_PIPE_Y, RECYCLED_JOIN_X, RECYCLED_PIPE_Y, COL_EFFLUENT);
+			flow(RECYCLED_JOIN_X, RECYCLED_PIPE_Y, RECYCLED_JOIN_X, REACTOR_Y + PIPE_DY, COL_EFFLUENT);
+			flow(RECYCLED_JOIN_X, REACTOR_Y + PIPE_DY, REACTOR_X - 1, REACTOR_Y + PIPE_DY, COL_EFFLUENT);
+		}
+		else if(filling())
 			flow(WATER_X + 20, REACTOR_Y + PIPE_DY, REACTOR_X - 1, REACTOR_Y + PIPE_DY, COL_WATER);
 		if(draining())
 			flow(REACTOR_X + REACTOR_W, REACTOR_Y + PIPE_DY, SLURRY_X - 1, REACTOR_Y + PIPE_DY, COL_SLURRY);
 		GlStateManager.color(1, 1, 1, 1);
 
+		ClientUtils.handleGuiTank(container.recycled, guiLeft + RECYCLED_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
 		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
 		ClientUtils.handleGuiTank(container.slurry, guiLeft + SLURRY_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
 
@@ -269,7 +288,7 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 		if(filling())
 		{
 			int inletY = REACTOR_Y + PIPE_DY;
-			rect(wx + 1, inletY, 2, surface - inletY, 0xcc3f76e4);
+			rect(wx + 1, inletY, 2, surface - inletY, fillingRecycled() ? 0xcc706a58 : 0xcc3f76e4);
 			for(int k = 0; k < 4; k++)
 			{
 				int y = wy + Math.floorMod(ticks * 2 + k * 7, Math.max(1, surface - wy));
@@ -320,6 +339,12 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 	{
 		super.drawScreen(mx, my, partialTicks);
 		ArrayList<String> tip = new ArrayList<>();
+		ClientUtils.handleGuiTank(container.recycled, guiLeft + RECYCLED_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		if(over(mx, my, RECYCLED_X, ROW, 20, 51))
+		{
+			tip.add(0, I18n.format(K + "recycled"));
+			tip.add("§7" + I18n.format(K + "recycled.info", TileChemicalProcessor.MAX_RECYCLED, TileChemicalProcessor.REAGENT_SAVED));
+		}
 		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
 		ClientUtils.handleGuiTank(container.slurry, guiLeft + SLURRY_X + 2, guiTop + ROW + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
 		if(over(mx, my, REACTOR_X, REACTOR_Y, REACTOR_W, REACTOR_H) || over(mx, my, REACTOR_X + MOTOR_X, REACTOR_Y - MOTOR_UP + 2, MOTOR_W, MOTOR_H))
@@ -332,7 +357,8 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 				tip.add("§7" + container.reactor + " / " + TileChemicalProcessor.BATCH_WATER + " mB");
 		}
 		if(over(mx, my, HOPPER_X, HOPPER_Y, HOPPER_W, HOPPER_H))
-			tip.add(I18n.format(K + "hopper", TileChemicalProcessor.BATCH_SOLIDS, TileChemicalProcessor.BATCH_SOLIDS));
+			tip.add(I18n.format(K + "hopper", TileChemicalProcessor.BATCH_SOLIDS,
+					TileChemicalProcessor.reagentFor(TileChemicalProcessor.recycledShare(container.recycled.getFluidAmount()))));
 		if(over(mx, my, ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H))
 			tip.add(container.energy + "/" + TileChemicalProcessor.ENERGY_CAPACITY + " IF");
 		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))

@@ -299,7 +299,7 @@ public class GuiFilterPress extends GuiIEContainerBase
 		int pos = Math.round(pinX + rodLength) - (PUMP_X + PUMP_WIN_X);
 		int px = PUMP_X + PUMP_WIN_X + pos, py = ROW + PUMP_DY + PUMP_WIN_Y;
 		if(container.pressure.getFluidAmount() > 0 || container.storage.getFluidAmount() > 0)
-			fluid(INContent.fluidSlurry, px + PISTON_W, py, PUMP_WIN_W - pos - PISTON_W, PUMP_WIN_H, 1);
+			fluid(container.feed(container.pressure.getFluidAmount() > 0 ? 2 : 1), px + PISTON_W, py, PUMP_WIN_W - pos - PISTON_W, PUMP_WIN_H, 1);
 		ClientUtils.bindTexture(SHEET);
 		sprite(PUMP, PUMP_X, ROW + PUMP_DY);
 		sprite(PISTON, px, py);
@@ -316,7 +316,7 @@ public class GuiFilterPress extends GuiIEContainerBase
 		int lh = Math.round(GLASS_H * Math.min(1, amount / (float)TileFilterPress.BATCH));
 		int vx = VESSEL_X, vy = ROW + VESSEL_DY;
 		if(lh > 0)
-			fluid(INContent.fluidSlurry, vx + GLASS_X, vy + GLASS_Y + GLASS_H - lh, GLASS_W, lh, 1);
+			fluid(container.feed(2), vx + GLASS_X, vy + GLASS_Y + GLASS_H - lh, GLASS_W, lh, 1);
 		ClientUtils.bindTexture(SHEET);
 		sprite(VESSEL, vx, vy);
 		sprite(DIAL, DIAL_X, ROW + DIAL_DY);
@@ -364,7 +364,7 @@ public class GuiFilterPress extends GuiIEContainerBase
 			for(int k = 1; k <= PLATES; k++)
 			{
 				int x0 = (int)Math.floor(k == 1 ? xs[0] + HEAD_W : xs[k - 1] + PLATE_W), w = Math.round(xs[k] - (k == 1 ? xs[0] + HEAD_W : xs[k - 1] + PLATE_W));
-				fluid(INContent.fluidSlurry, x0, top + CHAMBER_H - 2 - fh, w, fh, 0.85F);
+				fluid(container.feed(4), x0, top + CHAMBER_H - 2 - fh, w, fh, 0.85F);
 				rect(x0, top + CHAMBER_H - 2 - fh, w, fh, (int)(0xb0 * done) << 24 | COL_CAKE & 0xffffff);
 			}
 		}

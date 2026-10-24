@@ -37,8 +37,10 @@ public class ContainerFilterPress extends Container
 	public final FluidTank pressure = new FluidTank(TileFilterPress.BATCH);
 	public final FluidTank solution = new FluidTank(TileFilterPress.TANK_CAPACITY);
 	public int energy, pump, phase, phaseTicks, state;
+	/** TileFilterPress.getKinds(): which tanks hold sludge and water instead of slurry and crude solution. */
+	public int kinds;
 	public boolean redstoneInverted;
-	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
+	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 	public ContainerFilterPress(InventoryPlayer playerInv, TileFilterPress tile)
 	{
@@ -58,7 +60,7 @@ public class ContainerFilterPress extends Container
 	int[] values()
 	{
 		return new int[]{tile.getStorage(), tile.getPressureTank(), tile.getSolution(), tile.getEnergy(), tile.getPumpTicks(),
-				tile.getPhase(), tile.getPhaseTicks(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0};
+				tile.getPhase(), tile.getPhaseTicks(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0, tile.getKinds()};
 	}
 
 	/** Server side: mirror the tile into the client copies, so the same fields can be read on both sides. */
@@ -89,16 +91,32 @@ public class ContainerFilterPress extends Container
 	{
 		switch(id)
 		{
-			case 0: storage.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
-			case 1: pressure.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
-			case 2: solution.setFluid(data > 0 ? new FluidStack(INContent.fluidCrudeSolution, data) : null); break;
+			case 0: storage.setFluid(data > 0 ? new FluidStack(feed(1), data) : null); break;
+			case 1: pressure.setFluid(data > 0 ? new FluidStack(feed(2), data) : null); break;
+			case 2: solution.setFluid(data > 0 ? new FluidStack((kinds & 8) != 0 ? net.minecraftforge.fluids.FluidRegistry.WATER : INContent.fluidCrudeSolution, data) : null); break;
 			case 3: energy = data; break;
 			case 4: pump = data; break;
 			case 5: phase = data; break;
 			case 6: phaseTicks = data; break;
 			case 7: state = data; break;
 			case 8: redstoneInverted = data != 0; break;
+			case 9:
+				// The kinds come after the amounts: set the tanks again with the right fluids
+				kinds = data;
+				if(storage.getFluidAmount() > 0)
+					storage.setFluid(new FluidStack(feed(1), storage.getFluidAmount()));
+				if(pressure.getFluidAmount() > 0)
+					pressure.setFluid(new FluidStack(feed(2), pressure.getFluidAmount()));
+				if(solution.getFluidAmount() > 0)
+					solution.setFluid(new FluidStack((kinds & 8) != 0 ? net.minecraftforge.fluids.FluidRegistry.WATER : INContent.fluidCrudeSolution, solution.getFluidAmount()));
+				break;
 		}
+	}
+
+	/** Slurry or sludge, by a bit of {@link #kinds}. */
+	public net.minecraftforge.fluids.Fluid feed(int bit)
+	{
+		return (kinds & bit) != 0 ? INContent.fluidSludge : INContent.fluidSlurry;
 	}
 
 	/** The redstone mode button comes back through the vanilla "enchant" button packet. */

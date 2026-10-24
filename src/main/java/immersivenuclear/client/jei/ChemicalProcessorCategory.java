@@ -125,7 +125,14 @@ public class ChemicalProcessorCategory implements IRecipeCategory<ChemicalProces
 		items.set(ingredients);
 		IGuiFluidStackGroup fluids = layout.getFluidStacks();
 		int cap = TileChemicalProcessor.TANK_CAPACITY;
-		fluids.init(0, true, IN_X + 2, TANK_Y + 2, 16, 47, cap, false, g.gauge);
+		if(recipe.recycled)
+		{
+			// The input tank split: water on top, the recycled liquor (effluent or depleted effluent) under it
+			fluids.init(0, true, IN_X + 2, TANK_Y + 2, 16, 23, TileChemicalProcessor.BATCH_WATER / 2, false, null);
+			fluids.init(2, true, IN_X + 2, TANK_Y + 26, 16, 23, TileChemicalProcessor.BATCH_WATER / 2, false, null);
+		}
+		else
+			fluids.init(0, true, IN_X + 2, TANK_Y + 2, 16, 47, cap, false, g.gauge);
 		fluids.init(1, false, OUT_X + 2, TANK_Y + 2, 16, 47, cap, false, g.gauge);
 		fluids.set(ingredients);
 	}

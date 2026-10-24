@@ -1,0 +1,33 @@
+newmtl arc_furnace_inactive
+map_Kd #arc_furnace_inactive
+
+newmtl connector_transformer_hv
+map_Kd #connector_transformer_hv
+
+newmtl crusher
+map_Kd #crusher
+
+newmtl diesel_generator
+map_Kd #diesel_generator
+
+newmtl metal_device0_fluid_pump_side_none
+map_Kd #metal_device0_fluid_pump_side_none
+
+newmtl metal_device0_fluid_pump_top
+map_Kd #metal_device0_fluid_pump_top
+
+newmtl metal_device0_fluid_pump_up_none
+map_Kd #metal_device0_fluid_pump_up_none
+
+newmtl metal_device1_fluid_pipe
+map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl storage_steel
+map_Kd #storage_steel
+

@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1.2-alpha"
+version = "0.1.3-alpha"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -78,3 +78,9 @@ task chemicalSeparatorStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn chemicalSeparatorStructureTest
+
+task metalExtractorStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.MetalExtractorStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn metalExtractorStructureTest

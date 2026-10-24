@@ -31,9 +31,11 @@ public class HazardTooltips
 	{
 		items = new HashMap<>();
 		items.put(INContent.itemReagent, new String[]{OXID});
-		items.put(INContent.itemResidue, new String[]{RAD});
+		items.put(INContent.itemResidue, new String[]{RAD, CORR});
+		items.put(INContent.itemNeutralizedResidue, new String[]{RAD});
 		items.put(INContent.itemQuicklime, new String[]{CAUSTIC});
 		items.put(INContent.itemCake, new String[]{TRACE});
+		items.put(INContent.itemMixedDeposit, new String[]{TRACE});
 		items.put(INContent.itemAgglomerate, new String[]{TRACE});
 		items.put(INContent.itemWetConcentrate, new String[]{RAD, TOXIC});
 		items.put(INContent.itemYellowcake, new String[]{RAD, TOXIC});

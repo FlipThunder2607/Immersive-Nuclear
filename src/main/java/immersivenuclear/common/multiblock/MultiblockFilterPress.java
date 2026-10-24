@@ -250,7 +250,7 @@ public class MultiblockFilterPress implements IMultiblock
 			for(int dy = MIN_DY; dy <= MAX_DY; dy++)
 				for(int dz = MIN_DZ; dz <= MAX_DZ; dz++)
 					for(int dx = MIN_DX; dx <= MAX_DX; dx++)
-						manualStructure[dy - MIN_DY][dz - MIN_DZ][dx - MIN_DX] = isPumpTop(dx, dy, dz) ? ItemStack.EMPTY : stackFor(get(dx, dy, dz));
+						manualStructure[dy - MIN_DY][dz - MIN_DZ][MAX_DX - dx] = isPumpTop(dx, dy, dz) ? ItemStack.EMPTY : stackFor(get(dx, dy, dz));
 		}
 		return manualStructure;
 	}

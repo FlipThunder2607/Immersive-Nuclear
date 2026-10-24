@@ -1,0 +1,21 @@
+newmtl arc_furnace_inactive
+map_Kd #arc_furnace_inactive
+
+newmtl connector_transformer_hv
+map_Kd #connector_transformer_hv
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl storage_nickel
+map_Kd #storage_nickel
+
+newmtl storage_steel
+map_Kd #storage_steel
+

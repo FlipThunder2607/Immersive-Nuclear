@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        { "item": "immersivenuclear:wet_mineral_residue" },
+        { "item": "immersivenuclear:wet_mineral_residue" },
+        { "item": "immersivenuclear:wet_mineral_residue" },
+        { "item": "immersivenuclear:wet_mineral_residue" },
+        { "item": "immersivenuclear:quicklime" }
+    ],
+    "result": { "item": "immersivenuclear:neutralized_residue", "count": 4 }
+}

@@ -9,8 +9,9 @@ import net.minecraft.item.ItemStack;
 /**
  * The formed machine for IMultiblock.renderFormedStructure (IE's manual, Immersive Petroleum's projector): our 3D item
  * model (the whole machine, as the blockstate's inventory variant) drawn where the blocks would be. Those screens
- * draw block structure[h][l][w] at (l, h, w), so l (template dz) runs along x and w (template dx) along z; a quarter
- * turn puts the model the same way round without mirroring it.
+ * draw block structure[h][l][w] at (l, h, w), so l (template dz) runs along x and w along z; a quarter turn puts the
+ * model the same way round without mirroring it, and the structure arrays fill w as MAX_DX - dx to match that turn
+ * (with w = dx - MIN_DX the blocks came out mirrored, front and back swapped against the formed model).
  */
 public class FormedPreview
 {

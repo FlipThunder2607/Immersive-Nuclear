@@ -46,6 +46,9 @@ import net.minecraftforge.oredict.OreDictionary;
  * The reactor works in batches, like a settler: 1 fill (the hopper doses the uranium powder and the reagent, the pump
  * brings the water in), 2 react (the agitator turns, the water turns into slurry), 3 drain (the pump empties the
  * reactor into the slurry tank). A batch only starts with its solids at hand and room for all its slurry.
+ * Recycled liquor: the chemical effluent (machine 3) or the depleted effluent (Metal Extractor) can make up to half of
+ * a batch's liquid, from its own tank (the water port and bucket slot send each fluid to its tank). The acid left in
+ * it saves reagent: a batch with the full half recycled takes a quarter less (the saving scales with the share).
  * Sounds: the machine's own sound while the agitator turns; the mod's pump sound ({@link PumpSound}), on the pump
  * part, while the reactor fills or drains.
  */
@@ -54,6 +57,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 	// One batch (provisional): 8000 mB of water, 16 uranium powder and 16 reagent make 8000 mB of slurry.
 	// Gameplay values, not real chemistry.
 	public static final int BATCH_WATER = 8000, BATCH_SOLIDS = 16;
+	/** Most of a batch that can be recycled liquor, and the reagent that saves with all of it (provisional). */
+	public static final int MAX_RECYCLED = BATCH_WATER / 2, REAGENT_SAVED = BATCH_SOLIDS / 4;
 	public static final int FILL_PER_TICK = 100, DRAIN_PER_TICK = 100, REACT_TICKS = 640;
 	public static final int REACT_ENERGY = 40, PUMP_ENERGY = 16;
 	/** Fill, react and drain, for JEI. */
@@ -87,7 +92,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				case SLOT_REAGENT: return stack.getItem() == INContent.itemReagent;
 				case SLOT_WATER_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
-					return in != null && in.getFluid() == FluidRegistry.WATER;
+					return in != null && (in.getFluid() == FluidRegistry.WATER || isRecycled(in));
 				case SLOT_SLURRY_IN:
 					// An empty container, or one that already holds slurry
 					FluidStack held = FluidUtil.getFluidContained(stack);
@@ -123,6 +128,23 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			markDirty();
 		}
 	};
+	/** Recycled liquor: chemical effluent or depleted effluent (one at a time). */
+	final FluidTank recycled = new FluidTank(TANK_CAPACITY)
+	{
+		@Override
+		public boolean canFillFluidType(FluidStack fluid)
+		{
+			return isRecycled(fluid);
+		}
+
+		@Override
+		protected void onContentsChanged()
+		{
+			markDirty();
+		}
+	};
+	/** The water port and the bucket slot: water to its tank, effluent to the recycled liquor's. */
+	final IFluidHandler inlet = new net.minecraftforge.fluids.capability.templates.FluidHandlerConcatenate(water, recycled);
 	final FluidTank slurry = new FluidTank(TANK_CAPACITY)
 	{
 		@Override
@@ -133,8 +155,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 	};
 	final Energy energy = new Energy();
 	int state = STATE_IDLE;
-	/** The batch: its step, the ticks in it, the liquid in the reactor (mB). */
-	int phase = PHASE_IDLE, phaseTicks, reactor;
+	/** The batch: its step, the ticks in it, the liquid in the reactor (mB), the recycled liquor it takes (mB). */
+	int phase = PHASE_IDLE, phaseTicks, reactor, batchRecycled;
 	/** What moved this tick: water into the reactor, slurry out of it. */
 	boolean filling, draining;
 	/** What the client last got for the reactor window (see RenderChemicalProcessor); sent every SYNC_TICKS when it changes. */
@@ -153,6 +175,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 
 	{
 		water.setCanDrain(false);
+		recycled.setCanDrain(false);
 		slurry.setCanFill(false);
 	}
 
@@ -232,6 +255,24 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		{
 			return inv.isItemValid(slot, stack);
 		}
+	}
+
+	/** Chemical effluent or depleted effluent: what the recycled liquor tank takes. */
+	public static boolean isRecycled(FluidStack fluid)
+	{
+		return fluid != null && (fluid.getFluid() == INContent.fluidEffluent || fluid.getFluid() == INContent.fluidDepletedEffluent);
+	}
+
+	/** Recycled liquor a batch would take now: what the tank holds, up to half the batch. */
+	public static int recycledShare(int inTank)
+	{
+		return Math.min(MAX_RECYCLED, inTank / FILL_PER_TICK * FILL_PER_TICK);
+	}
+
+	/** Reagent for a batch with this much recycled liquor: the full half saves REAGENT_SAVED, less saves less. */
+	public static int reagentFor(int recycled)
+	{
+		return BATCH_SOLIDS - Math.round(REAGENT_SAVED * recycled / (float)MAX_RECYCLED);
 	}
 
 	public static boolean isUraniumPowder(ItemStack stack)
@@ -378,7 +419,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				if(port == ChemicalProcessorStructure.PORT_REAGENT)
 					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new SlotPort(m.inventory, SLOT_REAGENT));
 				if(port == ChemicalProcessorStructure.PORT_WATER)
-					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.water);
+					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.inlet);
 				if(port == ChemicalProcessorStructure.PORT_SLURRY)
 					return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.slurry);
 				if(port == ChemicalProcessorStructure.PORT_ENERGY)
@@ -457,10 +498,10 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		ItemStack in = inventory.getStackInSlot(SLOT_WATER_IN);
 		if(!in.isEmpty())
 		{
-			FluidActionResult r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), water, Integer.MAX_VALUE, null, false);
+			FluidActionResult r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), inlet, Integer.MAX_VALUE, null, false);
 			if(r.isSuccess() && canOutput(SLOT_WATER_OUT, r.getResult()))
 			{
-				r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), water, Integer.MAX_VALUE, null, true);
+				r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), inlet, Integer.MAX_VALUE, null, true);
 				output(SLOT_WATER_OUT, r.getResult());
 				in.shrink(1);
 				inventory.setStackInSlot(SLOT_WATER_IN, in);
@@ -514,29 +555,35 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		switch(phase)
 		{
 			case PHASE_IDLE:
-				// A new batch: the hopper doses the solids, then the reactor fills
-				if(inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < BATCH_SOLIDS
-						|| water.getFluidAmount() < FILL_PER_TICK)
+				// A new batch: the hopper doses the solids (less reagent with recycled liquor), then the reactor fills
+				int share = recycledShare(recycled.getFluidAmount());
+				if(inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < reagentFor(share)
+						|| water.getFluidAmount() + share < FILL_PER_TICK)
 					state = STATE_NO_INPUT;
 				else if(slurry.getCapacity() - slurry.getFluidAmount() < BATCH_WATER)
 					state = STATE_OUTPUT_FULL;
 				else
 				{
 					inventory.extractItem(SLOT_URANIUM, BATCH_SOLIDS, false);
-					inventory.extractItem(SLOT_REAGENT, BATCH_SOLIDS, false);
+					inventory.extractItem(SLOT_REAGENT, reagentFor(share), false);
+					batchRecycled = share;
 					next(PHASE_FILL);
 					state = STATE_RUNNING;
 				}
 				break;
 			case PHASE_FILL:
+				// The recycled liquor first, then the water
 				int in = Math.min(FILL_PER_TICK, BATCH_WATER - reactor);
-				if(water.getFluidAmount() < in)
+				FluidTank from = reactor < batchRecycled ? recycled : water;
+				if(from == recycled)
+					in = Math.min(in, batchRecycled - reactor);
+				if(from.getFluidAmount() < in)
 					state = STATE_NO_INPUT;
 				else if(!energy.use(PUMP_ENERGY))
 					state = STATE_NO_POWER;
 				else
 				{
-					water.drainInternal(in, true);
+					from.drainInternal(in, true);
 					reactor += in;
 					filling = true;
 					phaseTicks++;
@@ -629,6 +676,23 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		return water.getFluidAmount();
 	}
 
+	public int getRecycled()
+	{
+		return recycled.getFluidAmount();
+	}
+
+	/** 0 none, 1 chemical effluent, 2 depleted effluent. */
+	public int getRecycledType()
+	{
+		FluidStack f = recycled.getFluid();
+		return f == null ? 0 : f.getFluid() == INContent.fluidDepletedEffluent ? 2 : 1;
+	}
+
+	public int getBatchRecycled()
+	{
+		return batchRecycled;
+	}
+
 	public int getSlurry()
 	{
 		return slurry.getFluidAmount();
@@ -702,6 +766,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			inv.setInteger("Size", SLOTS); // 0.6.0 saved 2 slots; keep the handler at full size
 			inventory.deserializeNBT(inv);
 			water.readFromNBT(m.getCompoundTag("water"));
+			recycled.readFromNBT(m.getCompoundTag("recycled"));
+			batchRecycled = m.getInteger("batchRecycled");
 			slurry.readFromNBT(m.getCompoundTag("slurry"));
 			energy.set(m.getInteger("energy"));
 			phase = m.getInteger("phase");
@@ -726,6 +792,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			NBTTagCompound m = new NBTTagCompound();
 			m.setTag("inventory", inventory.serializeNBT());
 			m.setTag("water", water.writeToNBT(new NBTTagCompound()));
+			m.setTag("recycled", recycled.writeToNBT(new NBTTagCompound()));
+			m.setInteger("batchRecycled", batchRecycled);
 			m.setTag("slurry", slurry.writeToNBT(new NBTTagCompound()));
 			m.setInteger("energy", energy.getEnergyStored());
 			m.setInteger("phase", phase);

@@ -1,0 +1,25 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "SCS",
+        " P ",
+        " P "
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "stickSteel"
+        },
+        "C": {
+            "type": "forge:ore_dict",
+            "ore": "plateCopper"
+        },
+        "P": {
+            "type": "forge:ore_dict",
+            "ore": "plateSteel"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:electrode_steel"
+    }
+}

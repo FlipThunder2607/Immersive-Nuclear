@@ -25,8 +25,8 @@ public class ContainerChemicalProcessor extends Container
 	public static final int[][] SLOT_XY = {
 			{70, 12},  // uranium powder, on the hopper
 			{90, 12},  // reagent, on the hopper
-			{10, 54},  // water container in
-			{10, 85},  // empty water container out
+			{10, 18},  // water or effluent container in (each fluid goes to its tank)
+			{32, 18},  // empty container out
 			{221, 54}, // empty container in (slurry)
 			{221, 85}, // slurry container out
 	};
@@ -36,9 +36,10 @@ public class ContainerChemicalProcessor extends Container
 	/** Client copies of the master's values (on the server they are read straight from the tile). */
 	public final FluidTank water = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
 	public final FluidTank slurry = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
-	public int energy, phase, phaseTicks, reactor, moving, state;
+	public final FluidTank recycled = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
+	public int energy, phase, phaseTicks, reactor, moving, state, recycledType, batchRecycled;
 	public boolean redstoneInverted;
-	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
+	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 	public ContainerChemicalProcessor(InventoryPlayer playerInv, TileChemicalProcessor tile)
 	{
@@ -56,7 +57,7 @@ public class ContainerChemicalProcessor extends Container
 	int[] values()
 	{
 		return new int[]{tile.getWater(), tile.getSlurry(), tile.getEnergy(), tile.getPhase(), tile.getPhaseTicks(), tile.getReactor(),
-				tile.getMoving(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0};
+				tile.getMoving(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0, tile.getRecycledType(), tile.getRecycled(), tile.getBatchRecycled()};
 	}
 
 	/** Server side: mirror the tile into the client copies, so the same fields can be read on both sides. */
@@ -87,6 +88,11 @@ public class ContainerChemicalProcessor extends Container
 	{
 		switch(id)
 		{
+			case 9: recycledType = data; break;
+			case 10:
+				recycled.setFluid(data > 0 && recycledType > 0 ? new FluidStack(recycledType == 2 ? INContent.fluidDepletedEffluent : INContent.fluidEffluent, data) : null);
+				break;
+			case 11: batchRecycled = data; break;
 			case 0: water.setFluid(data > 0 ? new FluidStack(FluidRegistry.WATER, data) : null); break;
 			case 1: slurry.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
 			case 2: energy = data; break;

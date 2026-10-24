@@ -1,0 +1,24 @@
+{
+    "type": "forge:ore_shapeless",
+    "ingredients": [
+        {
+            "item": "immersivenuclear:electrode_lead_silver",
+            "data": 0
+        },
+        {
+            "type": "forge:ore_dict",
+            "ore": "plateElectrum"
+        },
+        {
+            "type": "forge:ore_dict",
+            "ore": "plateElectrum"
+        },
+        {
+            "type": "forge:ore_dict",
+            "ore": "plateElectrum"
+        }
+    ],
+    "result": {
+        "item": "immersivenuclear:electrode_electrum"
+    }
+}

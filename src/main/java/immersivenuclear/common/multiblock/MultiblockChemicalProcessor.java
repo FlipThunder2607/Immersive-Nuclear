@@ -223,7 +223,7 @@ public class MultiblockChemicalProcessor implements IMultiblock
 			for(int dy = MIN_DY; dy <= MAX_DY; dy++)
 				for(int dz = MIN_DZ; dz <= MAX_DZ; dz++)
 					for(int dx = MIN_DX; dx <= MAX_DX; dx++)
-						manualStructure[dy - MIN_DY][dz - MIN_DZ][dx - MIN_DX] = stackFor(get(dx, dy, dz));
+						manualStructure[dy - MIN_DY][dz - MIN_DZ][MAX_DX - dx] = stackFor(get(dx, dy, dz));
 		}
 		return manualStructure;
 	}

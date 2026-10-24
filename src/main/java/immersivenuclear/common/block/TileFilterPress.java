@@ -26,6 +26,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -50,6 +51,9 @@ import net.minecraftforge.items.ItemStackHandler;
  * The pump works on its own: as soon as a batch is released the pressure tank is free and the next batch is
  * pressurised while this one filters, so only the first batch waits for the pump.
  * The 28 filter slots must all hold a usable filter; every batch wears each filter by one.
+ * Two feeds, one batch at a time: uranium slurry (crude solution + wet mineral residue) or neutralized sludge from
+ * IE's Mixer (plain water + neutralization cake). The storage tank holds one of them at a time; a batch only starts
+ * when the solution tank and the residue slot can take its products.
  */
 public class TileFilterPress extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
 {
@@ -92,10 +96,11 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 			{
 				case SLOT_SLURRY_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
-					return in != null && in.getFluid() == INContent.fluidSlurry;
+					return in != null && isFeed(in);
 				case SLOT_SOLUTION_IN:
 					FluidStack held = FluidUtil.getFluidContained(stack);
-					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidCrudeSolution);
+					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidCrudeSolution
+							|| held.getFluid() == FluidRegistry.WATER);
 				default: return false; // outputs only take what the machine puts there
 			}
 		}
@@ -124,7 +129,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		@Override
 		public boolean canFillFluidType(FluidStack fluid)
 		{
-			return fluid != null && fluid.getFluid() == INContent.fluidSlurry;
+			return isFeed(fluid);
 		}
 
 		@Override
@@ -150,6 +155,8 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 	int phase = PHASE_OPEN, phaseTicks;
 	/** Slurry between the plates (released, not yet filtered) and the solution already given for this batch. */
 	int inPlates, solutionGiven;
+	/** The batch in the plates is neutralized sludge (its products are water and cake), set as it is released. */
+	boolean sludgeBatch;
 	int state = STATE_IDLE;
 	/** IE convention: a redstone signal stops the machine; hammering the redstone port inverts that. */
 	boolean redstoneInverted;
@@ -569,6 +576,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 				{
 					inPlates = 0;
 					solutionGiven = 0;
+					sludgeBatch = isSludge(pressureTank.getFluid());
 					next(PHASE_FILTERING);
 				}
 				break;
@@ -591,7 +599,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 					// The solution comes out little by little while the slurry passes through the cloths
 					int due = SOLUTION_PER_BATCH * phaseTicks / FILTER_TICKS - solutionGiven;
 					if(due > 0)
-						solutionGiven += solution.fillInternal(new FluidStack(INContent.fluidCrudeSolution, due), true);
+						solutionGiven += solution.fillInternal(new FluidStack(sludgeBatch ? FluidRegistry.WATER : INContent.fluidCrudeSolution, due), true);
 					if(phaseTicks >= FILTER_TICKS)
 					{
 						inPlates = 0;
@@ -638,17 +646,34 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		return true;
 	}
 
-	/** Room for the solution and the residue of one batch, so a batch is never lost half way. */
+	/**
+	 * Room for the liquid and the solids of the batch in the pressure tank (crude solution and residue for slurry, water
+	 * and cake for sludge), so a batch is never lost half way; the solution tank and the residue slot take one kind at a time.
+	 */
 	boolean roomForBatch()
 	{
-		ItemStack r = inventory.getStackInSlot(SLOT_RESIDUE);
-		return solution.getCapacity() - solution.getFluidAmount() >= SOLUTION_PER_BATCH && r.getCount() + RESIDUE_PER_BATCH <= 64;
+		boolean sludge = isSludge(pressureTank.getFluid());
+		FluidStack held = solution.getFluid();
+		boolean sameLiquid = held == null || held.getFluid() == (sludge ? FluidRegistry.WATER : INContent.fluidCrudeSolution);
+		return sameLiquid && solution.getCapacity() - solution.getFluidAmount() >= SOLUTION_PER_BATCH
+				&& canOutput(SLOT_RESIDUE, new ItemStack(sludge ? INContent.itemCake : INContent.itemResidue, RESIDUE_PER_BATCH));
+	}
+
+	/** What the press takes: uranium slurry or neutralized sludge. */
+	public static boolean isFeed(FluidStack f)
+	{
+		return f != null && (f.getFluid() == INContent.fluidSlurry || isSludge(f));
+	}
+
+	public static boolean isSludge(FluidStack f)
+	{
+		return f != null && f.getFluid() == INContent.fluidSludge;
 	}
 
 	/** The plates are apart: the cake falls on the conveyor (into the residue slot) and every filter wears. */
 	void dropResidue()
 	{
-		output(SLOT_RESIDUE, new ItemStack(INContent.itemResidue, RESIDUE_PER_BATCH));
+		output(SLOT_RESIDUE, new ItemStack(sludgeBatch ? INContent.itemCake : INContent.itemResidue, RESIDUE_PER_BATCH));
 		for(int i = 0; i < FILTERS; i++)
 		{
 			ItemStack f = inventory.getStackInSlot(i);
@@ -929,6 +954,15 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		return inventory;
 	}
 
+	/** Bits for the interface: storage holds sludge (1), pressure tank holds sludge (2), the plates' batch is sludge (4),
+	 * the solution tank holds water (8). */
+	public int getKinds()
+	{
+		FluidStack s = solution.getFluid();
+		return (isSludge(storage.getFluid()) ? 1 : 0) | (isSludge(pressureTank.getFluid()) ? 2 : 0) | (sludgeBatch ? 4 : 0)
+				| (s != null && s.getFluid() == FluidRegistry.WATER ? 8 : 0);
+	}
+
 	public int getStorage()
 	{
 		return storage.getFluidAmount();
@@ -1017,6 +1051,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 				phase = PHASE_FILTERING;
 			inPlates = m.getInteger("inPlates");
 			solutionGiven = m.getInteger("solutionGiven");
+			sludgeBatch = m.getBoolean("sludgeBatch");
 			state = m.getInteger("state");
 			redstoneInverted = m.getBoolean("redstoneInverted");
 		}
@@ -1044,6 +1079,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 			m.setInteger("phaseTicks", phaseTicks);
 			m.setInteger("inPlates", inPlates);
 			m.setInteger("solutionGiven", solutionGiven);
+			m.setBoolean("sludgeBatch", sludgeBatch);
 			m.setInteger("state", state);
 			m.setBoolean("redstoneInverted", redstoneInverted);
 			nbt.setTag("machine", m);

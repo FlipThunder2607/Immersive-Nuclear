@@ -24,7 +24,7 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.2-alpha)
+## Current content (0.1.3-alpha)
 
 ### Machines
 
@@ -33,6 +33,9 @@ Design goals:
 | **Chemical Processing Unit** | 3×6×3 | Batch leaching reactor. Turns IE uranium powder, Processing Reagent and water into **Uranium Slurry**. |
 | **Filtration Unit** | 3×3×9 | Filter press. Splits the slurry into **Crude Uranium Solution** and **Wet Mineral Residue**. Uses 28 replaceable filters that wear out, with ports to automate the swap. Fully animated: actuators, plates and a discharge conveyor. |
 | **Chemical Separation Unit** | 5×4×7 | Solvent extraction in two mixer-settler stages. Turns the crude solution into **Purified Uranium Solution** and **Chemical Effluent**; the solvent goes round inside and only its losses are topped up. |
+| **Metal Extractor** | 4×4×4 | Electrolytic cell. Plates the metals dissolved in the Chemical Effluent onto six electrode plates, which rise to be scraped over a tray: **Mixed Metal Deposit** and **Depleted Effluent**. Three electrode plates (steel, lead-silver, electrum-coated) with growing yield and life. Animated platform, tray and scraper. |
+
+The effluent never has to be dumped: it goes back into the Chemical Processing Unit as recycled liquor (saving reagent), through the Metal Extractor, or is neutralized with quicklime in IE's Mixer. The Filtration Unit filters the neutralized sludge into Neutralization Cake and plain water, and the cake replaces clay in IE's concrete.
 
 All machines have:
 
@@ -41,10 +44,11 @@ All machines have:
 - JEI recipe pages
 - looping and event sounds
 - blue input ports and orange output ports
+- a page in IE's Engineer's Manual, under its own **Immersive Nuclear** category
 
 ### Items, fluids and blocks
 
-- **Items:** Processing Reagent, Filter, Wet Mineral Residue, Quicklime, Neutralization Cake, Precipitating Agent, Wet Uranium Concentrate, Uranium Concentrate (Yellowcake)
+- **Items:** Processing Reagent, Filter, Wet Mineral Residue, Neutralized Mineral Residue, Electrode Plates (steel, lead-silver, electrum-coated), Mixed Metal Deposit, Quicklime, Neutralization Cake, Precipitating Agent, Wet Uranium Concentrate, Uranium Concentrate (Yellowcake)
 - **Fluids** (animated, with buckets): Uranium Slurry, Crude Uranium Solution, Extraction Solvent, Stripping Solution, Purified Uranium Solution, Chemical Effluent, Neutralized Sludge, Depleted Effluent, Process Condensate
 - **Blocks:** Impure Agglomerate, a heavy building block made from process waste
 - **Hazard tooltips** on materials: radioactive, corrosive, flammable, toxic, oxidizer, caustic. They are informative only for now.
@@ -66,8 +70,8 @@ Uranium powder (IE)
 
 Machines 1 to 3 are playable. Machines 4 and 5 are being designed.
 
-A branch after machine 3, the **Metal Extractor** (machine 3.5), will recover dissolved metals from the effluent in
-an electrolytic cell before it is treated.
+A branch after machine 3, the **Metal Extractor** (machine 3.5, playable), recovers dissolved metals from the effluent
+in an electrolytic cell before it is treated.
 
 ## Roadmap
 
@@ -75,11 +79,11 @@ an electrolytic cell before it is treated.
 - [x] Chemical Processing Unit
 - [x] Filtration Unit
 - [x] Chemical Separation Unit (solvent extraction: extraction and stripping stages)
-- [ ] Metal Extractor (machine 3.5: electrolytic recovery of metals from the effluent)
+- [x] Metal Extractor (machine 3.5: electrolytic recovery of metals from the effluent)
+- [x] Effluent treatment: recycling, neutralization with quicklime, sludge filtration
 - [ ] Precipitation Unit
 - [ ] Industrial Dryer
 - [ ] Concentrate Drum (storage)
-- [ ] Effluent treatment: recycling, neutralization with quicklime
 - [ ] Balancing pass (energy, time and quantities are placeholders)
 
 **Hazards**

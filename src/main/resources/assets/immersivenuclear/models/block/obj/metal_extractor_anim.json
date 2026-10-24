@@ -1,0 +1,29 @@
+{
+  "textures": {
+    "#arc_furnace_inactive": "immersiveengineering:models/arc_furnace_inactive",
+    "#connector_transformer_hv": "immersiveengineering:blocks/connector_transformer_hv",
+    "#crusher": "immersiveengineering:models/crusher",
+    "#diesel_generator": "immersiveengineering:models/diesel_generator",
+    "#metal_device0_fluid_pump_side_none": "immersiveengineering:blocks/metal_device0_fluid_pump_side_none",
+    "#metal_device0_fluid_pump_top": "immersiveengineering:blocks/metal_device0_fluid_pump_top",
+    "#metal_device0_fluid_pump_up_none": "immersiveengineering:blocks/metal_device0_fluid_pump_up_none",
+    "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+    "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+    "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+    "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+    "#storage_nickel": "immersiveengineering:blocks/storage_nickel",
+    "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "particle": "immersiveengineering:blocks/storage_steel"
+  },
+  "parts": {
+    "cleaner": 0.0,
+    "collector": 0.0,
+    "plate0": 0.0,
+    "plate1": 0.0,
+    "plate2": 0.0,
+    "plate3": 0.0,
+    "plate4": 0.0,
+    "plate5": 0.0,
+    "train": 0.0
+  }
+}

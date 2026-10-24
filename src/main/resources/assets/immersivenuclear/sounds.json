@@ -11,5 +11,14 @@
     "chemical_separator_mixer_stop": { "category": "block", "sounds": [ "immersivenuclear:chemical_separator_mixer_stop" ] },
     "pump_start": { "category": "block", "sounds": [ "immersivenuclear:pump_start" ] },
     "pump_loop": { "category": "block", "sounds": [ { "name": "immersivenuclear:pump_loop", "stream": false } ] },
-    "pump_stop": { "category": "block", "sounds": [ "immersivenuclear:pump_stop" ] }
+    "pump_stop": { "category": "block", "sounds": [ "immersivenuclear:pump_stop" ] },
+    "metal_extractor_plates_start": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_plates_start" ] },
+    "metal_extractor_plates_loop": { "category": "block", "sounds": [ { "name": "immersivenuclear:metal_extractor_plates_loop", "stream": false } ] },
+    "metal_extractor_plates_stop": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_plates_stop" ] },
+    "metal_extractor_platform_up": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_platform_up" ] },
+    "metal_extractor_platform_down": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_platform_down" ] },
+    "metal_extractor_tray_in": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_tray_in" ] },
+    "metal_extractor_tray_out": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_tray_out" ] },
+    "metal_extractor_cleaner_down": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_cleaner_down" ] },
+    "metal_extractor_cleaner_up": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_cleaner_up" ] }
 }

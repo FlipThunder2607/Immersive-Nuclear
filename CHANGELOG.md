@@ -7,11 +7,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Planned
-- **Metal Extractor** (machine 3.5), a branch after the Chemical Separation Unit. An electrolytic cell with hanging
-  plates recovers dissolved metals from the Chemical Effluent in batches (fill, prepare, recover, drain, collect):
-  the plates are lifted out and scraped, the Mixed Metal Deposit falls down a chute, and Depleted Effluent goes on to
-  treatment. The deposit is processed in an IE machine into metal nuggets.
-- Filtering the Neutralized Sludge into Neutralization Cake and water, and effluent recycling into the Chemical Processing Unit
+- Precipitation Unit (machine 4) and Industrial Dryer (machine 5), closing line 1.
+
+## [0.1.3-alpha] - 2026-10-24
+
+### Added
+- **Metal Extractor** (machine 3.5), a branch after the Chemical Separation Unit. An electrolytic cell takes the
+  Chemical Effluent in 12000 mB batches (fill, prepare, recover, drain): the metals plate out on six hanging electrode
+  plates, then the platform lifts them, a tray slides in and a scraper cleans them while the vat drains. Each batch
+  gives 6 Mixed Metal Deposits and 12000 mB of Depleted Effluent. GUI, JEI page, animated platform, tray and scraper
+  with falling fragments and sparks, HV wires, and sounds for the plates, platform, tray and scraper.
+- Electrode Plates for the Metal Extractor, one per plate slot and freely mixed:
+  - Steel: the base plate (2 steel rods, copper plate, 2 steel plates);
+  - Lead-Silver: more deposit with less energy, twice the life (steel plate + 2 lead plates + silver plate);
+  - Electrum-Coated: the most deposit and the longest life (lead-silver plate + 3 electrum plates).
+  Every batch wears each plate; a worn-through plate breaks.
+- Mixed Metal Deposit, crushed in IE's Crusher into slag and a chance of iron, aluminium, copper, lead, nickel and
+  uranium nuggets and clay.
+- Neutralized Mineral Residue: 4 Wet Mineral Residue + 1 Quicklime. Crushed in IE's Crusher it gives sand and a
+  chance of iron nuggets, clay and uranium nuggets (what the leaching left in the solid).
+- Chemical Processing Unit: a recycled liquor tank. The water port also takes Chemical or Depleted Effluent, and up to
+  4000 mB of each batch can come from it instead of water, saving up to 4 Processing Reagent.
+- Filtration Unit: filters Neutralized Sludge too (1000 mB gives 1 Neutralization Cake and 800 mB of water), one kind
+  of feed at a time.
+- IE's Mixer makes concrete with Neutralization Cake in place of clay.
+- Engineer's Manual: an **Immersive Nuclear** category with an entry per machine (structure, formed preview, texts and
+  part recipes), supplies, residues and by-products, and hazard warnings.
+- JEI: two pages each for the Chemical Processing Unit (water only, half recycled) and the Filtration Unit (slurry,
+  sludge).
+
+### Changed
+- Wet Mineral Residue is also corrosive (still soaked in the acid leach): it has to be neutralized before use. The
+  Impure Agglomerate is made from the neutralized residue (or from Neutralization Cake, as before).
+
+### Fixed
+- The multiblock structures shown in IE's manual (and the projector) were mirrored against the formed machine.
 
 ## [0.1.2-alpha] - 2026-10-24
 
@@ -96,7 +126,8 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.2-alpha...HEAD
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.3-alpha...HEAD
+[0.1.3-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.3-alpha
 [0.1.2-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.2-alpha
 [0.1.1-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.1-alpha
 [0.1.0-alpha.17]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.0-alpha.17

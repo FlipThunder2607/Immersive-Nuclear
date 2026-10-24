@@ -10,17 +10,28 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-/** One batch of the Filtration Unit, with the amounts the tile uses (TileFilterPress). */
+/**
+ * One batch of the Filtration Unit, with the amounts the tile uses (TileFilterPress): uranium slurry (crude solution
+ * and residue) or neutralized sludge (water and neutralization cake).
+ */
 public class FilterPressRecipe implements IRecipeWrapper
 {
+	final boolean sludge;
+
+	public FilterPressRecipe(boolean sludge)
+	{
+		this.sludge = sludge;
+	}
+
 	@Override
 	public void getIngredients(IIngredients ingredients)
 	{
 		// The filters are worn, not used up: listed so they show the machine among their uses
 		ingredients.setInput(VanillaTypes.ITEM, new ItemStack(INContent.itemFilter));
-		ingredients.setInput(VanillaTypes.FLUID, new FluidStack(INContent.fluidSlurry, TileFilterPress.BATCH));
-		ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(INContent.itemResidue, TileFilterPress.RESIDUE_PER_BATCH));
-		ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(new FluidStack(INContent.fluidCrudeSolution, TileFilterPress.SOLUTION_PER_BATCH)));
+		ingredients.setInput(VanillaTypes.FLUID, new FluidStack(sludge ? INContent.fluidSludge : INContent.fluidSlurry, TileFilterPress.BATCH));
+		ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(sludge ? INContent.itemCake : INContent.itemResidue, TileFilterPress.RESIDUE_PER_BATCH));
+		ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(new FluidStack(sludge ? net.minecraftforge.fluids.FluidRegistry.WATER : INContent.fluidCrudeSolution,
+				TileFilterPress.SOLUTION_PER_BATCH)));
 	}
 
 	/** Energy of one batch: pump, both actuator strokes, filtering. */
