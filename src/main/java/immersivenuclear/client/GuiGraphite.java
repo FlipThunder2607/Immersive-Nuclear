@@ -17,6 +17,8 @@ public final class GuiGraphite
 	/** IE's pieces are drawn this much darker, to sit on the graphite. */
 	public static final float IE_TINT = 0.8F;
 	public static final int ARROW_W = 19, ARROW_H = 13;
+	/** Tooltips wrap their lines at this width, so they stay on the screen beside a wide interface. */
+	public static final int TOOLTIP_WIDTH = 200;
 
 	private GuiGraphite()
 	{

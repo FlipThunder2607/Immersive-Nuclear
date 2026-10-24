@@ -25,12 +25,14 @@ public class INJeiPlugin implements IModPlugin
 	{
 		registry.addRecipeCategories(new ChemicalProcessorCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new FilterPressCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new ChemicalSeparatorCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
-	/** The liquids the Chemical Separation Unit uses or makes have recipe pages now, not the "coming later" note. */
-	static boolean separatorFluid(Fluid f)
+	/** Liquids with recipe pages now (machine 3, IE's Mixer), not the "coming later" note. */
+	static boolean hasRecipes(Fluid f)
 	{
-		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent;
+		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent
+				|| f == INContent.fluidSludge;
 	}
 
 	@Override
@@ -67,9 +69,10 @@ public class INJeiPlugin implements IModPlugin
 		for(Item item : new Item[]{INContent.itemQuicklime, INContent.itemCake, INContent.itemAgglomerate, INContent.itemPrecipitatingAgent,
 				INContent.itemWetConcentrate, INContent.itemYellowcake})
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
+		registry.addIngredientInfo(new FluidStack(INContent.fluidSludge, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.neutralized_sludge.info");
 		for(Fluid fluid : INContent.fluids)
 			if(fluid != INContent.fluidSlurry && fluid != INContent.fluidCrudeSolution)
-				if(!separatorFluid(fluid))
+				if(!hasRecipes(fluid))
 					registry.addIngredientInfo(new FluidStack(fluid, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.fluid_upcoming.info");
 	}
 }

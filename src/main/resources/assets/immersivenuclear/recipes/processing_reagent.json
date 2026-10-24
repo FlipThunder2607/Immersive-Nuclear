@@ -2,9 +2,9 @@
     "type": "forge:ore_shapeless",
     "ingredients": [
         { "type": "forge:ore_dict", "ore": "dustSulfur" },
+        { "type": "forge:ore_dict", "ore": "dustSulfur" },
         { "type": "forge:ore_dict", "ore": "dustSaltpeter" },
-        { "type": "forge:ore_dict", "ore": "dustSaltpeter" },
-        { "item": "minecraft:paper" }
+        { "type": "forge:ore_dict", "ore": "dustSaltpeter" }
     ],
     "result": { "item": "immersivenuclear:processing_reagent", "count": 4 }
 }

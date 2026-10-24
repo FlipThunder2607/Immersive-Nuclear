@@ -1,6 +1,5 @@
 package immersivenuclear.common.block;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -16,8 +15,6 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -50,15 +47,21 @@ import net.minecraftforge.items.ItemStackHandler;
  * less a small loss that the solvent port tops up.
  * Without stripping solution, stage 1 goes on until the loaded solvent line is full.
  *
- * Sounds: the mixer runs while a mixer works; the mod's pump sound ({@link PumpSound}) while any fluid moves (mixers
- * drawing from the tanks, settlers draining, the solvent lines). IE keeps one looping sound per block, so the master
- * plays the mixer and the part on the middle pump plays the pump.
+ * Sounds: each mixer and each pump has its own, played from the part where it stands in the model (IE keeps one
+ * looping sound per block): the two mixers while they mix, the pump of each settler while it drains, and the middle
+ * pump while the loaded solvent goes from settler A to its line (see {@link #SOUND_PARTS}).
  */
 public class TileChemicalSeparator extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
 {
 	public static final int TANK_CAPACITY = 12000, SETTLER_CAPACITY = 16000, ENERGY_CAPACITY = 32000;
 	/** One batch of each settler (provisional): A takes 10000 crude + 6000 solvent, B 6000 loaded solvent + 5000 stripping. */
 	public static final int A_AQUEOUS = 10000, A_SOLVENT = 6000, B_SOLVENT = 6000, B_AQUEOUS = 5000;
+	/**
+	 * The solvent reservoir is a surge tank: the solvent port only tops it up to MAKEUP_LEVEL (one batch of mixer A), the
+	 * rest is kept free for the clean solvent coming back from settler B. With the port allowed to fill it up, the
+	 * returning solvent had nowhere to go, settler B stopped, the loaded line filled and settler A stopped too.
+	 */
+	public static final int SOLVENT_CAPACITY = TANK_CAPACITY + B_SOLVENT, MAKEUP_LEVEL = A_SOLVENT;
 	/** Solvent lost per stripping batch (about 50 mB per 1000 mB of crude solution). */
 	public static final int SOLVENT_LOSS = 500;
 	/** Mixer feed per tick, in the batch's proportions (A fills in 400 ticks, B in 250). */
@@ -81,13 +84,42 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 	// ---------- master only ----------
 	final FluidTank crude = input(TANK_CAPACITY, () -> INContent.fluidCrudeSolution);
 	final FluidTank stripping = input(TANK_CAPACITY, () -> INContent.fluidStrippingSolution);
-	/** Solvent reservoir: the initial charge, the top-ups and the clean solvent coming back from settler B. */
-	final FluidTank solvent = input(TANK_CAPACITY, () -> INContent.fluidSolvent);
+	/** Solvent reservoir: the initial charge, the top-ups (up to MAKEUP_LEVEL) and the clean solvent coming back from settler B. */
+	final FluidTank solvent = new FluidTank(SOLVENT_CAPACITY)
+	{
+		@Override
+		public boolean canFillFluidType(FluidStack f)
+		{
+			return f != null && f.getFluid() == INContent.fluidSolvent;
+		}
+
+		/** From outside (the solvent port) only up to the make-up level; the return from settler B uses fillInternal. */
+		@Override
+		public int fill(FluidStack resource, boolean doFill)
+		{
+			int room = MAKEUP_LEVEL - getFluidAmount();
+			if(resource == null || room <= 0)
+				return 0;
+			FluidStack part = resource.copy();
+			part.amount = Math.min(part.amount, room);
+			return super.fill(part, doFill);
+		}
+
+		@Override
+		protected void onContentsChanged()
+		{
+			markDirty();
+		}
+	};
 	final FluidTank effluent = output(TANK_CAPACITY);
 	final FluidTank purified = output(TANK_CAPACITY);
 	/** Loaded solvent line between settler A and mixer B (no port). */
 	final FluidTank loaded = output(TANK_CAPACITY);
 	final Settler settlerA = new Settler(), settlerB = new Settler();
+
+	{
+		solvent.setCanDrain(false);
+	}
 	final Energy energy = new Energy();
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
 	{
@@ -127,19 +159,26 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 
 	// ---------- client only: the settlers seen through the windows of the model, {phase, ticks, top, bottom} ----------
 	public int[] clientSettlerA = new int[4], clientSettlerB = new int[4];
-	/** A mixer turning; fluid moving anywhere. */
-	public boolean clientMixing, clientPumping;
+	/** What moved last tick, as the bits of {@link #moving()}. */
+	public int clientMoving;
 
-	/** The part that plays the pump: the middle pump of the structure (upper half). */
-	static final int PUMP_DX = 3, PUMP_DY = 0, PUMP_DZ = 0;
-	static final float SOUND_VOLUME = 1.0F, SOUND_PITCH = 1.0F;
+	/** What moves: the mixers, and the fluid in each line (also the interface's flow lights). */
+	public static final int MOVE_MIXER_A = 1, MOVE_MIXER_B = 2, MOVE_LOADED = 4, MOVE_CLEAN = 8, MOVE_EFFLUENT = 16, MOVE_PURIFIED = 32;
+	/**
+	 * The parts that play a sound, where that mixer or pump stands in the model, and what runs it: {dx, dy, dz, bits of
+	 * moving()}. Settler A is the left (north) one.
+	 */
+	static final int[][] SOUND_PARTS = {
+			{3, 2, -1, MOVE_MIXER_A},                // mixer A, under its generator
+			{3, 2, 1, MOVE_MIXER_B},                 // mixer B
+			{2, 1, -2, MOVE_EFFLUENT},               // pump of settler A: the effluent out
+			{2, 1, 2, MOVE_PURIFIED | MOVE_CLEAN},   // pump of settler B: the purified solution out, the clean solvent back
+			{3, 0, 0, MOVE_LOADED},                  // middle pump: the loaded solvent from settler A to mixer B's line
+	};
 	/** The mixer's loop comes in as its 4.55 s start-up ends, less the 65 ms crossfade of the recording. */
 	static final int MIXER_LOOP_DELAY = 90;
-	/** A pause shorter than this (between two batches) keeps a sound going. */
-	static final int STOP_GRACE_TICKS = 20;
-	boolean soundOn;
-	int loopDelay, offTicks;
-	final PumpSound pump = new PumpSound();
+	/** This part's sound (client), made on its first tick when the part has one. */
+	LoopSound sound;
 
 	/** A settling basin: its step, the ticks in it, and how much of each layer it holds (solvent on top, water below). */
 	static class Settler
@@ -386,12 +425,14 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 	{
 		if(world.isRemote)
 		{
-			if(isMaster())
-				updateSound();
-			else if(isPumpPart())
+			int bits = soundBits();
+			if(bits != 0)
 			{
+				if(sound == null)
+					sound = (bits & (MOVE_MIXER_A | MOVE_MIXER_B)) != 0 ? new LoopSound(() -> INContent.soundCsMixerStart,
+							() -> INContent.soundCsMixerLoop, () -> INContent.soundCsMixerStop, MIXER_LOOP_DELAY) : new PumpSound();
 				TileChemicalSeparator m = getMaster();
-				pump.update(this, m != null && m.clientPumping);
+				sound.update(this, m != null && (m.clientMoving & bits) != 0);
 			}
 			return;
 		}
@@ -518,7 +559,7 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 	/** The windows show the settlers' layers: send them when they change visibly (levels in 1/64, settling in 1/32). */
 	void syncWindows()
 	{
-		int key = (mixing() ? 1 : 0) + (pumping() ? 2 : 0);
+		int key = moving();
 		for(Settler s : new Settler[]{settlerA, settlerB})
 			key = key * 31 + s.phase * 1000003 + s.top * 64 / SETTLER_CAPACITY * 1009 + s.bottom * 64 / SETTLER_CAPACITY * 101 + s.ticks * 32 / SETTLE_TICKS;
 		if(key != sentWindows)
@@ -529,9 +570,11 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		}
 	}
 
-	boolean mixing()
+	/** Bits: MOVE_MIXER_A, MOVE_MIXER_B, MOVE_LOADED, MOVE_CLEAN, MOVE_EFFLUENT, MOVE_PURIFIED. */
+	int moving()
 	{
-		return mixingA || mixingB;
+		return (mixingA ? MOVE_MIXER_A : 0) | (mixingB ? MOVE_MIXER_B : 0) | (flowLoaded ? MOVE_LOADED : 0) | (flowClean ? MOVE_CLEAN : 0)
+				| (flowEffluent ? MOVE_EFFLUENT : 0) | (flowPurified ? MOVE_PURIFIED : 0);
 	}
 
 	/** Fluid really moving: a settler waiting with its outlets full is not pumping. */
@@ -700,8 +743,7 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		return new int[]{crude.getFluidAmount(), stripping.getFluidAmount(), solvent.getFluidAmount(), effluent.getFluidAmount(),
 				purified.getFluidAmount(), loaded.getFluidAmount(), energy.getEnergyStored(), state, redstoneInverted ? 1 : 0,
 				settlerA.phase, settlerA.ticks, settlerA.top, settlerA.bottom, settlerB.phase, settlerB.ticks, settlerB.top, settlerB.bottom,
-				(mixingA ? 1 : 0) | (mixingB ? 2 : 0) | (flowLoaded ? 4 : 0) | (flowClean ? 8 : 0)
-				| (flowEffluent ? 16 : 0) | (flowPurified ? 32 : 0)};
+				moving()};
 	}
 
 	// ---------- saving and syncing ----------
@@ -821,8 +863,7 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		{
 			nbt.setIntArray("settlerA", settlerArray(settlerA));
 			nbt.setIntArray("settlerB", settlerArray(settlerB));
-			nbt.setBoolean("mixing", mixing());
-			nbt.setBoolean("pumping", pumping());
+			nbt.setInteger("moving", moving());
 		}
 	}
 
@@ -833,57 +874,30 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 			clientSettlerA = nbt.getIntArray("settlerA");
 		if(nbt.getIntArray("settlerB").length == 4)
 			clientSettlerB = nbt.getIntArray("settlerB");
-		clientMixing = nbt.getBoolean("mixing");
-		clientPumping = nbt.getBoolean("pumping");
+		clientMoving = nbt.getInteger("moving");
 	}
 
 	// ---------- client: sound ----------
-	boolean isPumpPart()
+	/** What runs this part's sound (bits of moving()), or 0 when it has none. */
+	int soundBits()
 	{
-		return dx == PUMP_DX && dy == PUMP_DY && dz == PUMP_DZ;
-	}
-
-	/** The mixer (master): start-up once, then IE's looping tile sound, shutdown once. */
-	void updateSound()
-	{
-		boolean running = clientMixing;
-		offTicks = running ? 0 : offTicks + 1;
-		boolean on = running || soundOn && offTicks < STOP_GRACE_TICKS;
-		if(on && !soundOn)
-		{
-			playOnce(INContent.soundCsMixerStart);
-			loopDelay = MIXER_LOOP_DELAY;
-		}
-		else if(!on && soundOn)
-			playOnce(INContent.soundCsMixerStop);
-		soundOn = on;
-		if(loopDelay > 0)
-			loopDelay--;
-		ImmersiveEngineering.proxy.handleTileSound(INContent.soundCsMixerLoop, this, on && loopDelay == 0 && !isInvalid(), SOUND_VOLUME, SOUND_PITCH);
+		for(int[] p : SOUND_PARTS)
+			if(p[0] == dx && p[1] == dy && p[2] == dz)
+				return p[3];
+		return 0;
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */
 	@Override
-	public boolean shoudlPlaySound(String sound)
+	public boolean shoudlPlaySound(String name)
 	{
-		if(isPumpPart())
-			return pump.shouldPlay(this, sound);
-		return isMaster() && !isInvalid() && soundOn && loopDelay == 0 && INContent.soundCsMixerLoop.getSoundName().toString().equals(sound);
-	}
-
-	void playOnce(SoundEvent sound)
-	{
-		world.playSound(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5, sound, SoundCategory.BLOCKS, SOUND_VOLUME, SOUND_PITCH, false);
+		return sound != null && sound.shouldPlay(this, name);
 	}
 
 	void stopSound()
 	{
-		if(world == null || !world.isRemote)
-			return;
-		if(isMaster())
-			ImmersiveEngineering.proxy.handleTileSound(INContent.soundCsMixerLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
-		else if(isPumpPart())
-			pump.stop(this);
+		if(world != null && world.isRemote && sound != null)
+			sound.stop(this);
 	}
 
 	/** Stop the loops when the structure comes apart or the chunk unloads. */

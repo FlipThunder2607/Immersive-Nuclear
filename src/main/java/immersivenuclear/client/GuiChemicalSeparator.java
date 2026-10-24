@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.client.config.GuiUtils;
 
 /**
  * Interface of the Chemical Separation Unit: graphite brushed steel finished the way IE finishes its GUIs (riveted
@@ -266,7 +267,7 @@ public class GuiChemicalSeparator extends GuiIEContainerBase
 			settlerLiquid(st, SETTLER_X, stageY(st) + SETTLER_DY);
 			mixerLiquid(st);
 		}
-		int rh = Math.round(RES_WIN_H * container.solvent.getFluidAmount() / (float)TileChemicalSeparator.TANK_CAPACITY);
+		int rh = Math.round(RES_WIN_H * container.solvent.getFluidAmount() / (float)TileChemicalSeparator.SOLVENT_CAPACITY);
 		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		fluid(INContent.fluidSolvent, RES_X + RES_WIN_X, RES_Y + RES_WIN_Y + RES_WIN_H - rh, RES_WIN_W, rh, 0xffffffff);
 
@@ -416,7 +417,8 @@ public class GuiChemicalSeparator extends GuiIEContainerBase
 		if(over(mx, my, RES_X, RES_Y, RES_W, RES_H))
 		{
 			tip.add(I18n.format(K + "solvent"));
-			tip.add("§7" + container.solvent.getFluidAmount() + " / " + TileChemicalSeparator.TANK_CAPACITY + " mB");
+			tip.add("§7" + container.solvent.getFluidAmount() + " / " + TileChemicalSeparator.SOLVENT_CAPACITY + " mB");
+			tip.add("§7" + I18n.format(K + "makeup", TileChemicalSeparator.MAKEUP_LEVEL));
 		}
 		for(int st = 0; st < 2; st++)
 		{
@@ -463,7 +465,8 @@ public class GuiChemicalSeparator extends GuiIEContainerBase
 				tip.add(i == lit ? I18n.format(K + "state." + container.state()) : "§7" + I18n.format(K + "light." + i));
 		if(!tip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tip, mx, my, fontRenderer, guiLeft + xSize, -1);
+			// Long lines wrap, and the tooltip stays on the screen
+			GuiUtils.drawHoveringText(tip, mx, my, width, height, GuiGraphite.TOOLTIP_WIDTH, fontRenderer);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}

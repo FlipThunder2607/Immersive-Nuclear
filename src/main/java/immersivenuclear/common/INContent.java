@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.block.BlockChemicalProcessor;
@@ -210,16 +211,26 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockFilterPress.instance);
 		MultiblockHandler.registerMultiblock(MultiblockChemicalSeparator.instance);
 		mixerRecipes();
+		cokeOvenRecipes();
 	}
 
-	// Mixer recipes of the Chemical Separation Unit's liquids (provisional amounts)
-	public static final int SOLVENT_PER_MIX = 1000, STRIPPING_PER_MIX = 1000;
-	public static final int SOLVENT_MIX_ENERGY = 3200, STRIPPING_MIX_ENERGY = 1600;
+	// Recipes in IE's machines (provisional amounts)
+	public static final int SOLVENT_PER_MIX = 1000, STRIPPING_PER_MIX = 1000, SLUDGE_PER_MIX = 1000;
+	public static final int SOLVENT_MIX_ENERGY = 3200, STRIPPING_MIX_ENERGY = 1600, SLUDGE_MIX_ENERGY = 1600;
+	public static final int QUICKLIME_TICKS = 900;
+
+	/** Quicklime: diorite (or limestone, when a mod adds it) burnt in IE's Coke Oven. */
+	static void cokeOvenRecipes()
+	{
+		CokeOvenRecipe.addRecipe(new ItemStack(itemQuicklime), "stoneDiorite", QUICKLIME_TICKS, 0);
+		if(!net.minecraftforge.oredict.OreDictionary.getOres("stoneLimestone").isEmpty())
+			CokeOvenRecipe.addRecipe(new ItemStack(itemQuicklime, 2), "stoneLimestone", QUICKLIME_TICKS, 0);
+	}
 
 	/**
 	 * IE's Mixer makes the two liquids the separation needs: extraction solvent from biodiesel and saltpeter, stripping
-	 * solution from water and saltpeter. Biodiesel comes from IE's refinery; without it (no IE fluid) the solvent recipe
-	 * is left out.
+	 * solution from water and saltpeter; and neutralizes the effluent with quicklime into sludge. Biodiesel comes from
+	 * IE's refinery; without it (no IE fluid) the solvent recipe is left out.
 	 */
 	static void mixerRecipes()
 	{
@@ -229,6 +240,9 @@ public class INContent
 		else
 			ImmersiveNuclear.logger.warn("No biodiesel fluid: the extraction solvent has no Mixer recipe");
 		MixerRecipe.addRecipe(new FluidStack(fluidStrippingSolution, STRIPPING_PER_MIX), new FluidStack(FluidRegistry.WATER, STRIPPING_PER_MIX), new Object[]{"dustSaltpeter"}, STRIPPING_MIX_ENERGY);
+		// Neutralizing the effluent (or what is left of it after the Metal Extractor) with quicklime
+		for(Fluid effluent : new Fluid[]{fluidEffluent, fluidDepletedEffluent})
+			MixerRecipe.addRecipe(new FluidStack(fluidSludge, SLUDGE_PER_MIX), new FluidStack(effluent, SLUDGE_PER_MIX), new Object[]{new ItemStack(itemQuicklime)}, SLUDGE_MIX_ENERGY);
 	}
 
 	/** Registry names used up to 0.1.0-alpha.17, mapped to the current ones so existing worlds keep their items. */

@@ -1,0 +1,10 @@
+{
+    "type": "forge:ore_shapeless",
+    "ingredients": [
+        { "item": "immersivenuclear:quicklime" },
+        { "item": "immersivenuclear:quicklime" },
+        { "type": "forge:ore_dict", "ore": "dustSaltpeter" },
+        { "type": "forge:ore_dict", "ore": "dustSaltpeter" }
+    ],
+    "result": { "item": "immersivenuclear:precipitating_agent", "count": 4 }
+}

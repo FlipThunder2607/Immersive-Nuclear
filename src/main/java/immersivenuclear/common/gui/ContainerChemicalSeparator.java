@@ -37,7 +37,7 @@ public class ContainerChemicalSeparator extends Container
 	final TileChemicalSeparator tile;
 	/** Client copies of the master's values (on the server they are read straight from the tile). */
 	public final FluidTank crude = new FluidTank(TileChemicalSeparator.TANK_CAPACITY), stripping = new FluidTank(TileChemicalSeparator.TANK_CAPACITY),
-			solvent = new FluidTank(TileChemicalSeparator.TANK_CAPACITY), effluent = new FluidTank(TileChemicalSeparator.TANK_CAPACITY),
+			solvent = new FluidTank(TileChemicalSeparator.SOLVENT_CAPACITY), effluent = new FluidTank(TileChemicalSeparator.TANK_CAPACITY),
 			purified = new FluidTank(TileChemicalSeparator.TANK_CAPACITY), loaded = new FluidTank(TileChemicalSeparator.TANK_CAPACITY);
 	public final int[] values = new int[VALUES];
 	final int[] sent = new int[VALUES];

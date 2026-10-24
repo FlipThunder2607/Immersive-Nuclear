@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.client.config.GuiUtils;
 
 /**
  * Interface of the Chemical Processing Unit, in the finish of machines 2 and 3 (graphite brushed steel, IE's own
@@ -348,7 +349,8 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 			}
 		if(!tip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tip, mx, my, fontRenderer, guiLeft + xSize, -1);
+			// Long lines wrap, and the tooltip stays on the screen
+			GuiUtils.drawHoveringText(tip, mx, my, width, height, GuiGraphite.TOOLTIP_WIDTH, fontRenderer);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}

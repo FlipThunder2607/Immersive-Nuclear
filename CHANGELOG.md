@@ -11,7 +11,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   plates recovers dissolved metals from the Chemical Effluent in batches (fill, prepare, recover, drain, collect):
   the plates are lifted out and scraped, the Mixed Metal Deposit falls down a chute, and Depleted Effluent goes on to
   treatment. The deposit is processed in an IE machine into metal nuggets.
-- Neutralized Sludge Mixer recipe, Quicklime recipe and effluent recycling into the Chemical Processing Unit
+- Filtering the Neutralized Sludge into Neutralization Cake and water, and effluent recycling into the Chemical Processing Unit
+
+## [0.1.2-alpha] - 2026-10-24
+
+### Added
+- Recipes:
+  - Quicklime, burnt from diorite in IE's Coke Oven (or from limestone, when a mod adds it);
+  - Precipitating Agent: 2 Quicklime + 2 saltpeter;
+  - Neutralized Sludge in IE's Mixer: Chemical Effluent or Depleted Effluent with Quicklime.
+- Chemical Separation Unit: each mixer and each pump has its own sound, played from where it stands in the model.
+
+### Changed
+- Processing Reagent: 2 sulfur dust + 2 saltpeter, without the paper.
+- The JEI pages of the Chemical Processing Unit and the Filtration Unit are compact copies of their new GUIs.
+- Chemical Separation Unit: the solvent reservoir is a surge tank of 18000 mB, and the solvent port only tops it up
+  to 6000 mB. The rest is room for the clean solvent coming back from settler B.
+- GUI tooltips wrap long lines and stay on the screen.
+
+### Fixed
+- The Chemical Separation Unit's JEI recipe page was missing.
+- The Chemical Separation Unit could lock up when the solvent port kept the reservoir full: the returning solvent had
+  nowhere to go, so both settlers stopped. Machines locked this way start again on their own.
 
 ## [0.1.1-alpha] - 2026-10-24
 
@@ -75,6 +96,7 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.1-alpha...HEAD
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.2-alpha...HEAD
+[0.1.2-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.2-alpha
 [0.1.1-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.1-alpha
 [0.1.0-alpha.17]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.0-alpha.17
