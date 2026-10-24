@@ -29,3 +29,6 @@ __pycache__/
 # Local workspace files (not part of the mod)
 ferramentas/
 build-local.ps1
+
+# JDK
+src/main/java/immersivenuclear/openJdk-27
