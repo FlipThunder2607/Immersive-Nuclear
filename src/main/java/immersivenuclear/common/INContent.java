@@ -17,9 +17,11 @@ import immersivenuclear.common.block.BlockMetalExtractor;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileFilterPress;
+import immersivenuclear.common.block.TileLinkConnector;
 import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.item.ItemElectrode;
 import immersivenuclear.common.item.ItemFilter;
+import immersivenuclear.common.item.ItemLinkCable;
 import immersivenuclear.common.multiblock.MultiblockChemicalProcessor;
 import immersivenuclear.common.multiblock.MultiblockChemicalSeparator;
 import immersivenuclear.common.multiblock.MultiblockFilterPress;
@@ -244,7 +246,9 @@ public class INContent
 		}
 		itemComputerParts = new Item[COMPUTER_PARTS.length];
 		for(int i = 0; i < COMPUTER_PARTS.length; i++)
-			itemComputerParts[i] = item(event, COMPUTER_PARTS[i]);
+			itemComputerParts[i] = i == 6 ? null : item(event, COMPUTER_PARTS[i]);
+		itemComputerParts[6] = new ItemLinkCable();
+		event.getRegistry().register(itemComputerParts[6]);
 		itemLinkConnector = new ItemBlock(blockLinkConnector).setRegistryName(blockLinkConnector.getRegistryName());
 		event.getRegistry().register(itemLinkConnector);
 		itemLinkRelay = new ItemBlock(blockLinkRelay).setRegistryName(blockLinkRelay.getRegistryName());
@@ -279,6 +283,7 @@ public class INContent
 		}
 		blockLinkConnector = new BlockLinkConnector("link_connector");
 		event.getRegistry().register(blockLinkConnector);
+		GameRegistry.registerTileEntity(TileLinkConnector.class, new ResourceLocation(ImmersiveNuclear.MODID, "link_connector"));
 		blockLinkRelay = new BlockLinkConnector("link_relay");
 		event.getRegistry().register(blockLinkRelay);
 	}

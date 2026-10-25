@@ -11,6 +11,7 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -64,6 +65,18 @@ public class BlockLinkConnector extends Block
 	public int getMetaFromState(IBlockState state)
 	{
 		return state.getValue(FACING).getIndex();
+	}
+
+	@Override
+	public boolean hasTileEntity(IBlockState state)
+	{
+		return true;
+	}
+
+	@Override
+	public TileEntity createTileEntity(World world, IBlockState state)
+	{
+		return new TileLinkConnector();
 	}
 
 	@Override
