@@ -1,12 +1,16 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "immersiveengineering:connector/connector_lv.obj",
+        "model": "immersiveengineering:smartmodel/connector",
         "textures": {
             "#immersiveengineering:blocks/connector_connector_lv": "immersivenuclear:blocks/link_relay"
         },
         "custom": {
-            "flip-v": true
+            "base": "immersiveengineering:block/connector/connector_lv.obj",
+            "flip-v": true,
+            "layers": [
+                "SOLID"
+            ]
         }
     },
     "variants": {
@@ -102,6 +106,13 @@
                             1.5
                         ]
                     }
+                },
+                "model": "immersiveengineering:connector/connector_lv.obj",
+                "textures": {
+                    "#immersiveengineering:blocks/connector_connector_lv": "immersivenuclear:blocks/link_relay"
+                },
+                "custom": {
+                    "flip-v": true
                 }
             }
         ],

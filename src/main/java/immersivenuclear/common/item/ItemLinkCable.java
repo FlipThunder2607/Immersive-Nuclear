@@ -15,6 +15,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/** Link cable coil: one coil per connection, like IE's wire coils (cutting or breaking gives it back). */
 public class ItemLinkCable extends Item implements IWireCoil
 {
 	public ItemLinkCable()
@@ -22,7 +23,6 @@ public class ItemLinkCable extends Item implements IWireCoil
 		setRegistryName(ImmersiveNuclear.MODID, "link_cable");
 		setTranslationKey(ImmersiveNuclear.MODID + ".link_cable");
 		setCreativeTab(INContent.TAB);
-		setMaxStackSize(1);
 	}
 
 	@Override
@@ -35,12 +35,6 @@ public class ItemLinkCable extends Item implements IWireCoil
 	public int getMaxLength(ItemStack stack)
 	{
 		return 32;
-	}
-
-	@Override
-	public void consumeWire(ItemStack stack, int amount)
-	{
-		// Connections are graphical data links; the item itself has no physical durability yet.
 	}
 
 	@Override

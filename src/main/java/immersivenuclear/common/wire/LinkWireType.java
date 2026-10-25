@@ -5,6 +5,10 @@ import blusunrize.immersiveengineering.api.energy.wires.WireType;
 import immersivenuclear.common.INContent;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+/** Data cable: looks and hangs like IE's HV (steel) wire, painted space grey; carries no energy. */
 public class LinkWireType extends WireType
 {
 	public static final LinkWireType INSTANCE = new LinkWireType();
@@ -27,22 +31,24 @@ public class LinkWireType extends WireType
 		return 0;
 	}
 
+	/** Space grey cable (tints IE's wire texture, which darkens it a little). */
 	@Override
 	public int getColour(Connection connection)
 	{
-		return 0x7CC4D8;
+		return 0x3A3C40;
 	}
 
 	@Override
 	public double getSlack()
 	{
-		return 1;
+		return WireType.STEEL.getSlack();
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public TextureAtlasSprite getIcon(Connection connection)
 	{
-		return WireType.REDSTONE.getIcon(connection);
+		return WireType.STEEL.getIcon(connection);
 	}
 
 	@Override
@@ -60,7 +66,7 @@ public class LinkWireType extends WireType
 	@Override
 	public double getRenderDiameter()
 	{
-		return 0.03125;
+		return WireType.STEEL.getRenderDiameter();
 	}
 
 	@Override

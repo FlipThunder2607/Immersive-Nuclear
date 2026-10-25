@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
+import blusunrize.immersiveengineering.api.energy.wires.WireApi;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.block.BlockChemicalProcessor;
 import immersivenuclear.common.block.BlockChemicalSeparator;
@@ -22,6 +23,7 @@ import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.item.ItemElectrode;
 import immersivenuclear.common.item.ItemFilter;
 import immersivenuclear.common.item.ItemLinkCable;
+import immersivenuclear.common.wire.LinkWireType;
 import immersivenuclear.common.multiblock.MultiblockChemicalProcessor;
 import immersivenuclear.common.multiblock.MultiblockChemicalSeparator;
 import immersivenuclear.common.multiblock.MultiblockFilterPress;
@@ -175,6 +177,9 @@ public class INContent
 	/** Fluids have to exist before blocks and items are registered (buckets look them up). */
 	public static void preInit()
 	{
+		// The link cable's wire type has to exist before any world loads: IE reads saved wires by name and turns
+		// an unknown name into LV copper (this also files it under its category, like IE's own wires)
+		WireApi.registerWireType(LinkWireType.INSTANCE);
 		fluidSlurry = fluid("uranium_slurry", 1400, 3000);
 		fluidCrudeSolution = fluid("crude_uranium_solution", 1100, 1200);
 		fluidSolvent = fluid("extraction_solvent", 800, 1100);
@@ -281,10 +286,10 @@ public class INContent
 			blockEngineering[i] = new BlockEngineering(BlockEngineering.KINDS[i]);
 			event.getRegistry().register(blockEngineering[i]);
 		}
-		blockLinkConnector = new BlockLinkConnector("link_connector");
+		blockLinkConnector = new BlockLinkConnector("link_connector", false);
 		event.getRegistry().register(blockLinkConnector);
 		GameRegistry.registerTileEntity(TileLinkConnector.class, new ResourceLocation(ImmersiveNuclear.MODID, "link_connector"));
-		blockLinkRelay = new BlockLinkConnector("link_relay");
+		blockLinkRelay = new BlockLinkConnector("link_relay", true);
 		event.getRegistry().register(blockLinkRelay);
 	}
 
