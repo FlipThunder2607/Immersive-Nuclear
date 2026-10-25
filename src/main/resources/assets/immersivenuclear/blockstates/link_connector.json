@@ -1,0 +1,130 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "immersiveengineering:connector/connector_lv.obj",
+        "textures": {
+            "#immersiveengineering:blocks/connector_connector_lv": "immersivenuclear:blocks/link_connector"
+        },
+        "custom": {
+            "flip-v": true
+        }
+    },
+    "variants": {
+        "inventory": [
+            {
+                "transform": {
+                    "scale": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "firstperson_righthand": {
+                        "translation": [
+                            0,
+                            0.25,
+                            0.125
+                        ]
+                    },
+                    "firstperson_lefthand": {
+                        "translation": [
+                            0,
+                            0.25,
+                            0.125
+                        ]
+                    },
+                    "thirdperson_righthand": {
+                        "translation": [
+                            -0.0625,
+                            0.125,
+                            0.1875
+                        ],
+                        "rotation": [
+                            {
+                                "x": 70
+                            },
+                            {
+                                "y": 70
+                            }
+                        ]
+                    },
+                    "thirdperson_lefthand": {
+                        "translation": [
+                            -0.0625,
+                            0.125,
+                            0.1875
+                        ],
+                        "rotation": [
+                            {
+                                "x": 70
+                            },
+                            {
+                                "y": 70
+                            }
+                        ]
+                    },
+                    "fixed": {
+                        "scale": [
+                            2,
+                            2,
+                            2
+                        ],
+                        "translation": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "rotation": [
+                            {
+                                "y": -90
+                            }
+                        ]
+                    },
+                    "gui": {
+                        "translation": [
+                            0,
+                            0.125,
+                            0
+                        ],
+                        "rotation": [
+                            {
+                                "x": 30
+                            },
+                            {
+                                "y": 135
+                            },
+                            {
+                                "z": 0
+                            }
+                        ],
+                        "scale": [
+                            1.5,
+                            1.5,
+                            1.5
+                        ]
+                    }
+                }
+            }
+        ],
+        "facing": {
+            "up": {},
+            "down": {
+                "x": 180
+            },
+            "north": {
+                "x": 90
+            },
+            "south": {
+                "x": 90,
+                "y": 180
+            },
+            "east": {
+                "x": 90,
+                "y": 90
+            },
+            "west": {
+                "x": 90,
+                "y": 270
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "normal": {
+            "model": "immersivenuclear:radioactive_handling"
+        },
+        "inventory": {
+            "model": "immersivenuclear:radioactive_handling"
+        }
+    }
+}

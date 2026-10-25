@@ -10,6 +10,8 @@ import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.block.BlockChemicalProcessor;
 import immersivenuclear.common.block.BlockChemicalSeparator;
+import immersivenuclear.common.block.BlockEngineering;
+import immersivenuclear.common.block.BlockLinkConnector;
 import immersivenuclear.common.block.BlockFilterPress;
 import immersivenuclear.common.block.BlockMetalExtractor;
 import immersivenuclear.common.block.TileChemicalProcessor;
@@ -98,6 +100,18 @@ public class INContent
 	/** Impure Agglomerate: heavy building block made of neutralisation cake or filter residue. */
 	public static Block blockAgglomerate;
 	public static Item itemAgglomerate;
+
+	/** Engineering blocks, casings of the next machines, in the order of {@link BlockEngineering#KINDS} (no recipe yet). */
+	public static Block[] blockEngineering;
+	public static Item[] itemEngineering;
+
+	/** Parts of the computers (in development): only the items for now, no recipe and no use yet. */
+	public static final String[] COMPUTER_PARTS = {"electronic_module", "relay_module", "core_memory", "punched_card", "punched_paper_tape",
+			"disk_pack", "link_cable", "magnetic_tape", "continuous_form_paper"};
+	public static Item[] itemComputerParts;
+	/** Link connector and link relay of the computers' data network (blocks with IE's connector model). */
+	public static Block blockLinkConnector, blockLinkRelay;
+	public static Item itemLinkConnector, itemLinkRelay;
 
 	/** Fluids of the chemical separation, the effluent treatment and the dryer (catalogue); only tanks and pipes
 	 * use them for now. */
@@ -222,6 +236,19 @@ public class INContent
 		event.getRegistry().register(itemElectrodeElectrum);
 		itemAgglomerate = new ItemBlock(blockAgglomerate).setRegistryName(blockAgglomerate.getRegistryName());
 		event.getRegistry().register(itemAgglomerate);
+		itemEngineering = new Item[blockEngineering.length];
+		for(int i = 0; i < blockEngineering.length; i++)
+		{
+			itemEngineering[i] = new ItemBlock(blockEngineering[i]).setRegistryName(blockEngineering[i].getRegistryName());
+			event.getRegistry().register(itemEngineering[i]);
+		}
+		itemComputerParts = new Item[COMPUTER_PARTS.length];
+		for(int i = 0; i < COMPUTER_PARTS.length; i++)
+			itemComputerParts[i] = item(event, COMPUTER_PARTS[i]);
+		itemLinkConnector = new ItemBlock(blockLinkConnector).setRegistryName(blockLinkConnector.getRegistryName());
+		event.getRegistry().register(itemLinkConnector);
+		itemLinkRelay = new ItemBlock(blockLinkRelay).setRegistryName(blockLinkRelay.getRegistryName());
+		event.getRegistry().register(itemLinkRelay);
 	}
 
 	@SubscribeEvent
@@ -244,6 +271,16 @@ public class INContent
 				.setTranslationKey(ImmersiveNuclear.MODID + ".impure_agglomerate").setCreativeTab(TAB);
 		blockAgglomerate.setHarvestLevel("pickaxe", 1);
 		event.getRegistry().register(blockAgglomerate);
+		blockEngineering = new Block[BlockEngineering.KINDS.length];
+		for(int i = 0; i < blockEngineering.length; i++)
+		{
+			blockEngineering[i] = new BlockEngineering(BlockEngineering.KINDS[i]);
+			event.getRegistry().register(blockEngineering[i]);
+		}
+		blockLinkConnector = new BlockLinkConnector("link_connector");
+		event.getRegistry().register(blockLinkConnector);
+		blockLinkRelay = new BlockLinkConnector("link_relay");
+		event.getRegistry().register(blockLinkRelay);
 	}
 
 	public static void init()

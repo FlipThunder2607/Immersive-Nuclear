@@ -83,6 +83,12 @@ public class INJeiPlugin implements IModPlugin
 		for(Item item : new Item[]{INContent.itemQuicklime, INContent.itemCake, INContent.itemAgglomerate, INContent.itemPrecipitatingAgent,
 				INContent.itemWetConcentrate, INContent.itemYellowcake})
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
+		for(Item item : INContent.itemComputerParts)
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei.immersivenuclear.computer_part.info");
+		for(Item item : new Item[]{INContent.itemLinkConnector, INContent.itemLinkRelay})
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei.immersivenuclear.computer_part.info");
+		for(Item item : INContent.itemEngineering)
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidSludge, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.neutralized_sludge.info");
 		for(Fluid fluid : INContent.fluids)
 			if(fluid != INContent.fluidSlurry && fluid != INContent.fluidCrudeSolution)

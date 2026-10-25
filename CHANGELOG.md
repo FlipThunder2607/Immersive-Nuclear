@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Planned
 - Precipitation Unit (machine 4) and Industrial Dryer (machine 5), closing line 1.
+- The mod's own computers: multiblocks built with the Control Engineering Block, a data network with player-named
+  variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
+  the machines report every phase of their process.
+
+## [0.1.3.1-alpha] - 2026-10-25
+
+### Added
+- **Engineering blocks**, like IE's light and heavy engineering, as casings for the next machines: Precision
+  Engineering (grey), Nuclear Engineering (green), Control Engineering (blue) and Radioactive Handling (yellow). With
+  the CTM mod installed, a wall of them joins into one surface, with conduits running from block to block. No recipe
+  yet.
+- **Computer parts**, the first items of the computers (in development; no recipe and no use yet, from the creative
+  tab): Electronic Module, Relay Module, Core Memory, Punched Card, Punched Paper Tape, Disk Pack, Link Cable,
+  Magnetic Tape, Continuous Form Paper, and the Link Connector and Link Relay blocks (IE's LV connector model, in
+  graphite and brushed steel).
 
 ## [0.1.3-alpha] - 2026-10-24
 

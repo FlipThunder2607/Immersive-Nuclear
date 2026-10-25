@@ -26,7 +26,7 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.3-alpha)
+## Current content (0.1.3.1-alpha)
 
 ### Machines
 
@@ -52,7 +52,8 @@ All machines have:
 
 - **Items:** Processing Reagent, Filter, Wet Mineral Residue, Neutralized Mineral Residue, Electrode Plates (steel, lead-silver, electrum-coated), Mixed Metal Deposit, Quicklime, Neutralization Cake, Precipitating Agent, Wet Uranium Concentrate, Uranium Concentrate (Yellowcake)
 - **Fluids** (animated, with buckets): Uranium Slurry, Crude Uranium Solution, Extraction Solvent, Stripping Solution, Purified Uranium Solution, Chemical Effluent, Neutralized Sludge, Depleted Effluent, Process Condensate
-- **Blocks:** Impure Agglomerate, a heavy building block made from process waste
+- **Blocks:** Impure Agglomerate, a heavy building block made from process waste; four engineering blocks (precision, nuclear, control, radioactive handling) that join into connected walls with the CTM mod
+- **Computer parts** (in development, creative tab only): electronic and relay modules, core memory, punched card and paper tape, disk pack, magnetic tape, link cable, continuous form paper, link connector and link relay
 - **Hazard tooltips** on materials: radioactive, corrosive, flammable, toxic, oxidizer, caustic. They are informative only for now.
 
 Some items and fluids are already registered for the next machines. Until those machines exist, they can only be stored.
