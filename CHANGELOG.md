@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Precipitation Unit: the structure follows the rebuilt screw ramp (iron sheetmetal blocks and slabs; 93 IE blocks).
+- Precipitation Unit: a batch now takes 90 seconds, 60 s mixing and 30 s dewatering (was 20 s and 10 s).
+- Precipitation Unit model: one more plate on the tank.
+
 ### Planned
 - Industrial Dryer (machine 5), closing line 1.
 - The mod's own computers: multiblocks built with the Control Engineering Block, a data network with player-named

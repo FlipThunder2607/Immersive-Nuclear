@@ -7,7 +7,7 @@ public class PrecipitationUnitStructureTest
 {
 	public static void main(String[] args)
 	{
-		// Counts read from the dev world build (x194..198, y4..8, z451..457)
+		// Counts read from the dev world build (x200..204, y4..8, z440..446, rebuilt 26/10)
 		expect(count('s'), 28, "steel scaffolding");
 		expect(count('f'), 10, "steel fences");
 		expect(count('l'), 9, "light engineering");
@@ -18,10 +18,10 @@ public class PrecipitationUnitStructureTest
 		expect(count('B'), 15, "metal barrels");
 		expect(count('p'), 2, "fluid pipes");
 		expect(count('S'), 6, "steel sheetmetal");
-		expect(count('I'), 3, "iron sheetmetal");
-		expect(count('a') + count('A') + count('D'), 5, "iron sheetmetal slabs");
+		expect(count('I'), 5, "iron sheetmetal");
+		expect(count('a') + count('A') + count('D'), 2, "iron sheetmetal slabs");
 		expect(count('b'), 4, "steel sheetmetal slabs");
-		expect(totalParts(), 94, "total parts");
+		expect(totalParts(), 93, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'H', "master is the tank's core");

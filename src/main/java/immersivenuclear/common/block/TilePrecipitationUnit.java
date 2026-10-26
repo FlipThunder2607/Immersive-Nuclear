@@ -50,7 +50,7 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 	public static final int BATCH_SOLUTION = 12000, AGENT_PER_BATCH = 6, CONCENTRATE_PER_BATCH = 24, EFFLUENT_PER_BATCH = 9000;
 	/** Room for a whole batch's effluent and some more, like the Metal Extractor's depleted effluent tank. */
 	public static final int EFFLUENT_CAPACITY = 16000, ENERGY_CAPACITY = 16000;
-	public static final int PRECIPITATE_TICKS = 400, DEWATER_TICKS = 200, PUSH_PER_TICK = 100;
+	public static final int PRECIPITATE_TICKS = 1200, DEWATER_TICKS = 600, PUSH_PER_TICK = 100;
 	public static final int PRECIPITATE_ENERGY = 48, DEWATER_ENERGY = 32;
 	/** Pipes and buckets fill in spurts: the filling counts as running this long after the level last rose. */
 	static final int FILL_GRACE = 20;
@@ -151,7 +151,7 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 	/** Full speed: 90 rpm. */
 	public static final float ROTOR_DEGREES_PER_TICK = 27;
 	/** The agitator turns from its motor on the tank's lid (the generator); the screw sounds from its ramp. */
-	static final int AGITATOR_DX = 2, AGITATOR_DY = 3, AGITATOR_DZ = -5, SCREW_DX = 2, SCREW_DY = 1, SCREW_DZ = -2;
+	static final int AGITATOR_DX = 2, AGITATOR_DY = 3, AGITATOR_DZ = -5, SCREW_DX = 2, SCREW_DY = 1, SCREW_DZ = -1;
 	/** The loops come in as the starts end: the CS mixer's start is 4.5 s, the screw's 1.6 s. */
 	static final int AGITATOR_LOOP_DELAY = 90, SCREW_LOOP_DELAY = 30;
 	final LoopSound agitator = new LoopSound(() -> INContent.soundCsMixerStart, () -> INContent.soundCsMixerLoop, () -> INContent.soundCsMixerStop,

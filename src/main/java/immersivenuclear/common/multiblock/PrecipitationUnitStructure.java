@@ -1,9 +1,9 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Precipitation Unit, block by block: 5 wide x 7 long x 5 high, 94 blocks. On a scaffolding floor, the agitated tank
+ * Precipitation Unit, block by block: 5 wide x 7 long x 5 high, 93 blocks. On a scaffolding floor, the agitated tank
  * (metal barrels around a heavy engineering core, its agitator on top) stands on fences at the north end; under it the
- * conical bottom (iron sheetmetal) drops the slurry into the screw dewaterer, an iron sheetmetal slab ramp climbing
+ * conical bottom (iron sheetmetal) drops the slurry into the screw dewaterer, an iron sheetmetal and slab ramp climbing
  * south to the discharge head (steel sheetmetal) by the redstone port. Power comes in at the south-east corner.
  *
  * Offsets are relative to the trigger (redstone engineering block, layer 2, hit with the hammer on its front face),
@@ -44,16 +44,16 @@ public final class PrecipitationUnitStructure
 					".fIff",
 					".fIf.",
 					"ppIG.",
-					"..A..",
-					"....H",
+					"..I..",
+					"..A.H",
 					"RSSSH"},
 			{ // y 6
 					".BBB.",
 					".BHBf",
 					".BBB.",
+					".....",
 					"..a..",
-					"..D..",
-					"..A..",
+					"..I..",
 					".SSS."},
 			{ // y 7
 					".BlB.",
@@ -61,7 +61,7 @@ public final class PrecipitationUnitStructure
 					".BBB.",
 					".....",
 					".....",
-					"..a..",
+					".....",
 					"..b.."},
 			{ // y 8
 					".brl.",
