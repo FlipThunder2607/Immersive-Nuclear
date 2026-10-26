@@ -20,5 +20,8 @@
     "metal_extractor_tray_in": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_tray_in" ] },
     "metal_extractor_tray_out": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_tray_out" ] },
     "metal_extractor_cleaner_down": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_cleaner_down" ] },
-    "metal_extractor_cleaner_up": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_cleaner_up" ] }
+    "metal_extractor_cleaner_up": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_cleaner_up" ] },
+    "precipitation_screw_start": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_start" ] },
+    "precipitation_screw_loop": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_loop" ] },
+    "precipitation_screw_stop": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_stop" ] }
 }

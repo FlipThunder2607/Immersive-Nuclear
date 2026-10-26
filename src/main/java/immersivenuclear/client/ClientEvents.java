@@ -6,6 +6,7 @@ import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileFilterPress;
 import immersivenuclear.common.block.TileMetalExtractor;
+import immersivenuclear.common.block.TilePrecipitationUnit;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -36,6 +37,7 @@ public class ClientEvents
 		ModelLoader.setCustomModelResourceLocation(INContent.itemFilterPress, 0, new ModelResourceLocation(INContent.itemFilterPress.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemChemicalSeparator, 0, new ModelResourceLocation(INContent.itemChemicalSeparator.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemMetalExtractor, 0, new ModelResourceLocation(INContent.itemMetalExtractor.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemPrecipitationUnit, 0, new ModelResourceLocation(INContent.itemPrecipitationUnit.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
@@ -70,6 +72,8 @@ public class ClientEvents
 		ClientRegistry.bindTileEntitySpecialRenderer(TileChemicalSeparator.class, new RenderChemicalSeparator());
 		// HV wires from the controller to the plates' platform
 		ClientRegistry.bindTileEntitySpecialRenderer(TileMetalExtractor.class, new RenderMetalExtractor());
+		// The agitator turning and the batch in the agitated tank
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePrecipitationUnit.class, new RenderPrecipitationUnit());
 	}
 
 	/** Textures are stitched by now (the item variant of the blockstate names them all). */
@@ -78,6 +82,7 @@ public class ClientEvents
 	{
 		RenderFilterPress.bake();
 		RenderMetalExtractor.bake();
+		RenderPrecipitationUnit.bake();
 	}
 
 	/** Our fluids have no world block, so nothing else asks for their textures (bucket, tanks, pipes draw them). */

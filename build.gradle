@@ -84,3 +84,9 @@ task metalExtractorStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn metalExtractorStructureTest
+
+task precipitationUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.PrecipitationUnitStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn precipitationUnitStructureTest

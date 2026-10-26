@@ -1,0 +1,17 @@
+{
+  "textures": {
+    "#arc_furnace_inactive": "immersiveengineering:models/arc_furnace_inactive",
+    "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+    "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+    "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
+    "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+    "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+    "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+    "#precipitation_tank_window": "immersivenuclear:blocks/precipitation_tank_window",
+    "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "particle": "immersiveengineering:blocks/storage_steel"
+  },
+  "parts": {
+    "rotor": 0.0
+  }
+}

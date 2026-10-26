@@ -6,6 +6,7 @@ import immersivenuclear.client.GuiChemicalProcessor;
 import immersivenuclear.client.GuiChemicalSeparator;
 import immersivenuclear.client.GuiFilterPress;
 import immersivenuclear.client.GuiMetalExtractor;
+import immersivenuclear.client.GuiPrecipitationUnit;
 import immersivenuclear.common.INContent;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -28,6 +29,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new FilterPressCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ChemicalSeparatorCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MetalExtractorCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new PrecipitationUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
 	/** Liquids with recipe pages now (machine 3, IE's Mixer), not the "coming later" note. */
@@ -67,6 +69,13 @@ public class INJeiPlugin implements IModPlugin
 		// Clicking the vat of the interface shows the recipe
 		registry.addRecipeClickArea(GuiMetalExtractor.class, GuiMetalExtractor.VAT_X, GuiMetalExtractor.VAT_Y, GuiMetalExtractor.VAT_W, GuiMetalExtractor.VAT_H, MetalExtractorCategory.UID);
 		registry.addIngredientInfo(extractor, VanillaTypes.ITEM, "jei.immersivenuclear.metal_extractor.info");
+		registry.addRecipes(Collections.singletonList(new PrecipitationUnitRecipe()), PrecipitationUnitCategory.UID);
+		ItemStack precipitation = new ItemStack(INContent.itemPrecipitationUnit);
+		registry.addRecipeCatalyst(precipitation, PrecipitationUnitCategory.UID);
+		// Clicking the agitated tank of the interface shows the recipe
+		registry.addRecipeClickArea(GuiPrecipitationUnit.class, GuiPrecipitationUnit.MIXER_X, GuiPrecipitationUnit.MIXER_Y, GuiPrecipitationUnit.MIXER_W,
+				GuiPrecipitationUnit.MIXER_H, PrecipitationUnitCategory.UID);
+		registry.addIngredientInfo(precipitation, VanillaTypes.ITEM, "jei.immersivenuclear.precipitation_unit.info");
 
 		// What each of our materials is for
 		registry.addIngredientInfo(new ItemStack(INContent.itemFilter), VanillaTypes.ITEM, "jei.immersivenuclear.filter.info");
