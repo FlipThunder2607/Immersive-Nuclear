@@ -7,10 +7,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Planned
-- Precipitation Unit (machine 4) and Industrial Dryer (machine 5), closing line 1.
+- Industrial Dryer (machine 5), closing line 1.
 - The mod's own computers: multiblocks built with the Control Engineering Block, a data network with player-named
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
+
+## [0.1.4-alpha] - 2026-10-26
+
+### Added
+- **Precipitation Unit** (machine 4): the uranium dissolved in the Purified Uranium Solution becomes a solid. A 5×7×5
+  multiblock (94 IE blocks): an agitated tank on legs over a conical bottom, and an inclined screw dewaterer. Each batch
+  is the full tank, 12000 mB of solution: 6 Precipitating Agents are dosed and mixed, then the screw lifts the solid to
+  the chute while the liquid runs back down. 24 Wet Uranium Concentrate and 9000 mB of Chemical Effluent per batch.
+  GUI, JEI page (click the tank in the GUI), a page in the Engineer's Manual, animated agitator (three levels of four
+  blades) and liquid seen through the tank's window, and sounds for the agitator and the screw.
+
+### Fixed
+- Link cables are drawn between the connectors and relays, sag like IE's HV wire (in space grey), can be cut and
+  broken, and stay link cables after the game restarts (#5).
 
 ## [0.1.3.1-alpha] - 2026-10-25
 

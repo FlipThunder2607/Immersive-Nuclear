@@ -26,7 +26,7 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.3.1-alpha)
+## Current content (0.1.4-alpha)
 
 ### Machines
 
@@ -36,6 +36,7 @@ Design goals:
 | **Filtration Unit** | 3×3×9 | Filter press. Splits the slurry into **Crude Uranium Solution** and **Wet Mineral Residue**. Uses 28 replaceable filters that wear out, with ports to automate the swap. Fully animated: actuators, plates and a discharge conveyor. |
 | **Chemical Separation Unit** | 5×4×7 | Solvent extraction in two mixer-settler stages. Turns the crude solution into **Purified Uranium Solution** and **Chemical Effluent**; the solvent goes round inside and only its losses are topped up. |
 | **Metal Extractor** | 4×4×4 | Electrolytic cell. Plates the metals dissolved in the Chemical Effluent onto six electrode plates, which rise to be scraped over a tray: **Mixed Metal Deposit** and **Depleted Effluent**. Three electrode plates (steel, lead-silver, electrum-coated) with growing yield and life. Animated platform, tray and scraper. |
+| **Precipitation Unit** | 5×7×5 | Agitated tank and screw dewaterer. Turns the purified solution and the Precipitating Agent into **Wet Uranium Concentrate** and **Chemical Effluent**. Animated agitator and liquid behind the tank's window. |
 
 The effluent never has to be dumped: it goes back into the Chemical Processing Unit as recycled liquor (saving reagent), through the Metal Extractor, or is neutralized with quicklime in IE's Mixer. The Filtration Unit filters the neutralized sludge into Neutralization Cake and plain water, and the cake replaces clay in IE's concrete.
 
@@ -71,7 +72,7 @@ Uranium powder (IE)
                           └─► [5] Industrial Dryer ──► Yellowcake     (+ Process Condensate)
 ```
 
-Machines 1 to 3 are playable. Machines 4 and 5 are being designed.
+Machines 1 to 4 are playable. Machine 5 is being designed.
 
 A branch after machine 3, the **Metal Extractor** (machine 3.5, playable), recovers dissolved metals from the effluent
 in an electrolytic cell before it is treated.
@@ -84,7 +85,7 @@ in an electrolytic cell before it is treated.
 - [x] Chemical Separation Unit (solvent extraction: extraction and stripping stages)
 - [x] Metal Extractor (machine 3.5: electrolytic recovery of metals from the effluent)
 - [x] Effluent treatment: recycling, neutralization with quicklime, sludge filtration
-- [ ] Precipitation Unit
+- [x] Precipitation Unit
 - [ ] Industrial Dryer
 - [ ] Concentrate Drum (storage)
 - [ ] Balancing pass (energy, time and quantities are placeholders)
