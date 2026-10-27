@@ -15,12 +15,14 @@ import immersivenuclear.common.block.BlockEngineering;
 import immersivenuclear.common.block.BlockLinkConnector;
 import immersivenuclear.common.block.BlockFilterPress;
 import immersivenuclear.common.block.BlockMetalExtractor;
+import immersivenuclear.common.block.BlockIndustrialDryer;
 import immersivenuclear.common.block.BlockPrecipitationUnit;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileFilterPress;
 import immersivenuclear.common.block.TileLinkConnector;
 import immersivenuclear.common.block.TileMetalExtractor;
+import immersivenuclear.common.block.TileIndustrialDryer;
 import immersivenuclear.common.block.TilePrecipitationUnit;
 import immersivenuclear.common.item.ItemElectrode;
 import immersivenuclear.common.item.ItemFilter;
@@ -30,6 +32,7 @@ import immersivenuclear.common.multiblock.MultiblockChemicalProcessor;
 import immersivenuclear.common.multiblock.MultiblockChemicalSeparator;
 import immersivenuclear.common.multiblock.MultiblockFilterPress;
 import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
+import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -56,6 +59,7 @@ public class INContent
 	public static BlockChemicalSeparator blockChemicalSeparator;
 	public static BlockMetalExtractor blockMetalExtractor;
 	public static BlockPrecipitationUnit blockPrecipitationUnit;
+	public static BlockIndustrialDryer blockIndustrialDryer;
 
 	/** The mod's creative tab; JEI also lists what is in it. */
 	public static final CreativeTabs TAB = new CreativeTabs(ImmersiveNuclear.MODID)
@@ -82,6 +86,8 @@ public class INContent
 
 	/** The same for the Precipitation Unit. */
 	public static Item itemPrecipitationUnit;
+	/** The same for the Industrial Dryer. */
+	public static Item itemIndustrialDryer;
 
 	/** Processing Reagent: consumed one per cycle by the Chemical Processing Unit. */
 	public static Item itemReagent;
@@ -149,6 +155,10 @@ public class INContent
 	/** Precipitation Unit: the screw dewaterer dragging the slurry up (start, loop, stop); its agitator is the CS mixer. */
 	public static SoundEvent soundPuScrewStart, soundPuScrewLoop, soundPuScrewStop;
 
+	/** The Industrial Dryer's steps: load (rotary valve), heat (heaters, loop), dry (paddles, loop), discharge (valve). */
+	public static SoundEvent soundDryerLoad, soundDryerHeatStart, soundDryerHeatLoop, soundDryerHeatStop, soundDryerDryStart, soundDryerDryLoop,
+			soundDryerDryStop, soundDryerDischarge;
+
 	@SubscribeEvent
 	public static void registerSounds(RegistryEvent.Register<SoundEvent> event)
 	{
@@ -177,6 +187,14 @@ public class INContent
 		soundPuScrewStart = sound(event, "precipitation_screw_start");
 		soundPuScrewLoop = sound(event, "precipitation_screw_loop");
 		soundPuScrewStop = sound(event, "precipitation_screw_stop");
+		soundDryerLoad = sound(event, "industrial_dryer_load");
+		soundDryerHeatStart = sound(event, "industrial_dryer_heat_start");
+		soundDryerHeatLoop = sound(event, "industrial_dryer_heat_loop");
+		soundDryerHeatStop = sound(event, "industrial_dryer_heat_stop");
+		soundDryerDryStart = sound(event, "industrial_dryer_dry_start");
+		soundDryerDryLoop = sound(event, "industrial_dryer_dry_loop");
+		soundDryerDryStop = sound(event, "industrial_dryer_dry_stop");
+		soundDryerDischarge = sound(event, "industrial_dryer_discharge");
 	}
 
 	static SoundEvent sound(RegistryEvent.Register<SoundEvent> event, String name)
@@ -236,6 +254,8 @@ public class INContent
 		event.getRegistry().register(itemMetalExtractor);
 		itemPrecipitationUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "precipitation_unit").setTranslationKey(ImmersiveNuclear.MODID + ".precipitation_unit").setCreativeTab(TAB);
 		event.getRegistry().register(itemPrecipitationUnit);
+		itemIndustrialDryer = new Item().setRegistryName(ImmersiveNuclear.MODID, "industrial_dryer").setTranslationKey(ImmersiveNuclear.MODID + ".industrial_dryer").setCreativeTab(TAB);
+		event.getRegistry().register(itemIndustrialDryer);
 		itemReagent = new Item().setRegistryName(ImmersiveNuclear.MODID, "processing_reagent").setTranslationKey(ImmersiveNuclear.MODID + ".processing_reagent").setCreativeTab(TAB);
 		event.getRegistry().register(itemReagent);
 		itemResidue = new Item().setRegistryName(ImmersiveNuclear.MODID, "wet_mineral_residue").setTranslationKey(ImmersiveNuclear.MODID + ".wet_mineral_residue").setCreativeTab(TAB);
@@ -293,6 +313,9 @@ public class INContent
 		blockPrecipitationUnit = new BlockPrecipitationUnit();
 		event.getRegistry().register(blockPrecipitationUnit);
 		GameRegistry.registerTileEntity(TilePrecipitationUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "precipitation_unit"));
+		blockIndustrialDryer = new BlockIndustrialDryer();
+		event.getRegistry().register(blockIndustrialDryer);
+		GameRegistry.registerTileEntity(TileIndustrialDryer.class, new ResourceLocation(ImmersiveNuclear.MODID, "industrial_dryer"));
 		// Heavy like IE's concrete (provisional values)
 		blockAgglomerate = new Block(Material.ROCK).setHardness(3f).setResistance(60f).setRegistryName(ImmersiveNuclear.MODID, "impure_agglomerate")
 				.setTranslationKey(ImmersiveNuclear.MODID + ".impure_agglomerate").setCreativeTab(TAB);
@@ -318,6 +341,7 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockChemicalSeparator.instance);
 		MultiblockHandler.registerMultiblock(MultiblockMetalExtractor.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPrecipitationUnit.instance);
+		MultiblockHandler.registerMultiblock(MultiblockIndustrialDryer.instance);
 		mixerRecipes();
 		cokeOvenRecipes();
 		crusherRecipes();

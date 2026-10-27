@@ -9,6 +9,7 @@ import immersivenuclear.common.INContent;
 import immersivenuclear.common.multiblock.MultiblockChemicalProcessor;
 import immersivenuclear.common.multiblock.MultiblockChemicalSeparator;
 import immersivenuclear.common.multiblock.MultiblockFilterPress;
+import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import net.minecraft.item.ItemStack;
@@ -48,6 +49,9 @@ public class ManualEntries
 				new ManualPageMultiblock(manual, "in_precipitation_unit0", MultiblockPrecipitationUnit.instance),
 				text("in_precipitation_unit1"), text("in_precipitation_unit2"),
 				new ManualPages.Crafting(manual, "in_precipitation_unit3", new ItemStack(INContent.itemPrecipitatingAgent)));
+		ManualHelper.addEntry("in_industrial_dryer", CATEGORY,
+				new ManualPageMultiblock(manual, "in_industrial_dryer0", MultiblockIndustrialDryer.instance),
+				text("in_industrial_dryer1"), text("in_industrial_dryer2"));
 		ManualHelper.addEntry("in_supplies", CATEGORY,
 				text("in_supplies0"), text("in_supplies1"),
 				new ManualPages.Crafting(manual, "in_supplies2", new ItemStack(INContent.itemPrecipitatingAgent)));

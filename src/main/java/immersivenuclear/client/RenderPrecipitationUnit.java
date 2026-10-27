@@ -211,4 +211,11 @@ public class RenderPrecipitationUnit extends TileEntitySpecialRenderer<TilePreci
 		}
 		Tessellator.getInstance().draw();
 	}
+
+	/** Drawn whenever the machine's render box is on screen, not only while the master's chunk section is. */
+	@Override
+	public boolean isGlobalRenderer(TilePrecipitationUnit te)
+	{
+		return te.isMaster();
+	}
 }

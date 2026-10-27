@@ -630,7 +630,7 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 		markDirty();
 	}
 
-	/** Hammer on the redstone port: invert the redstone control, like IE's machines. */
+	/** Hammer on the redstone port: invert the redstone control, like IE's machines, and say so in the chat. */
 	@Override
 	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
 	{
@@ -642,7 +642,7 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 		if(!world.isRemote)
 		{
 			m.toggleRedstone();
-			player.sendStatusMessage(new TextComponentTranslation(m.redstoneInverted ? "chat.immersivenuclear.redstone.inverted" : "chat.immersivenuclear.redstone.normal"), true);
+			player.sendStatusMessage(new TextComponentTranslation(m.redstoneInverted ? "chat.immersivenuclear.redstone.inverted" : "chat.immersivenuclear.redstone.normal"), false);
 		}
 		return true;
 	}
@@ -891,10 +891,13 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 		stopSound();
 	}
 
-	/** The master draws the agitator and the liquid inside the tank, around it (any turn of the structure). */
+	/**
+	 * The master draws the whole machine (any turn of the structure): it stands near one end, so the structure reaches
+	 * 5 blocks from it one way, 2 down to the floor and 3 up to the motor.
+	 */
 	@Override
 	public AxisAlignedBB getRenderBoundingBox()
 	{
-		return isMaster() ? new AxisAlignedBB(pos.add(-3, -1, -3), pos.add(4, 3, 4)) : super.getRenderBoundingBox();
+		return isMaster() ? new AxisAlignedBB(pos.add(-5, -2, -5), pos.add(6, 4, 6)) : super.getRenderBoundingBox();
 	}
 }

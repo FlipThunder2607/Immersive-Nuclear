@@ -2,11 +2,13 @@
   "forge_marker": 1,
   "defaults": {
     "custom": {
-      "flip-v": true
+      "flip-v": true,
+      "ambient": false
     },
     "textures": {
       "#arc_furnace_inactive": "immersiveengineering:models/arc_furnace_inactive",
-      "#fluid_input": "immersivenuclear:blocks/fluid_input",
+      "#base_handrail": "immersivenuclear:blocks/base_handrail",
+      "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
       "#metal_device0_barrel_side": "immersiveengineering:blocks/metal_device0_barrel_side",
       "#metal_device0_barrel_up_none": "immersiveengineering:blocks/metal_device0_barrel_up_none",
       "#metal_device0_fluid_pump_side_none": "immersiveengineering:blocks/metal_device0_fluid_pump_side_none",
@@ -14,18 +16,21 @@
       "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
       "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
       "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
-      "#settler_wall": "immersivenuclear:blocks/settler_wall",
-      "#settler_window": "immersivenuclear:blocks/settler_window",
+      "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#precipitation_tank_window": "immersivenuclear:blocks/precipitation_tank_window",
       "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
       "particle": "immersiveengineering:blocks/storage_steel"
     }
   },
   "variants": {
     "facing=east,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator.obj",
+      "y": 90
     },
     "facing=east,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator_mirrored.obj",
+      "y": 90
     },
     "facing=east,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_separator.obj",
@@ -36,10 +41,12 @@
       "y": 90
     },
     "facing=north,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator.obj",
+      "y": 0
     },
     "facing=north,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator_mirrored.obj",
+      "y": 0
     },
     "facing=north,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_separator.obj",
@@ -50,10 +57,12 @@
       "y": 0
     },
     "facing=south,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator.obj",
+      "y": 180
     },
     "facing=south,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator_mirrored.obj",
+      "y": 180
     },
     "facing=south,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_separator.obj",
@@ -64,10 +73,12 @@
       "y": 180
     },
     "facing=west,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator.obj",
+      "y": 270
     },
     "facing=west,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_separator_mirrored.obj",
+      "y": 270
     },
     "facing=west,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_separator.obj",
@@ -101,17 +112,17 @@
           },
           "ground": {
             "translation": [
-              -0.002,
-              -0.045,
+              -0.0,
+              -0.065,
               -0.0
             ],
             "scale": 0.08
           },
           "fixed": {
             "translation": [
-              -0.0033,
-              -0.0731,
-              -0.0
+              -0.0,
+              -0.1056,
+              0.0
             ],
             "scale": 0.13,
             "post-rotation": [
@@ -122,9 +133,9 @@
           },
           "thirdperson_righthand": {
             "translation": [
-              -0.0018,
-              0.0898,
-              -0.038
+              -0.0,
+              -0.0147,
+              -0.0549
             ],
             "scale": 0.07,
             "rotation": [
@@ -140,9 +151,9 @@
           },
           "thirdperson_lefthand": {
             "translation": [
-              -0.0018,
-              0.0898,
-              -0.038
+              -0.0,
+              -0.0147,
+              -0.0549
             ],
             "scale": 0.07,
             "rotation": [
@@ -158,8 +169,8 @@
           },
           "firstperson_righthand": {
             "translation": [
-              -0.002,
-              0.005,
+              -0.0,
+              -0.065,
               -0.0
             ],
             "scale": 0.08,
@@ -171,8 +182,8 @@
           },
           "firstperson_lefthand": {
             "translation": [
-              -0.002,
-              0.005,
+              0.0,
+              -0.065,
               -0.0
             ],
             "scale": 0.08,

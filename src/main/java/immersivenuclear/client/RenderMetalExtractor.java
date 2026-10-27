@@ -303,4 +303,11 @@ public class RenderMetalExtractor extends TileEntitySpecialRenderer<TileMetalExt
 			}
 		}
 	}
+
+	/** Drawn whenever the machine's render box is on screen, not only while the master's chunk section is. */
+	@Override
+	public boolean isGlobalRenderer(TileMetalExtractor te)
+	{
+		return te.isMaster();
+	}
 }

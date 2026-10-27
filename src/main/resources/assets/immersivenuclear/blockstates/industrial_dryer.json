@@ -1,0 +1,317 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true,
+      "ambient": false
+    },
+    "textures": {
+      "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+      "#base_flange": "immersivenuclear:blocks/base_flange",
+      "#base_flange_side": "immersivenuclear:blocks/base_flange_side",
+      "#base_handrail": "immersivenuclear:blocks/base_handrail",
+      "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
+      "#base_hatch": "immersivenuclear:blocks/base_hatch",
+      "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
+      "#base_terminal_box": "immersivenuclear:blocks/base_terminal_box",
+      "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
+      "#furnace_heater": "immersivenuclear:blocks/furnace_heater",
+      "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+      "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
+      "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+      "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+      "#metal_multiblock_refinery_graphite": "immersivenuclear:blocks/metal_multiblock_refinery_graphite",
+      "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "active=false,facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 90
+    },
+    "active=false,facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 90
+    },
+    "active=false,facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 90
+    },
+    "active=false,facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 90
+    },
+    "active=false,facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 0
+    },
+    "active=false,facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 0
+    },
+    "active=false,facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 0
+    },
+    "active=false,facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 0
+    },
+    "active=false,facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 180
+    },
+    "active=false,facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 180
+    },
+    "active=false,facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 180
+    },
+    "active=false,facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 180
+    },
+    "active=false,facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 270
+    },
+    "active=false,facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 270
+    },
+    "active=false,facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 270
+    },
+    "active=false,facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 270
+    },
+    "active=true,facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/industrial_dryer.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "active=true,facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/industrial_dryer_mirrored.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active"
+      }
+    },
+    "inventory": [
+      {
+        "model": "immersivenuclear:obj/industrial_dryer.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0411,
+              0.0537,
+              -0.014
+            ],
+            "scale": 0.1019,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.041,
+              0.0286,
+              -0.0011
+            ],
+            "scale": 0.0738
+          },
+          "fixed": {
+            "translation": [
+              0.0668,
+              0.0466,
+              0.0018
+            ],
+            "scale": 0.1203,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0262,
+              -0.0174,
+              0.0307
+            ],
+            "scale": 0.0649,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0262,
+              -0.0174,
+              0.0307
+            ],
+            "scale": 0.0649,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0297,
+              0.0286,
+              0.0282
+            ],
+            "scale": 0.0738,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0297,
+              0.0286,
+              -0.0282
+            ],
+            "scale": 0.0738,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

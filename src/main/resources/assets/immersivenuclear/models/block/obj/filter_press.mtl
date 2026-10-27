@@ -1,11 +1,11 @@
 newmtl arc_furnace_active
 map_Kd #arc_furnace_active
 
-newmtl fluid_input
-map_Kd #fluid_input
+newmtl base_plate_in
+map_Kd #base_plate_in
 
-newmtl metal_decoration0_radiator
-map_Kd #metal_decoration0_radiator
+newmtl metal_decoration0_radiator_ctm
+map_Kd #metal_decoration0_radiator_ctm
 
 newmtl metal_device0_fluid_pump_top
 map_Kd #metal_device0_fluid_pump_top
@@ -30,4 +30,7 @@ map_Kd #sheetmetal_steel
 
 newmtl storage_steel
 map_Kd #storage_steel
+
+newmtl storage_uranium_top
+map_Kd #storage_uranium_top
 

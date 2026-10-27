@@ -71,7 +71,7 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 	// IE's pieces in refinery.png
 	static final int[] IE_SLOT = {35, 13, 20, 20}, IE_TANK = {11, 18, 20, 51}, IE_BLUE = {42, 10, 6, 3}, IE_ORANGE = {42, 49, 6, 3};
 
-	static final int COL_EFFLUENT = 0xff706a58, COL_WATER = 0xff3f76e4, COL_SLURRY = 0xff968060, COL_SHAFT = 0xff96999e, COL_DUST = 0xff8a9a6a;
+	static final int COL_CONDENSATE = 0xffb4c4d0, COL_EFFLUENT = 0xff706a58, COL_WATER = 0xff3f76e4, COL_SLURRY = 0xff968060, COL_SHAFT = 0xff96999e, COL_DUST = 0xff8a9a6a;
 
 	final ContainerChemicalProcessor container;
 	/** Client counters: the agitator's turn, and the ticks for the swirl and the falling solids. */
@@ -230,11 +230,11 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 		// Fluid moving in the pipes
 		if(fillingRecycled())
 		{
-			int rx = RECYCLED_X + 10;
-			flow(rx, ROW + 51, rx, RECYCLED_PIPE_Y, COL_EFFLUENT);
-			flow(rx, RECYCLED_PIPE_Y, RECYCLED_JOIN_X, RECYCLED_PIPE_Y, COL_EFFLUENT);
-			flow(RECYCLED_JOIN_X, RECYCLED_PIPE_Y, RECYCLED_JOIN_X, REACTOR_Y + PIPE_DY, COL_EFFLUENT);
-			flow(RECYCLED_JOIN_X, REACTOR_Y + PIPE_DY, REACTOR_X - 1, REACTOR_Y + PIPE_DY, COL_EFFLUENT);
+			int rx = RECYCLED_X + 10, col = container.recycledType == 3 ? COL_CONDENSATE : COL_EFFLUENT;
+			flow(rx, ROW + 51, rx, RECYCLED_PIPE_Y, col);
+			flow(rx, RECYCLED_PIPE_Y, RECYCLED_JOIN_X, RECYCLED_PIPE_Y, col);
+			flow(RECYCLED_JOIN_X, RECYCLED_PIPE_Y, RECYCLED_JOIN_X, REACTOR_Y + PIPE_DY, col);
+			flow(RECYCLED_JOIN_X, REACTOR_Y + PIPE_DY, REACTOR_X - 1, REACTOR_Y + PIPE_DY, col);
 		}
 		else if(filling())
 			flow(WATER_X + 20, REACTOR_Y + PIPE_DY, REACTOR_X - 1, REACTOR_Y + PIPE_DY, COL_WATER);
@@ -358,7 +358,7 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 		}
 		if(over(mx, my, HOPPER_X, HOPPER_Y, HOPPER_W, HOPPER_H))
 			tip.add(I18n.format(K + "hopper", TileChemicalProcessor.BATCH_SOLIDS,
-					TileChemicalProcessor.reagentFor(TileChemicalProcessor.recycledShare(container.recycled.getFluidAmount()))));
+					TileChemicalProcessor.reagentFor(TileChemicalProcessor.recycledShare(container.recycled.getFluidAmount()), container.recycled.getFluid())));
 		if(over(mx, my, ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H))
 			tip.add(container.energy + "/" + TileChemicalProcessor.ENERGY_CAPACITY + " IF");
 		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))

@@ -2,7 +2,8 @@
   "forge_marker": 1,
   "defaults": {
     "custom": {
-      "flip-v": true
+      "flip-v": true,
+      "ambient": false
     },
     "textures": {
       "#glass": "minecraft:blocks/glass",
@@ -22,10 +23,12 @@
   },
   "variants": {
     "facing=east,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor.obj",
+      "y": 90
     },
     "facing=east,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor_mirrored.obj",
+      "y": 90
     },
     "facing=east,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_processor.obj",
@@ -36,10 +39,12 @@
       "y": 90
     },
     "facing=north,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor.obj",
+      "y": 0
     },
     "facing=north,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor_mirrored.obj",
+      "y": 0
     },
     "facing=north,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_processor.obj",
@@ -50,10 +55,12 @@
       "y": 0
     },
     "facing=south,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor.obj",
+      "y": 180
     },
     "facing=south,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor_mirrored.obj",
+      "y": 180
     },
     "facing=south,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_processor.obj",
@@ -64,10 +71,12 @@
       "y": 180
     },
     "facing=west,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor.obj",
+      "y": 270
     },
     "facing=west,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/chemical_processor_mirrored.obj",
+      "y": 270
     },
     "facing=west,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/chemical_processor.obj",
@@ -83,11 +92,11 @@
         "transform": {
           "gui": {
             "translation": [
-              -0.0035,
-              -0.0682,
-              -0.0394
+              0.003,
+              -0.0665,
+              -0.0407
             ],
-            "scale": 0.14,
+            "scale": 0.1398,
             "rotation": [
               {
                 "x": 30
@@ -102,18 +111,18 @@
           "ground": {
             "translation": [
               -0.002,
-              -0.045,
-              -0.0
+              -0.0445,
+              -0.0004
             ],
-            "scale": 0.08
+            "scale": 0.0799
           },
           "fixed": {
             "translation": [
-              -0.0033,
-              -0.0731,
-              -0.0
+              0.0032,
+              -0.0724,
+              0.0006
             ],
-            "scale": 0.13,
+            "scale": 0.1298,
             "post-rotation": [
               {
                 "y": 180
@@ -122,11 +131,11 @@
           },
           "thirdperson_righthand": {
             "translation": [
-              -0.0018,
-              0.0898,
-              -0.038
+              -0.0015,
+              -0.011,
+              -0.0374
             ],
-            "scale": 0.07,
+            "scale": 0.0699,
             "rotation": [
               {
                 "x": 75
@@ -140,11 +149,11 @@
           },
           "thirdperson_lefthand": {
             "translation": [
-              -0.0018,
-              0.0898,
-              -0.038
+              -0.0015,
+              -0.011,
+              -0.0374
             ],
-            "scale": 0.07,
+            "scale": 0.0699,
             "rotation": [
               {
                 "x": 75
@@ -158,11 +167,11 @@
           },
           "firstperson_righthand": {
             "translation": [
-              -0.002,
-              0.005,
-              -0.0
+              -0.0017,
+              -0.0445,
+              0.0011
             ],
-            "scale": 0.08,
+            "scale": 0.0799,
             "post-rotation": [
               {
                 "y": 45
@@ -171,11 +180,11 @@
           },
           "firstperson_lefthand": {
             "translation": [
-              -0.002,
-              0.005,
-              -0.0
+              0.0017,
+              -0.0445,
+              -0.0011
             ],
-            "scale": 0.08,
+            "scale": 0.0799,
             "post-rotation": [
               {
                 "y": 225

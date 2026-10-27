@@ -1,15 +1,21 @@
 package immersivenuclear.client;
 
+import java.util.Map;
+
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.INContent;
+import immersivenuclear.common.block.BlockChemicalProcessor;
+import immersivenuclear.common.block.MachinePartBlock;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileFilterPress;
+import immersivenuclear.common.block.TileIndustrialDryer;
 import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.block.TilePrecipitationUnit;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.Item;
@@ -38,6 +44,7 @@ public class ClientEvents
 		ModelLoader.setCustomModelResourceLocation(INContent.itemChemicalSeparator, 0, new ModelResourceLocation(INContent.itemChemicalSeparator.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemMetalExtractor, 0, new ModelResourceLocation(INContent.itemMetalExtractor.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemPrecipitationUnit, 0, new ModelResourceLocation(INContent.itemPrecipitationUnit.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemIndustrialDryer, 0, new ModelResourceLocation(INContent.itemIndustrialDryer.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
@@ -83,6 +90,16 @@ public class ClientEvents
 		RenderFilterPress.bake();
 		RenderMetalExtractor.bake();
 		RenderPrecipitationUnit.bake();
+		// Every part of a formed machine draws its own slice of the machine's model
+		for(Block b : new Block[]{INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
+				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer})
+			for(Map.Entry<IBlockState, ModelResourceLocation> e : event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(b).entrySet())
+			{
+				IBakedModel whole = event.getModelRegistry().getObject(e.getValue());
+				if(whole != null && !(whole instanceof SlicedMachineModel))
+					event.getModelRegistry().putObject(e.getValue(), new SlicedMachineModel(whole, (MachinePartBlock)b,
+							e.getKey().getValue(BlockChemicalProcessor.FACING), e.getKey().getValue(BlockChemicalProcessor.MIRRORED)));
+			}
 	}
 
 	/** Our fluids have no world block, so nothing else asks for their textures (bucket, tanks, pipes draw them). */

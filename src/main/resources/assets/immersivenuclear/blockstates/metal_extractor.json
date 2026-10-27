@@ -2,7 +2,8 @@
   "forge_marker": 1,
   "defaults": {
     "custom": {
-      "flip-v": true
+      "flip-v": true,
+      "ambient": false
     },
     "textures": {
       "#arc_furnace_inactive": "immersiveengineering:models/arc_furnace_inactive",
@@ -23,10 +24,12 @@
   },
   "variants": {
     "facing=east,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor.obj",
+      "y": 90
     },
     "facing=east,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor_mirrored.obj",
+      "y": 90
     },
     "facing=east,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/metal_extractor.obj",
@@ -37,10 +40,12 @@
       "y": 90
     },
     "facing=north,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor.obj",
+      "y": 0
     },
     "facing=north,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor_mirrored.obj",
+      "y": 0
     },
     "facing=north,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/metal_extractor.obj",
@@ -51,10 +56,12 @@
       "y": 0
     },
     "facing=south,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor.obj",
+      "y": 180
     },
     "facing=south,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor_mirrored.obj",
+      "y": 180
     },
     "facing=south,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/metal_extractor.obj",
@@ -65,10 +72,12 @@
       "y": 180
     },
     "facing=west,master=false,mirrored=false": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor.obj",
+      "y": 270
     },
     "facing=west,master=false,mirrored=true": {
-      "model": "immersiveengineering:ie_empty"
+      "model": "immersivenuclear:obj/metal_extractor_mirrored.obj",
+      "y": 270
     },
     "facing=west,master=true,mirrored=false": {
       "model": "immersivenuclear:obj/metal_extractor.obj",

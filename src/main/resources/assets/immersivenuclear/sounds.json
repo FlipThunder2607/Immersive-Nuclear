@@ -23,5 +23,13 @@
     "metal_extractor_cleaner_up": { "category": "block", "sounds": [ "immersivenuclear:metal_extractor_cleaner_up" ] },
     "precipitation_screw_start": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_start" ] },
     "precipitation_screw_loop": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_loop" ] },
-    "precipitation_screw_stop": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_stop" ] }
+    "precipitation_screw_stop": { "category": "block", "sounds": [ "immersivenuclear:precipitation_screw_stop" ] },
+    "industrial_dryer_load": { "category": "block", "sounds": [ "immersivenuclear:industrial_dryer_load" ] },
+    "industrial_dryer_heat_start": { "category": "block", "sounds": [ "immersivenuclear:industrial_dryer_heat_start" ] },
+    "industrial_dryer_heat_loop": { "category": "block", "sounds": [ { "name": "immersivenuclear:industrial_dryer_heat_loop", "stream": false } ] },
+    "industrial_dryer_heat_stop": { "category": "block", "sounds": [ "immersivenuclear:industrial_dryer_heat_stop" ] },
+    "industrial_dryer_dry_start": { "category": "block", "sounds": [ "immersivenuclear:industrial_dryer_dry_start" ] },
+    "industrial_dryer_dry_loop": { "category": "block", "sounds": [ { "name": "immersivenuclear:industrial_dryer_dry_loop", "stream": false } ] },
+    "industrial_dryer_dry_stop": { "category": "block", "sounds": [ "immersivenuclear:industrial_dryer_dry_stop" ] },
+    "industrial_dryer_discharge": { "category": "block", "sounds": [ "immersivenuclear:industrial_dryer_discharge" ] }
 }

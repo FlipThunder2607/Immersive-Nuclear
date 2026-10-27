@@ -6,13 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Industrial Dryer** (machine 5), closing line 1: the water is driven out of the Wet Uranium Concentrate and
+  **Yellowcake** comes out. A 4×7×3 multiblock (63 IE blocks): a horizontal drying chamber with paddles and heaters,
+  a feed hopper with a rotary valve, a condenser and a condensate tank. Each batch takes 24 Wet Uranium Concentrate and
+  90 seconds: loading, heating up to 140 °C, 60 seconds of drying while the paddles turn the concentrate over, then
+  cooling and discharge. 16 Yellowcake and 2000 mB of Process Condensate per batch (76800 IF).
+  GUI, JEI page (click the chamber in the GUI), a page in the Engineer's Manual, heaters that glow while they run,
+  steam rising from the chamber and yellow dust at the discharge, and a sound for every step.
+  A scrubber on the vapour line catches the fines the vapour carries off: every 4 batches they come back as one more
+  yellowcake.
+- The Industrial Dryer's Process Condensate goes back into the Chemical Processing Unit through its recycled liquor
+  tank, in place of part of the water (unlike the effluents, it saves no reagent).
+- A set of base detail textures for the machines (flanges, hatches, handwheels, vents and more), the Immersive
+  Nuclear maker's plate, and a darker graphite finish for the machines' decks.
+
 ### Changed
 - Precipitation Unit: the structure follows the rebuilt screw ramp (iron sheetmetal blocks and slabs; 93 IE blocks).
 - Precipitation Unit: a batch now takes 90 seconds, 60 s mixing and 30 s dewatering (was 20 s and 10 s).
 - Precipitation Unit model: one more plate on the tank.
+- Precipitation Unit model: more detail (maker's plate, gauge, inlet valve, ladder, railing on the tank's lid) and a
+  darker graphite deck; faces that flickered where two parts met no longer do.
+- Yellowcake's icon in its real lemon yellow, no longer mistaken for IE's gold dust.
+- Every machine's model is now drawn in pieces, each by the block it stands in, so the machines no longer vanish at
+  some view angles and a block placed against them no longer turns their faces black.
+
+### Fixed
+- Low frame rate near machines with moving parts (Filtration Unit, Metal Extractor, Precipitation Unit).
+- The Engineer's Hammer on a machine's redstone port now inverts its redstone control (it did nothing before).
 
 ### Planned
-- Industrial Dryer (machine 5), closing line 1.
+- Concentrate Drum (storage for yellowcake).
 - The mod's own computers: multiblocks built with the Control Engineering Block, a data network with player-named
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.

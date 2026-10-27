@@ -141,4 +141,11 @@ public class RenderChemicalSeparator extends TileEntitySpecialRenderer<TileChemi
 		}
 		Tessellator.getInstance().draw();
 	}
+
+	/** Drawn whenever the machine's render box is on screen, not only while the master's chunk section is. */
+	@Override
+	public boolean isGlobalRenderer(TileChemicalSeparator te)
+	{
+		return te.isMaster();
+	}
 }

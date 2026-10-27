@@ -7,7 +7,7 @@
   "mcversion": "${mcversion}",
   "url": "",
   "authorList": ["FlipThunder2607"],
-  "credits": "BluSunrize and the Immersive Engineering team. Some item icons are remixes of Immersive Engineering textures, used under the addon clause of its license.",
+  "credits": "BluSunrize and the Immersive Engineering team. Some item icons and block textures are copies or remixes of Immersive Engineering textures, used under the addon clause of its license.",
   "dependencies": ["immersiveengineering"]
 }
 ]

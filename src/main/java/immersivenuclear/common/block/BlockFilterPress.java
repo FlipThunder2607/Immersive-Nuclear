@@ -1,6 +1,7 @@
 package immersivenuclear.common.block;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.INGuiHandler;
 import immersivenuclear.common.INContent;
@@ -9,6 +10,7 @@ import immersivenuclear.common.multiblock.MultiblockFilterPress;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,13 +23,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Every part of a formed Filtration Unit. The master part draws the whole unit
  * (models/block/obj/filter_press*.obj);
  * the other parts are invisible. Same properties as {@link BlockChemicalProcessor}, all from the tile entity.
  */
-public class BlockFilterPress extends Block
+public class BlockFilterPress extends Block implements MachinePartBlock
 {
 	/** Set while parts are being put back, so restoring one part does not start another disassembly. */
 	static boolean disassembling;
@@ -48,7 +55,7 @@ public class BlockFilterPress extends Block
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this, BlockChemicalProcessor.FACING, BlockChemicalProcessor.MASTER, BlockChemicalProcessor.MIRRORED);
+		return new ExtendedBlockState(this, new IProperty[]{BlockChemicalProcessor.FACING, BlockChemicalProcessor.MASTER, BlockChemicalProcessor.MIRRORED}, new IUnlistedProperty[]{OFFSET});
 	}
 
 	@Override
@@ -114,12 +121,18 @@ public class BlockFilterPress extends Block
 			spawnAsEntity(world, pos, ((TileFilterPress)te).getOriginalStack());
 	}
 
-	/** Right click on any part opens the interface of the master, like IE's multiblocks (not while sneaking or with the hammer). */
+	/** Right click on any part opens the interface of the master, like IE's multiblocks (not while sneaking; the hammer goes to the part, which inverts the redstone port). */
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		ItemStack held = player.getHeldItem(hand);
-		if(player.isSneaking() || !held.isEmpty() && held.getItem().getToolClasses(held).contains(Lib.TOOL_HAMMER))
+		if(!held.isEmpty() && held.getItem().getToolClasses(held).contains(Lib.TOOL_HAMMER))
+		{
+			// IE's own blocks hand the hammer to their tile (the hammer item does not): the redstone port inverts
+			TileEntity tile = world.getTileEntity(pos);
+			return tile instanceof IHammerInteraction && ((IHammerInteraction)tile).hammerUseSide(side, player, hitX, hitY, hitZ);
+		}
+		if(player.isSneaking())
 			return false;
 		TileEntity te = world.getTileEntity(pos);
 		if(!(te instanceof TileFilterPress))
@@ -166,6 +179,31 @@ public class BlockFilterPress extends Block
 	public boolean isFullCube(IBlockState state)
 	{
 		return false;
+	}
+
+	/** Which slice of the machine's model this part draws: its offset from the master. */
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		TileEntity te = world.getTileEntity(pos);
+		if(state instanceof IExtendedBlockState && te instanceof TileFilterPress)
+			return ((IExtendedBlockState)state).withProperty(OFFSET, pos.subtract(((TileFilterPress)te).getMasterPos()));
+		return state;
+	}
+
+	@Override
+	public boolean isPartAt(EnumFacing facing, boolean mirrored, BlockPos offset)
+	{
+		int[] t = FilterPressStructure.unrotate(offset.getX(), offset.getZ(), MultiblockFilterPress.turns(facing), mirrored);
+		return FilterPressStructure.isPart(FilterPressStructure.MASTER_DX + t[0], FilterPressStructure.MASTER_DY + offset.getY(), FilterPressStructure.MASTER_DZ + t[1]);
+	}
+
+	/** The model's light: the brightest of the spot and its neighbours, so a solid block beside the master does not darken it. */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getPackedLightmapCoords(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		return MachineLight.packed(world, pos);
 	}
 
 	@Override

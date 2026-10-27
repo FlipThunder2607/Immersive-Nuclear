@@ -1,6 +1,8 @@
 {
   "textures": {
     "#arc_furnace_inactive": "immersiveengineering:models/arc_furnace_inactive",
+    "#base_handrail": "immersivenuclear:blocks/base_handrail",
+    "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
     "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
     "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
     "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
@@ -9,6 +11,7 @@
     "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
     "#precipitation_tank_window": "immersivenuclear:blocks/precipitation_tank_window",
     "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
     "particle": "immersiveengineering:blocks/storage_steel"
   },
   "parts": {

@@ -1,6 +1,7 @@
 package immersivenuclear.common.block;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.INGuiHandler;
 import immersivenuclear.common.INContent;
@@ -9,6 +10,7 @@ import immersivenuclear.common.multiblock.MultiblockChemicalProcessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -23,13 +25,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Every part of a formed Chemical Processing Unit. The master part draws the whole unit
  * (models/block/obj/chemical_processor*.obj);
  * the other parts are invisible. The properties only come from the tile entity, nothing is stored in meta.
  */
-public class BlockChemicalProcessor extends Block
+public class BlockChemicalProcessor extends Block implements MachinePartBlock
 {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	public static final PropertyBool MASTER = PropertyBool.create("master");
@@ -53,7 +60,7 @@ public class BlockChemicalProcessor extends Block
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this, FACING, MASTER, MIRRORED);
+		return new ExtendedBlockState(this, new IProperty[]{FACING, MASTER, MIRRORED}, new IUnlistedProperty[]{OFFSET});
 	}
 
 	@Override
@@ -118,12 +125,18 @@ public class BlockChemicalProcessor extends Block
 			spawnAsEntity(world, pos, ((TileChemicalProcessor)te).getOriginalStack());
 	}
 
-	/** Right click on any part opens the interface of the master, like IE's multiblocks (not while sneaking or with the hammer). */
+	/** Right click on any part opens the interface of the master, like IE's multiblocks (not while sneaking; the hammer goes to the part, which inverts the redstone port). */
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		ItemStack held = player.getHeldItem(hand);
-		if(player.isSneaking() || !held.isEmpty() && held.getItem().getToolClasses(held).contains(Lib.TOOL_HAMMER))
+		if(!held.isEmpty() && held.getItem().getToolClasses(held).contains(Lib.TOOL_HAMMER))
+		{
+			// IE's own blocks hand the hammer to their tile (the hammer item does not): the redstone port inverts
+			TileEntity tile = world.getTileEntity(pos);
+			return tile instanceof IHammerInteraction && ((IHammerInteraction)tile).hammerUseSide(side, player, hitX, hitY, hitZ);
+		}
+		if(player.isSneaking())
 			return false;
 		TileEntity te = world.getTileEntity(pos);
 		if(!(te instanceof TileChemicalProcessor))
@@ -170,6 +183,31 @@ public class BlockChemicalProcessor extends Block
 	public boolean isFullCube(IBlockState state)
 	{
 		return false;
+	}
+
+	/** Which slice of the machine's model this part draws: its offset from the master. */
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		TileEntity te = world.getTileEntity(pos);
+		if(state instanceof IExtendedBlockState && te instanceof TileChemicalProcessor)
+			return ((IExtendedBlockState)state).withProperty(OFFSET, pos.subtract(((TileChemicalProcessor)te).getMasterPos()));
+		return state;
+	}
+
+	@Override
+	public boolean isPartAt(EnumFacing facing, boolean mirrored, BlockPos offset)
+	{
+		int[] t = ChemicalProcessorStructure.unrotate(offset.getX(), offset.getZ(), MultiblockChemicalProcessor.turns(facing), mirrored);
+		return ChemicalProcessorStructure.isPart(ChemicalProcessorStructure.MASTER_DX + t[0], ChemicalProcessorStructure.MASTER_DY + offset.getY(), ChemicalProcessorStructure.MASTER_DZ + t[1]);
+	}
+
+	/** The model's light: the brightest of the spot and its neighbours, so a solid block beside the master does not darken it. */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getPackedLightmapCoords(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		return MachineLight.packed(world, pos);
 	}
 
 	@Override

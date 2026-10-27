@@ -144,4 +144,4 @@ Immersive Nuclear is licensed under the [GNU General Public License v3.0](LICENS
 ## Credits
 
 - [Immersive Engineering](https://github.com/BluSunrize/ImmersiveEngineering) by BluSunrize and contributors. This addon builds on its API and references its textures at runtime.
-- Some item icons are remixes of Immersive Engineering textures. They are not covered by this mod's GPL-3.0: they stay under [Immersive Engineering's license](https://github.com/BluSunrize/ImmersiveEngineering/blob/master/LICENSE) and are used under its clause for addons.
+- Some item icons and block textures (such as the furnace heater faces of the Industrial Dryer) are copies or remixes of Immersive Engineering textures. They are not covered by this mod's GPL-3.0: they stay under [Immersive Engineering's license](https://github.com/BluSunrize/ImmersiveEngineering/blob/master/LICENSE) and are used under its clause for addons.

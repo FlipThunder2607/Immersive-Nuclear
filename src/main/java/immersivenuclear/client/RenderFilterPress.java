@@ -131,10 +131,12 @@ public class RenderFilterPress extends TileEntitySpecialRenderer<TileFilterPress
 		}
 	}
 
+	/** A moving-part OBJ, flat lit like the machine's own model: it is drawn every frame, and smooth lighting would ask
+	 * the light of several neighbours for every face of every part. */
 	static IModel load(String obj, ImmutableMap<String, String> textures) throws Exception
 	{
 		return ModelLoaderRegistry.getModel(new ResourceLocation(ImmersiveNuclear.MODID, obj))
-				.process(ImmutableMap.of("flip-v", "true")).retexture(textures);
+				.process(ImmutableMap.of("flip-v", "true", "ambient", "false")).retexture(textures);
 	}
 
 	static IBakedModel bakeGroup(IModel model, String group)
@@ -241,5 +243,12 @@ public class RenderFilterPress extends TileEntitySpecialRenderer<TileFilterPress
 			Minecraft.getMinecraft().getRenderItem().renderItem(residue, ItemCameraTransforms.TransformType.FIXED);
 			GlStateManager.popMatrix();
 		}
+	}
+
+	/** Drawn whenever the machine's render box is on screen, not only while the master's chunk section is. */
+	@Override
+	public boolean isGlobalRenderer(TileFilterPress te)
+	{
+		return te.isMaster();
 	}
 }

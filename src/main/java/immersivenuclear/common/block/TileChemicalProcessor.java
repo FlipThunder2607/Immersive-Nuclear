@@ -46,7 +46,8 @@ import net.minecraftforge.oredict.OreDictionary;
  * The reactor works in batches, like a settler: 1 fill (the hopper doses the uranium powder and the reagent, the pump
  * brings the water in), 2 react (the agitator turns, the water turns into slurry), 3 drain (the pump empties the
  * reactor into the slurry tank). A batch only starts with its solids at hand and room for all its slurry.
- * Recycled liquor: the chemical effluent (machine 3) or the depleted effluent (Metal Extractor) can make up to half of
+ * Recycled liquor: the chemical effluent (machine 3), the depleted effluent (Metal Extractor) or the Industrial Dryer's
+ * process condensate (only water to it: it saves no reagent) can make up to half of
  * a batch's liquid, from its own tank (the water port and bucket slot send each fluid to its tank). The acid left in
  * it saves reagent: a batch with the full half recycled takes a quarter less (the saving scales with the share).
  * Sounds: the machine's own sound while the agitator turns; the mod's pump sound ({@link PumpSound}), on the pump
@@ -128,7 +129,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			markDirty();
 		}
 	};
-	/** Recycled liquor: chemical effluent or depleted effluent (one at a time). */
+	/** Recycled liquor: chemical effluent, depleted effluent or process condensate (one at a time). */
 	final FluidTank recycled = new FluidTank(TANK_CAPACITY)
 	{
 		@Override
@@ -257,10 +258,22 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		}
 	}
 
-	/** Chemical effluent or depleted effluent: what the recycled liquor tank takes. */
+	/** Chemical effluent, depleted effluent or the dryer's process condensate: what the recycled liquor tank takes. */
 	public static boolean isRecycled(FluidStack fluid)
 	{
+		return savesReagent(fluid) || fluid != null && fluid.getFluid() == INContent.fluidCondensate;
+	}
+
+	/** The effluents still carry acid and oxidizer, so they save reagent; the condensate is little more than water. */
+	public static boolean savesReagent(FluidStack fluid)
+	{
 		return fluid != null && (fluid.getFluid() == INContent.fluidEffluent || fluid.getFluid() == INContent.fluidDepletedEffluent);
+	}
+
+	/** Reagent for a batch taking this much of this recycled liquor. */
+	public static int reagentFor(int recycled, FluidStack liquor)
+	{
+		return reagentFor(savesReagent(liquor) ? recycled : 0);
 	}
 
 	/** Recycled liquor a batch would take now: what the tank holds, up to half the batch. */
@@ -557,7 +570,8 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			case PHASE_IDLE:
 				// A new batch: the hopper doses the solids (less reagent with recycled liquor), then the reactor fills
 				int share = recycledShare(recycled.getFluidAmount());
-				if(inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < reagentFor(share)
+				int reagent = reagentFor(share, recycled.getFluid());
+				if(inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < reagent
 						|| water.getFluidAmount() + share < FILL_PER_TICK)
 					state = STATE_NO_INPUT;
 				else if(slurry.getCapacity() - slurry.getFluidAmount() < BATCH_WATER)
@@ -565,7 +579,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				else
 				{
 					inventory.extractItem(SLOT_URANIUM, BATCH_SOLIDS, false);
-					inventory.extractItem(SLOT_REAGENT, reagentFor(share), false);
+					inventory.extractItem(SLOT_REAGENT, reagent, false);
 					batchRecycled = share;
 					next(PHASE_FILL);
 					state = STATE_RUNNING;
@@ -648,7 +662,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 			m.slurry.drainInternal(taken, true);
 	}
 
-	/** Hammer on the redstone port: invert the redstone control, like IE's machines. */
+	/** Hammer on the redstone port: invert the redstone control, like IE's machines, and say so in the chat. */
 	@Override
 	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
 	{
@@ -660,7 +674,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		if(!world.isRemote)
 		{
 			m.toggleRedstone();
-			player.sendStatusMessage(new TextComponentTranslation(m.redstoneInverted ? "chat.immersivenuclear.redstone.inverted" : "chat.immersivenuclear.redstone.normal"), true);
+			player.sendStatusMessage(new TextComponentTranslation(m.redstoneInverted ? "chat.immersivenuclear.redstone.inverted" : "chat.immersivenuclear.redstone.normal"), false);
 		}
 		return true;
 	}
@@ -685,7 +699,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 	public int getRecycledType()
 	{
 		FluidStack f = recycled.getFluid();
-		return f == null ? 0 : f.getFluid() == INContent.fluidDepletedEffluent ? 2 : 1;
+		return f == null ? 0 : f.getFluid() == INContent.fluidDepletedEffluent ? 2 : f.getFluid() == INContent.fluidCondensate ? 3 : 1;
 	}
 
 	public int getBatchRecycled()

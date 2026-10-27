@@ -90,3 +90,9 @@ task precipitationUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn precipitationUnitStructureTest
+
+task industrialDryerStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.IndustrialDryerStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn industrialDryerStructureTest

@@ -5,6 +5,7 @@ import java.util.Collections;
 import immersivenuclear.client.GuiChemicalProcessor;
 import immersivenuclear.client.GuiChemicalSeparator;
 import immersivenuclear.client.GuiFilterPress;
+import immersivenuclear.client.GuiIndustrialDryer;
 import immersivenuclear.client.GuiMetalExtractor;
 import immersivenuclear.client.GuiPrecipitationUnit;
 import immersivenuclear.common.INContent;
@@ -30,19 +31,21 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new ChemicalSeparatorCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MetalExtractorCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new PrecipitationUnitCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
-	/** Liquids with recipe pages now (machine 3, IE's Mixer), not the "coming later" note. */
+	/** Liquids with recipe pages now (our machines, IE's Mixer), not the "coming later" note. */
 	static boolean hasRecipes(Fluid f)
 	{
 		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent
-				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent;
+				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate;
 	}
 
 	@Override
 	public void register(IModRegistry registry)
 	{
-		registry.addRecipes(java.util.Arrays.asList(new ChemicalProcessorRecipe(false), new ChemicalProcessorRecipe(true)), ChemicalProcessorCategory.UID);
+		registry.addRecipes(java.util.Arrays.asList(new ChemicalProcessorRecipe(false), new ChemicalProcessorRecipe(true),
+				new ChemicalProcessorRecipe(false, true)), ChemicalProcessorCategory.UID);
 		ItemStack machine = new ItemStack(INContent.itemChemicalProcessor);
 		registry.addRecipeCatalyst(machine, ChemicalProcessorCategory.UID);
 		// Clicking the arrow of the interface shows the recipes, like IE's machines
@@ -76,6 +79,13 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeClickArea(GuiPrecipitationUnit.class, GuiPrecipitationUnit.MIXER_X, GuiPrecipitationUnit.MIXER_Y, GuiPrecipitationUnit.MIXER_W,
 				GuiPrecipitationUnit.MIXER_H, PrecipitationUnitCategory.UID);
 		registry.addIngredientInfo(precipitation, VanillaTypes.ITEM, "jei.immersivenuclear.precipitation_unit.info");
+		registry.addRecipes(Collections.singletonList(new IndustrialDryerRecipe()), IndustrialDryerCategory.UID);
+		ItemStack dryer = new ItemStack(INContent.itemIndustrialDryer);
+		registry.addRecipeCatalyst(dryer, IndustrialDryerCategory.UID);
+		// Clicking the drying chamber of the interface shows the recipe
+		registry.addRecipeClickArea(GuiIndustrialDryer.class, GuiIndustrialDryer.CHAMBER_X, GuiIndustrialDryer.CHAMBER_Y, GuiIndustrialDryer.CHAMBER_W,
+				GuiIndustrialDryer.CHAMBER_H, IndustrialDryerCategory.UID);
+		registry.addIngredientInfo(dryer, VanillaTypes.ITEM, "jei.immersivenuclear.industrial_dryer.info");
 
 		// What each of our materials is for
 		registry.addIngredientInfo(new ItemStack(INContent.itemFilter), VanillaTypes.ITEM, "jei.immersivenuclear.filter.info");
@@ -99,6 +109,7 @@ public class INJeiPlugin implements IModPlugin
 		for(Item item : INContent.itemEngineering)
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidSludge, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.neutralized_sludge.info");
+		registry.addIngredientInfo(new FluidStack(INContent.fluidCondensate, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.process_condensate.info");
 		for(Fluid fluid : INContent.fluids)
 			if(fluid != INContent.fluidSlurry && fluid != INContent.fluidCrudeSolution)
 				if(!hasRecipes(fluid))

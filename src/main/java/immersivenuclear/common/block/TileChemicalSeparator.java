@@ -698,7 +698,7 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		markDirty();
 	}
 
-	/** Hammer on the redstone port: invert the redstone control, like IE's machines. */
+	/** Hammer on the redstone port: invert the redstone control, like IE's machines, and say so in the chat. */
 	@Override
 	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
 	{
@@ -710,7 +710,7 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		if(!world.isRemote)
 		{
 			m.toggleRedstone();
-			player.sendStatusMessage(new TextComponentTranslation(m.redstoneInverted ? "chat.immersivenuclear.redstone.inverted" : "chat.immersivenuclear.redstone.normal"), true);
+			player.sendStatusMessage(new TextComponentTranslation(m.redstoneInverted ? "chat.immersivenuclear.redstone.inverted" : "chat.immersivenuclear.redstone.normal"), false);
 		}
 		return true;
 	}

@@ -90,7 +90,8 @@ public class ContainerChemicalProcessor extends Container
 		{
 			case 9: recycledType = data; break;
 			case 10:
-				recycled.setFluid(data > 0 && recycledType > 0 ? new FluidStack(recycledType == 2 ? INContent.fluidDepletedEffluent : INContent.fluidEffluent, data) : null);
+				recycled.setFluid(data > 0 && recycledType > 0 ? new FluidStack(recycledType == 2 ? INContent.fluidDepletedEffluent
+						: recycledType == 3 ? INContent.fluidCondensate : INContent.fluidEffluent, data) : null);
 				break;
 			case 11: batchRecycled = data; break;
 			case 0: water.setFluid(data > 0 ? new FluidStack(FluidRegistry.WATER, data) : null); break;

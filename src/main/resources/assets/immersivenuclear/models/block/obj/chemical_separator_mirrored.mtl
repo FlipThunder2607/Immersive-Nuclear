@@ -1,8 +1,11 @@
 newmtl arc_furnace_inactive
 map_Kd #arc_furnace_inactive
 
-newmtl fluid_input
-map_Kd #fluid_input
+newmtl base_handrail
+map_Kd #base_handrail
+
+newmtl base_plate_in
+map_Kd #base_plate_in
 
 newmtl metal_device0_barrel_side
 map_Kd #metal_device0_barrel_side
@@ -25,12 +28,15 @@ map_Kd #metal_multiblock_mixer
 newmtl metal_multiblock_refinery
 map_Kd #metal_multiblock_refinery
 
-newmtl settler_wall
-map_Kd #settler_wall
+newmtl precipitation_tank_wall
+map_Kd #precipitation_tank_wall
 
-newmtl settler_window
-map_Kd #settler_window
+newmtl precipitation_tank_window
+map_Kd #precipitation_tank_window
 
 newmtl storage_steel
 map_Kd #storage_steel
+
+newmtl storage_uranium_top
+map_Kd #storage_uranium_top
 

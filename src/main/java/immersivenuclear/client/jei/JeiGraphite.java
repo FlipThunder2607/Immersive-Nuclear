@@ -17,7 +17,7 @@ final class JeiGraphite
 {
 	static final ResourceLocation IE = new ResourceLocation("immersiveengineering", "textures/gui/refinery.png");
 	static final ResourceLocation GRAPHITE = new ResourceLocation(ImmersiveNuclear.MODID, "textures/gui/graphite.png");
-	static final int WELL = 0xff1c1c1e, PIPE_EDGE = 0xff1e1f21, PIPE_LIGHT = 0xff606266, PIPE = 0xff4e5054, TEXT = 0xd0d0d0;
+	static final int WELL = 0xff1c1c1e, PIPE_RIM = 0xff55585e, PIPE_CORE = 0xff2a2c30, TEXT = 0xd0d0d0;
 
 	final IDrawableStatic plate;
 	final IDrawable slot, tank, gauge, blue, orange;
@@ -71,22 +71,19 @@ final class JeiGraphite
 			ClientUtils.drawGradientRect(x, y, x + w, y + h, argb, argb);
 	}
 
-	/** A pipe like the interfaces' (dark walls, a lighter body), horizontal or vertical, centred on its line. */
+	/** A pipe like the interfaces' (a light rim round the dark core the moving fluid fills), horizontal or vertical,
+	 * centred on its line. */
 	static void pipe(int x0, int y0, int x1, int y1)
 	{
 		if(y0 == y1)
 		{
-			int x = Math.min(x0, x1), w = Math.abs(x1 - x0) + 1;
-			rect(x, y0 - 2, w, 5, PIPE_EDGE);
-			rect(x, y0 - 1, w, 1, PIPE_LIGHT);
-			rect(x, y0, w, 2, PIPE);
+			rect(Math.min(x0, x1) - 2, y0 - 2, Math.abs(x1 - x0) + 5, 5, PIPE_RIM);
+			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, PIPE_CORE);
 		}
 		else
 		{
-			int y = Math.min(y0, y1), h = Math.abs(y1 - y0) + 1;
-			rect(x0 - 2, y, 5, h, PIPE_EDGE);
-			rect(x0 - 1, y, 1, h, PIPE_LIGHT);
-			rect(x0, y, 2, h, PIPE);
+			rect(x0 - 2, Math.min(y0, y1) - 2, 5, Math.abs(y1 - y0) + 5, PIPE_RIM);
+			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, PIPE_CORE);
 		}
 	}
 

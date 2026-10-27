@@ -1,9 +1,9 @@
 {
   "textures": {
     "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+    "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
     "#conveyor_off": "immersiveengineering:blocks/conveyor_off",
-    "#fluid_input": "immersivenuclear:blocks/fluid_input",
-    "#metal_decoration0_radiator": "immersiveengineering:blocks/metal_decoration0_radiator",
+    "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
     "#metal_device0_fluid_pump_top": "immersiveengineering:blocks/metal_device0_fluid_pump_top",
     "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
     "#metal_device1_thermoelectric_gen_bottom": "immersiveengineering:blocks/metal_device1_thermoelectric_gen_bottom",
@@ -12,6 +12,7 @@
     "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
     "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
     "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
     "#wooden_device_windmill_advanced": "immersiveengineering:blocks/wooden_device_windmill_advanced",
     "particle": "immersiveengineering:blocks/storage_steel"
   },
