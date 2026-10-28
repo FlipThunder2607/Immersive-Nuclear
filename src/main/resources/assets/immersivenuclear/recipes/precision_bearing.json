@@ -1,0 +1,22 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "NNN",
+        "NRN",
+        "NNN"
+    ],
+    "key": {
+        "N": {
+            "type": "forge:ore_dict",
+            "ore": "nuggetSteel"
+        },
+        "R": {
+            "type": "forge:ore_dict",
+            "ore": "stickSteel"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:precision_bearing",
+        "count": 2
+    }
+}

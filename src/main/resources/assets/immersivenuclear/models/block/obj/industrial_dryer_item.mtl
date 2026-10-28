@@ -1,0 +1,72 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
+newmtl base_actuator
+map_Kd #base_actuator
+
+newmtl base_brass
+map_Kd #base_brass
+
+newmtl base_flange
+map_Kd #base_flange
+
+newmtl base_flange_side
+map_Kd #base_flange_side
+
+newmtl base_handrail
+map_Kd #base_handrail
+
+newmtl base_handwheel
+map_Kd #base_handwheel
+
+newmtl base_hatch
+map_Kd #base_hatch
+
+newmtl base_plate_in
+map_Kd #base_plate_in
+
+newmtl base_vent_cap
+map_Kd #base_vent_cap
+
+newmtl concentrate_drum_side
+map_Kd #concentrate_drum_side
+
+newmtl concentrate_drum_top
+map_Kd #concentrate_drum_top
+
+newmtl conveyor_off
+map_Kd #conveyor_off
+
+newmtl furnace_heater
+map_Kd #furnace_heater
+
+newmtl metal_decoration0_radiator_ctm
+map_Kd #metal_decoration0_radiator_ctm
+
+newmtl metal_device1_fluid_pipe
+map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_device1_thermoelectric_gen_bottom
+map_Kd #metal_device1_thermoelectric_gen_bottom
+
+newmtl metal_multiblock_arc_furnace
+map_Kd #metal_multiblock_arc_furnace
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl precipitation_tank_wall
+map_Kd #precipitation_tank_wall
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl storage_steel
+map_Kd #storage_steel
+
+newmtl wooden_device_windmill_advanced
+map_Kd #wooden_device_windmill_advanced
+

@@ -7,32 +7,39 @@ public class IndustrialDryerStructureTest
 {
 	public static void main(String[] args)
 	{
-		// Counts read from the dev world build (x200..203, y4..6, z449..455, 26/10, second build)
-		expect(count('s'), 20, "steel scaffolding");
+		// Counts read from the dev world build (x200..204, y4..7, z449..455, 27/10, fourth layer and front fence)
+		expect(count('s'), 22, "steel scaffolding");
 		expect(count('F'), 3, "furnace heaters");
-		expect(count('l'), 4, "light engineering");
+		expect(count('l'), 9, "light engineering");
 		expect(count('H'), 2, "heavy engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 1, "generators");
-		expect(count('r'), 1, "radiators");
+		expect(count('r'), 3, "radiators");
 		expect(count('B'), 4, "metal barrels");
-		expect(count('p'), 3, "fluid pipes");
+		expect(count('p'), 5, "fluid pipes");
 		expect(count('I'), 13, "iron sheetmetal");
+		expect(count('c'), 5, "conveyors");
+		expect(count('f'), 6, "steel fences");
+		expect(count('X'), 1, "radioactive handling");
 		expect(count('a'), 11, "iron sheetmetal slabs");
-		expect(totalParts(), 63, "total parts");
+		expect(count('b'), 3, "steel sheetmetal slabs");
+		expect(totalParts(), 89, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'a', "master is a roof slab of the chamber");
 		expect(portAt(2, 1, 2), PORT_WET, "wet concentrate port");
-		expect(portAt(1, 1, 2), PORT_WET, "wet concentrate under the model's hopper");
-		expect(get(2, 1, 2), 'I', "wet concentrate through the feed hopper on the chamber's roof");
-		expect(portAt(1, -1, 6), PORT_YELLOWCAKE, "yellowcake port");
-		expect(portFace(1, -1, 6)[1], 1, "yellowcake on the south face");
-		expect(portAt(3, -1, 5), PORT_CONDENSATE, "condensate port");
-		expect(portFace(3, -1, 5)[0], 1, "condensate on the east face (back)");
-		expect(portAt(3, -1, 0), PORT_ENERGY, "energy port (bottom)");
-		expect(portAt(3, 0, 0), PORT_ENERGY, "energy port (top)");
-		expect(get(3, 0, 0), 'H', "energy on heavy engineering");
+		expect(portAt(1, 1, 2), PORT_WET, "wet concentrate under the hopper");
+		expect(get(1, 1, 2), 'I', "wet concentrate through the feed hopper on the chamber's roof");
+		expect(portAt(4, -1, 1), PORT_DRUM, "empty drum port");
+		expect(portFace(4, -1, 1)[0], 1, "empty drums on the east face (back), at the conveyor's start");
+		expect(get(3, 0, 1), 'c', "the conveyor starts by the drum port");
+		expect(portAt(2, -1, 6), PORT_YELLOWCAKE, "yellowcake port");
+		expect(portFace(2, -1, 6)[1], 1, "yellowcake and full drums on the south face");
+		expect(portAt(4, -1, 5), PORT_CONDENSATE, "condensate port");
+		expect(portFace(4, -1, 5)[0], 1, "condensate on the east face (back)");
+		expect(portAt(4, -1, 0), PORT_ENERGY, "energy port (bottom)");
+		expect(portAt(4, 0, 0), PORT_ENERGY, "energy port (top)");
+		expect(get(4, 0, 0), 'H', "energy on heavy engineering");
 		expect(portAt(0, 0, 0), PORT_REDSTONE, "redstone port is the trigger");
 		expect(portAt(MASTER_DX, MASTER_DY, MASTER_DZ), PORT_NONE, "master is not a port");
 		for(int[] p : PORTS)
@@ -44,7 +51,7 @@ public class IndustrialDryerStructureTest
 				throw new AssertionError("port face blocked at " + p[0] + "," + p[1] + "," + p[2]);
 		}
 		// The wet concentrate goes in from above: nothing on top of its port
-		expect(get(2, 2, 2), '.', "open above the feed");
+		expect(get(1, 2, 2), '.', "open above the feed");
 
 		for(int turns = 0; turns < 4; turns++)
 			for(boolean mirror : new boolean[]{false, true})

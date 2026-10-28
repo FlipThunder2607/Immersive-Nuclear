@@ -13,20 +13,24 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Industrial Dryer. 272 x 210 (as wide as the other machines'): wet concentrate over the feed valve,
+ * Interface of the Industrial Dryer. 272 x 236 (as wide as the other machines'): wet concentrate over the feed valve,
  * the drying chamber with its thermometer and the batch's steps under it, the condenser, the condensate tank with its
- * container slots, the yellowcake under the discharge; the player inventory at the bottom, centred. The condensate tank,
+ * container slots, the yellowcake under the discharge; under them the drum loading station's conveyor (empty drums in,
+ * the drum being filled under the yellowcake, the full drum out); the player inventory at the bottom, centred. The condensate tank,
  * energy, the batch (step, ticks), state and redstone mode go to the client as window properties (all below 32767).
  */
 public class ContainerIndustrialDryer extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 210, INV_X = 56, INV_Y = 129;
+	public static final int WIDTH = 272, HEIGHT = 236, INV_X = 56, INV_Y = 155;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TileIndustrialDryer's slot order. */
 	public static final int[][] SLOT_XY = {
 			{66, 10},  // wet concentrate, over the feed valve
 			{176, 82}, // yellowcake, after the discharge
 			{220, 12}, // empty container in, over the condensate tank
 			{220, 96}, // condensate container out, under it
+			{40, 120}, // empty drums, at the conveyor's start
+			{176, 120}, // the drum being filled, under the yellowcake
+			{204, 120}, // the full drum, at the conveyor's end
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

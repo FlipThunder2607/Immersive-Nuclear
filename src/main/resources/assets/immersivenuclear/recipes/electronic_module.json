@@ -1,0 +1,24 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "TCT",
+        "PPP"
+    ],
+    "key": {
+        "T": {
+            "type": "forge:ore_dict",
+            "ore": "elecTube"
+        },
+        "C": {
+            "type": "forge:ore_dict",
+            "ore": "componentIron"
+        },
+        "P": {
+            "type": "forge:ore_dict",
+            "ore": "plateIron"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:electronic_module"
+    }
+}

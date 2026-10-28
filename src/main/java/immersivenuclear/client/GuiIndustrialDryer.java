@@ -1,5 +1,7 @@
 package immersivenuclear.client;
 
+import immersivenuclear.common.block.TileConcentrateDrum;
+import immersivenuclear.common.item.ItemConcentrateDrum;
 import java.util.ArrayList;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
@@ -40,15 +42,18 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 	static final int COND_X = 176, COND_Y = 14, COND_W = 30, COND_H = 50;
 	static final int TANK_X = 218, TANK_Y = 38;
 	static final int ARROW_X = 152, ARROW_Y = 84;
-	/** The scrubber on the vapour line (its pipe runs through it at VAPOUR_Y), and its return down into the chamber. */
-	static final int SCRUB_X = 140, SCRUB_Y = 14, SCRUB_W = 14, SCRUB_H = 17;
 	/** The bed's full depth, over the heaters' strip at the bottom of the chamber. */
 	static final int BED_DEPTH = 18, HEATER_H = 4, PADDLES = 9, PADDLE_REACH = 12;
 	/** Pipes: vapour from the dome over the chamber to the condenser's top; condensate from its foot to the tank. */
 	static final int DOME_X = CHAMBER_X + CHAMBER_W - 28, VAPOUR_Y = 24, DRAIN_X = COND_X + COND_W - 6, DRAIN_Y = TANK_Y + 44;
+	/** The scrubber on the vapour line, centred on its pipe (VAPOUR_Y) between the dome and the condenser; its return goes
+	 * down and into the chamber's right end at RETURN_Y. */
+	static final int SCRUB_X = 152, SCRUB_W = 14, SCRUB_H = 16, SCRUB_Y = VAPOUR_Y - SCRUB_H / 2, RETURN_Y = CHAMBER_Y + 6;
 	static final int ENERGY_X = 248, ENERGY_Y = 16, ENERGY_W = 14, ENERGY_H = 64;
 	static final int BUTTON_X = 247, BUTTON_Y = 86, BUTTON_SIZE = 16;
 	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 112, LIGHT_STEP = 8;
+	/** The drum station's conveyor, from the empty drums' slot to the full drum's, through the one being filled. */
+	static final int BELT_X = 58, BELT_Y = 124, BELT_W = 144, BELT_H = 8, FILL_Y = 139;
 	static final int PANEL_X = ContainerIndustrialDryer.INV_X - 8, PANEL_Y = ContainerIndustrialDryer.INV_Y - 8;
 
 	// IE's pieces in refinery.png
@@ -233,9 +238,12 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 		}
 
 		// The scrubber on the vapour line, over its return to the chamber
-		pipe(SCRUB_X + SCRUB_W / 2, SCRUB_Y + SCRUB_H, SCRUB_X + SCRUB_W / 2, CHAMBER_Y - 1);
+		pipe(SCRUB_X + SCRUB_W / 2, SCRUB_Y + SCRUB_H, SCRUB_X + SCRUB_W / 2, RETURN_Y);
+		pipe(SCRUB_X + SCRUB_W / 2, RETURN_Y, CHAMBER_X + CHAMBER_W, RETURN_Y);
 		GuiGraphite.well(guiLeft + SCRUB_X, guiTop + SCRUB_Y, SCRUB_W, SCRUB_H);
 		drawScrubber();
+
+		drawDrumStation();
 
 		// IE's wooden inventory panel; IE's pieces, a little darker
 		GlStateManager.color(1, 1, 1, 1);
@@ -246,7 +254,9 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 		for(int i = 0; i < xy.length; i++)
 		{
 			piece(IE_SLOT, xy[i][0] - 2, xy[i][1] - 2);
-			boolean input = i == TileIndustrialDryer.SLOT_WET || i == TileIndustrialDryer.SLOT_CONDENSATE_IN;
+			if(i == TileIndustrialDryer.SLOT_DRUM_FILLING)
+				continue;
+			boolean input = i == TileIndustrialDryer.SLOT_WET || i == TileIndustrialDryer.SLOT_CONDENSATE_IN || i == TileIndustrialDryer.SLOT_DRUM_EMPTY;
 			piece(input ? IE_BLUE : IE_ORANGE, xy[i][0] + 5, xy[i][1] - 5);
 		}
 		piece(IE_TANK, TANK_X, TANK_Y);
@@ -270,6 +280,36 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 		int lit = litLight();
 		for(int i = 0; i < 4; i++)
 			drawTexturedModalRect(guiLeft + LIGHT_X + 1, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
+	}
+
+	/** Yellowcake in the drum being filled. */
+	int drumFill()
+	{
+		return ItemConcentrateDrum.contents(container.getSlot(TileIndustrialDryer.SLOT_DRUM_FILLING).getStack());
+	}
+
+	/**
+	 * The drum loading station: the conveyor under the chamber, its rollers turning while drums wait on it, the chute from
+	 * the yellowcake down into the drum being filled, and that drum's level under it.
+	 */
+	void drawDrumStation()
+	{
+		boolean waiting = !container.getSlot(TileIndustrialDryer.SLOT_DRUM_EMPTY).getStack().isEmpty();
+		boolean drum = !container.getSlot(TileIndustrialDryer.SLOT_DRUM_FILLING).getStack().isEmpty();
+		GuiGraphite.well(guiLeft + BELT_X, guiTop + BELT_Y, BELT_W, BELT_H);
+		rect(BELT_X + 2, BELT_Y + 2, BELT_W - 4, BELT_H - 4, COL_INSIDE);
+		int shift = waiting ? ticks / 2 % 6 : 0;
+		for(int x = BELT_X + 2 + shift; x < BELT_X + BELT_W - 3; x += 6)
+			rect(x, BELT_Y + 3, 2, BELT_H - 6, COL_BAND);
+		// The chute from the yellowcake into the drum, yellow while it fills
+		int[] out = ContainerIndustrialDryer.SLOT_XY[TileIndustrialDryer.SLOT_YELLOWCAKE];
+		int[] st = ContainerIndustrialDryer.SLOT_XY[TileIndustrialDryer.SLOT_DRUM_FILLING];
+		pipe(out[0] + 8, out[1] + 18, st[0] + 8, st[1] - 3);
+		if(drum && !container.getSlot(TileIndustrialDryer.SLOT_YELLOWCAKE).getStack().isEmpty())
+			flow(out[0] + 8, out[1] + 18, st[0] + 8, st[1] - 3, COL_DRY);
+		// The drum's level
+		GuiGraphite.well(guiLeft + st[0] - 2, guiTop + FILL_Y, 20, 5);
+		rect(st[0], FILL_Y + 1, Math.round(16 * drumFill() / (float)TileConcentrateDrum.CAPACITY), 3, COL_DRY);
 	}
 
 	/** The rotary valve under the wet concentrate's slot, letting the lumps fall into the chamber while it loads. */
@@ -391,7 +431,10 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 			}
 		// The fines going back with the batch that completes them
 		if(in(TileIndustrialDryer.PHASE_DISCHARGE) && container.fines >= TileIndustrialDryer.FINES_EVERY)
-			flow(SCRUB_X + SCRUB_W / 2, SCRUB_Y + SCRUB_H, SCRUB_X + SCRUB_W / 2, CHAMBER_Y - 1, COL_DRY);
+		{
+			flow(SCRUB_X + SCRUB_W / 2, SCRUB_Y + SCRUB_H, SCRUB_X + SCRUB_W / 2, RETURN_Y, COL_DRY);
+			flow(SCRUB_X + SCRUB_W / 2, RETURN_Y, CHAMBER_X + CHAMBER_W, RETURN_Y, COL_DRY);
+		}
 	}
 
 	/** The chamber's thermometer: up while heating, held while drying, down while cooling. */
@@ -529,6 +572,21 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 		int[] out = ContainerIndustrialDryer.SLOT_XY[TileIndustrialDryer.SLOT_YELLOWCAKE];
 		if(over(mx, my, out[0], out[1], 16, 16) && container.getSlot(TileIndustrialDryer.SLOT_YELLOWCAKE).getStack().isEmpty())
 			tip.add(I18n.format(K + "yellowcake"));
+		int[] empty = ContainerIndustrialDryer.SLOT_XY[TileIndustrialDryer.SLOT_DRUM_EMPTY];
+		if(over(mx, my, empty[0], empty[1], 16, 16) && container.getSlot(TileIndustrialDryer.SLOT_DRUM_EMPTY).getStack().isEmpty())
+			tip.add(I18n.format(K + "drum_empty"));
+		int[] st = ContainerIndustrialDryer.SLOT_XY[TileIndustrialDryer.SLOT_DRUM_FILLING];
+		if(over(mx, my, BELT_X, BELT_Y, BELT_W, BELT_H) || over(mx, my, st[0] - 2, FILL_Y, 20, 5)
+				|| over(mx, my, st[0], st[1], 16, 16) && container.getSlot(TileIndustrialDryer.SLOT_DRUM_FILLING).getStack().isEmpty())
+		{
+			tip.add(I18n.format(K + "drum_station"));
+			tip.add("§7" + I18n.format(K + "drum_station_info", TileConcentrateDrum.CAPACITY));
+			if(!container.getSlot(TileIndustrialDryer.SLOT_DRUM_FILLING).getStack().isEmpty())
+				tip.add("§e" + I18n.format(K + "drum_fill", drumFill(), TileConcentrateDrum.CAPACITY));
+		}
+		int[] full = ContainerIndustrialDryer.SLOT_XY[TileIndustrialDryer.SLOT_DRUM_FULL];
+		if(over(mx, my, full[0], full[1], 16, 16) && container.getSlot(TileIndustrialDryer.SLOT_DRUM_FULL).getStack().isEmpty())
+			tip.add(I18n.format(K + "drum_full"));
 		if(over(mx, my, ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H))
 			tip.add(container.energy + "/" + TileIndustrialDryer.ENERGY_CAPACITY + " IF");
 		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))

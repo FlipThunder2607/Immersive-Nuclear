@@ -7,24 +7,29 @@
     },
     "textures": {
       "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+      "#base_actuator": "immersivenuclear:blocks/base_actuator",
+      "#base_brass": "immersivenuclear:blocks/base_brass",
       "#base_flange": "immersivenuclear:blocks/base_flange",
       "#base_flange_side": "immersivenuclear:blocks/base_flange_side",
       "#base_handrail": "immersivenuclear:blocks/base_handrail",
       "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
       "#base_hatch": "immersivenuclear:blocks/base_hatch",
       "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
-      "#base_terminal_box": "immersivenuclear:blocks/base_terminal_box",
       "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
+      "#concentrate_drum_side": "immersivenuclear:blocks/concentrate_drum_side",
+      "#concentrate_drum_top": "immersivenuclear:blocks/concentrate_drum_top",
+      "#conveyor_off": "immersiveengineering:blocks/conveyor_off",
       "#furnace_heater": "immersivenuclear:blocks/furnace_heater",
       "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
       "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_device1_thermoelectric_gen_bottom": "immersiveengineering:blocks/metal_device1_thermoelectric_gen_bottom",
       "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
       "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
       "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
-      "#metal_multiblock_refinery_graphite": "immersivenuclear:blocks/metal_multiblock_refinery_graphite",
       "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
       "#storage_steel": "immersiveengineering:blocks/storage_steel",
-      "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
+      "#wooden_device_windmill_advanced": "immersiveengineering:blocks/wooden_device_windmill_advanced",
       "particle": "immersiveengineering:blocks/storage_steel"
     }
   },
@@ -207,13 +212,13 @@
     },
     "inventory": [
       {
-        "model": "immersivenuclear:obj/industrial_dryer.obj",
+        "model": "immersivenuclear:obj/industrial_dryer_item.obj",
         "transform": {
           "gui": {
             "translation": [
-              0.0411,
-              0.0537,
-              -0.014
+              0.0749,
+              0.071,
+              -0.043
             ],
             "scale": 0.1019,
             "rotation": [
@@ -229,16 +234,16 @@
           },
           "ground": {
             "translation": [
-              -0.041,
-              0.0286,
+              -0.0756,
+              0.029,
               -0.0011
             ],
             "scale": 0.0738
           },
           "fixed": {
             "translation": [
-              0.0668,
-              0.0466,
+              0.1233,
+              0.0472,
               0.0018
             ],
             "scale": 0.1203,
@@ -250,9 +255,9 @@
           },
           "thirdperson_righthand": {
             "translation": [
-              -0.0262,
-              -0.0174,
-              0.0307
+              -0.0477,
+              -0.0382,
+              0.0366
             ],
             "scale": 0.0649,
             "rotation": [
@@ -268,9 +273,9 @@
           },
           "thirdperson_lefthand": {
             "translation": [
-              -0.0262,
-              -0.0174,
-              0.0307
+              -0.0477,
+              -0.0382,
+              0.0366
             ],
             "scale": 0.0649,
             "rotation": [
@@ -286,9 +291,9 @@
           },
           "firstperson_righthand": {
             "translation": [
-              -0.0297,
-              0.0286,
-              0.0282
+              -0.0543,
+              0.029,
+              0.0527
             ],
             "scale": 0.0738,
             "post-rotation": [
@@ -299,9 +304,9 @@
           },
           "firstperson_lefthand": {
             "translation": [
-              0.0297,
-              0.0286,
-              -0.0282
+              0.0543,
+              0.029,
+              -0.0527
             ],
             "scale": 0.0738,
             "post-rotation": [

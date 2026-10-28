@@ -1,9 +1,16 @@
 package immersivenuclear.common;
 
+import immersivenuclear.common.block.BlockAgglomerateSlab;
+import immersivenuclear.common.block.BlockAgglomerateStairs;
+import immersivenuclear.common.block.BlockConcentrateDrum;
+import immersivenuclear.common.block.BlockLeadedGlass;
+import immersivenuclear.common.block.TileConcentrateDrum;
+import immersivenuclear.common.item.ItemConcentrateDrum;
 import java.util.HashMap;
 import java.util.Map;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
+import blusunrize.immersiveengineering.api.crafting.ArcFurnaceRecipe;
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
@@ -35,9 +42,11 @@ import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
 import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.ResourceLocation;
@@ -60,6 +69,8 @@ public class INContent
 	public static BlockMetalExtractor blockMetalExtractor;
 	public static BlockPrecipitationUnit blockPrecipitationUnit;
 	public static BlockIndustrialDryer blockIndustrialDryer;
+	public static BlockConcentrateDrum blockConcentrateDrum;
+	public static BlockLeadedGlass blockLeadedGlass;
 
 	/** The mod's creative tab; JEI also lists what is in it. */
 	public static final CreativeTabs TAB = new CreativeTabs(ImmersiveNuclear.MODID)
@@ -88,6 +99,7 @@ public class INContent
 	public static Item itemPrecipitationUnit;
 	/** The same for the Industrial Dryer. */
 	public static Item itemIndustrialDryer;
+	public static Item itemConcentrateDrum;
 
 	/** Processing Reagent: consumed one per cycle by the Chemical Processing Unit. */
 	public static Item itemReagent;
@@ -106,6 +118,8 @@ public class INContent
 	public static ItemFilter itemFilter;
 
 	/** Items of the next steps of the line; no machine uses them yet. */
+	/** Parts of the engineering blocks' recipes: lead glass (a block, from IE's Arc Furnace), a hot cell's tongs, a precision bearing. */
+	public static Item itemLeadedGlass, itemRemoteManipulator, itemPrecisionBearing;
 	public static Item itemQuicklime, itemCake, itemPrecipitatingAgent, itemWetConcentrate, itemYellowcake, itemNeutralizedResidue;
 
 	/** Mixed Metal Deposit: scraped off the Metal Extractor's plates; crushed in IE's Crusher into nuggets. */
@@ -117,6 +131,11 @@ public class INContent
 	/** Impure Agglomerate: heavy building block made of neutralisation cake or filter residue. */
 	public static Block blockAgglomerate;
 	public static Item itemAgglomerate;
+	/** The raw agglomerate fired in a furnace (concrete-like), its tile (as IE's concrete tile), its bricks, and the bricks'
+	 * stairs and slab. */
+	public static Block blockAgglomerateBlock, blockAgglomerateTile, blockAgglomerateBricks, blockAgglomerateStairs;
+	public static BlockSlab blockAgglomerateSlab, blockAgglomerateSlabDouble;
+	public static Item itemAgglomerateBlock, itemAgglomerateTile, itemAgglomerateBricks, itemAgglomerateStairs, itemAgglomerateSlab;
 
 	/** Engineering blocks, casings of the next machines, in the order of {@link BlockEngineering#KINDS} (no recipe yet). */
 	public static Block[] blockEngineering;
@@ -157,7 +176,7 @@ public class INContent
 
 	/** The Industrial Dryer's steps: load (rotary valve), heat (heaters, loop), dry (paddles, loop), discharge (valve). */
 	public static SoundEvent soundDryerLoad, soundDryerHeatStart, soundDryerHeatLoop, soundDryerHeatStop, soundDryerDryStart, soundDryerDryLoop,
-			soundDryerDryStop, soundDryerDischarge;
+			soundDryerDryStop, soundDryerDischarge, soundDryerFillStart, soundDryerFillLoop, soundDryerFillStop;
 
 	@SubscribeEvent
 	public static void registerSounds(RegistryEvent.Register<SoundEvent> event)
@@ -195,6 +214,9 @@ public class INContent
 		soundDryerDryLoop = sound(event, "industrial_dryer_dry_loop");
 		soundDryerDryStop = sound(event, "industrial_dryer_dry_stop");
 		soundDryerDischarge = sound(event, "industrial_dryer_discharge");
+		soundDryerFillStart = sound(event, "industrial_dryer_fill_start");
+		soundDryerFillLoop = sound(event, "industrial_dryer_fill_loop");
+		soundDryerFillStop = sound(event, "industrial_dryer_fill_stop");
 	}
 
 	static SoundEvent sound(RegistryEvent.Register<SoundEvent> event, String name)
@@ -221,6 +243,15 @@ public class INContent
 		fluidDepletedEffluent = fluid("depleted_effluent", 1050, 1100);
 		fluidCondensate = fluid("process_condensate", 1000, 1000);
 		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate};
+	}
+
+	/** A building block of the finished agglomerate: heavy like the raw one and IE's concrete (provisional values). */
+	static Block agglomerate(String name)
+	{
+		Block b = new Block(Material.ROCK).setHardness(3f).setResistance(60f).setRegistryName(ImmersiveNuclear.MODID, name)
+				.setTranslationKey(ImmersiveNuclear.MODID + "." + name).setCreativeTab(TAB);
+		b.setHarvestLevel("pickaxe", 1);
+		return b;
 	}
 
 	static Item item(RegistryEvent.Register<Item> event, String name)
@@ -263,6 +294,10 @@ public class INContent
 		itemFilter = new ItemFilter();
 		event.getRegistry().register(itemFilter);
 		itemQuicklime = item(event, "quicklime");
+		itemLeadedGlass = new ItemBlock(blockLeadedGlass).setRegistryName(blockLeadedGlass.getRegistryName());
+		event.getRegistry().register(itemLeadedGlass);
+		itemRemoteManipulator = item(event, "remote_manipulator");
+		itemPrecisionBearing = item(event, "precision_bearing");
 		itemCake = item(event, "neutralization_cake");
 		itemPrecipitatingAgent = item(event, "precipitating_agent");
 		itemWetConcentrate = item(event, "wet_uranium_concentrate");
@@ -276,8 +311,16 @@ public class INContent
 		event.getRegistry().register(itemElectrodeSteel);
 		event.getRegistry().register(itemElectrodeLeadSilver);
 		event.getRegistry().register(itemElectrodeElectrum);
+		itemConcentrateDrum = new ItemConcentrateDrum(blockConcentrateDrum);
+		event.getRegistry().register(itemConcentrateDrum);
 		itemAgglomerate = new ItemBlock(blockAgglomerate).setRegistryName(blockAgglomerate.getRegistryName());
 		event.getRegistry().register(itemAgglomerate);
+		itemAgglomerateBlock = new ItemBlock(blockAgglomerateBlock).setRegistryName(blockAgglomerateBlock.getRegistryName());
+		itemAgglomerateTile = new ItemBlock(blockAgglomerateTile).setRegistryName(blockAgglomerateTile.getRegistryName());
+		itemAgglomerateBricks = new ItemBlock(blockAgglomerateBricks).setRegistryName(blockAgglomerateBricks.getRegistryName());
+		itemAgglomerateStairs = new ItemBlock(blockAgglomerateStairs).setRegistryName(blockAgglomerateStairs.getRegistryName());
+		itemAgglomerateSlab = new ItemSlab(blockAgglomerateSlab, blockAgglomerateSlab, blockAgglomerateSlabDouble).setRegistryName(blockAgglomerateSlab.getRegistryName());
+		event.getRegistry().registerAll(itemAgglomerateBlock, itemAgglomerateTile, itemAgglomerateBricks, itemAgglomerateStairs, itemAgglomerateSlab);
 		itemEngineering = new Item[blockEngineering.length];
 		for(int i = 0; i < blockEngineering.length; i++)
 		{
@@ -316,11 +359,23 @@ public class INContent
 		blockIndustrialDryer = new BlockIndustrialDryer();
 		event.getRegistry().register(blockIndustrialDryer);
 		GameRegistry.registerTileEntity(TileIndustrialDryer.class, new ResourceLocation(ImmersiveNuclear.MODID, "industrial_dryer"));
+		blockLeadedGlass = new BlockLeadedGlass();
+		event.getRegistry().register(blockLeadedGlass);
+		blockConcentrateDrum = new BlockConcentrateDrum();
+		event.getRegistry().register(blockConcentrateDrum);
+		GameRegistry.registerTileEntity(TileConcentrateDrum.class, new ResourceLocation(ImmersiveNuclear.MODID, "concentrate_drum"));
 		// Heavy like IE's concrete (provisional values)
 		blockAgglomerate = new Block(Material.ROCK).setHardness(3f).setResistance(60f).setRegistryName(ImmersiveNuclear.MODID, "impure_agglomerate")
 				.setTranslationKey(ImmersiveNuclear.MODID + ".impure_agglomerate").setCreativeTab(TAB);
 		blockAgglomerate.setHarvestLevel("pickaxe", 1);
 		event.getRegistry().register(blockAgglomerate);
+		blockAgglomerateBlock = agglomerate("agglomerate_block");
+		blockAgglomerateTile = agglomerate("agglomerate_tile");
+		blockAgglomerateBricks = agglomerate("agglomerate_bricks");
+		blockAgglomerateStairs = new BlockAgglomerateStairs(blockAgglomerateBricks.getDefaultState());
+		blockAgglomerateSlab = new BlockAgglomerateSlab.Half();
+		blockAgglomerateSlabDouble = new BlockAgglomerateSlab.Double();
+		event.getRegistry().registerAll(blockAgglomerateBlock, blockAgglomerateTile, blockAgglomerateBricks, blockAgglomerateStairs, blockAgglomerateSlab, blockAgglomerateSlabDouble);
 		blockEngineering = new Block[BlockEngineering.KINDS.length];
 		for(int i = 0; i < blockEngineering.length; i++)
 		{
@@ -380,6 +435,10 @@ public class INContent
 	static void cokeOvenRecipes()
 	{
 		CokeOvenRecipe.addRecipe(new ItemStack(itemQuicklime), "stoneDiorite", QUICKLIME_TICKS, 0);
+		// The raw agglomerate fired into its finished, concrete-like block, as cobblestone into stone
+		GameRegistry.addSmelting(blockAgglomerate, new ItemStack(blockAgglomerateBlock), 0.1f);
+		// Lead glass, as it is made: glass melted with lead (provisional time and energy, like IE's alloys)
+		ArcFurnaceRecipe.addRecipe(new ItemStack(itemLeadedGlass), "blockGlass", ItemStack.EMPTY, 100, 512, "dustLead");
 		if(!net.minecraftforge.oredict.OreDictionary.getOres("stoneLimestone").isEmpty())
 			CokeOvenRecipe.addRecipe(new ItemStack(itemQuicklime, 2), "stoneLimestone", QUICKLIME_TICKS, 0);
 	}

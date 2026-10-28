@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TT",
+    "TT"
+  ],
+  "key": {
+    "T": {
+      "item": "immersivenuclear:agglomerate_tile"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:agglomerate_bricks",
+    "count": 4
+  }
+}

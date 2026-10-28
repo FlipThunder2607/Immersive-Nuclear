@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=bottom,variant=default": {
+      "model": "immersivenuclear:agglomerate_brick_slab"
+    },
+    "half=top,variant=default": {
+      "model": "immersivenuclear:agglomerate_brick_slab_top"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "NWN",
+        "PRP"
+    ],
+    "key": {
+        "N": {
+            "type": "forge:ore_dict",
+            "ore": "nuggetElectrum"
+        },
+        "W": {
+            "type": "forge:ore_dict",
+            "ore": "wireCopper"
+        },
+        "P": {
+            "type": "forge:ore_dict",
+            "ore": "plateIron"
+        },
+        "R": {
+            "type": "forge:ore_dict",
+            "ore": "dustRedstone"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:relay_module",
+        "count": 2
+    }
+}

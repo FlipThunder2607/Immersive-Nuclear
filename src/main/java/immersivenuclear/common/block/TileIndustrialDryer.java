@@ -3,11 +3,13 @@ package immersivenuclear.common.block;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
+import immersivenuclear.common.item.ItemConcentrateDrum;
 import immersivenuclear.common.multiblock.IndustrialDryerStructure;
 import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -60,7 +62,18 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	public static final int LOAD_ENERGY = 16, HEAT_ENERGY = 64, DRY_ENERGY = 48, DISCHARGE_ENERGY = 16;
 	public static final int PHASE_LOAD = 0, PHASE_HEAT = 1, PHASE_DRY = 2, PHASE_DISCHARGE = 3;
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
-	public static final int SLOT_WET = 0, SLOT_YELLOWCAKE = 1, SLOT_CONDENSATE_IN = 2, SLOT_CONDENSATE_OUT = 3, SLOTS = 4;
+	public static final int SLOT_WET = 0, SLOT_YELLOWCAKE = 1, SLOT_CONDENSATE_IN = 2, SLOT_CONDENSATE_OUT = 3;
+	/**
+	 * The drum loading station: drums waiting on the conveyor (empty ones, up to a stack, or a partly filled one, which the
+	 * station tops up), the drum under the discharge, the full drum out.
+	 */
+	public static final int SLOT_DRUM_EMPTY = 4, SLOT_DRUM_FILLING = 5, SLOT_DRUM_FULL = 6, SLOTS = 7;
+	/** The drum at the station: none, riding the conveyor in, under the discharge, riding on into the output. */
+	public static final int DRUM_NONE = 0, DRUM_ARRIVING = 1, DRUM_FILLING = 2, DRUM_LEAVING = 3, DRUM_POURING = 4;
+	/** The rides in and out; while it pours, one yellowcake goes into the drum every DRUM_POUR_EVERY ticks. */
+	public static final int DRUM_ARRIVE_TICKS = 80, DRUM_LEAVE_TICKS = 30, DRUM_POUR_EVERY = 8;
+	/** The drum's ride in the model, in blocks: off the port across onto the conveyor, down the conveyor, into the output. */
+	static final float DRUM_PORT_DX = 1.4F, DRUM_RUN_DZ = 3.5F, DRUM_OUT_DZ = 0.95F;
 	/** Chamber temperature, °C: room temperature when loaded, drying temperature from the end of the heating. */
 	public static final int ROOM_TEMPERATURE = 20, DRYING_TEMPERATURE = 140;
 	/**
@@ -86,6 +99,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 			{
 				case SLOT_WET:
 					return stack.getItem() == INContent.itemWetConcentrate;
+				case SLOT_DRUM_EMPTY:
+					return ItemConcentrateDrum.canTakeMore(stack);
 				case SLOT_CONDENSATE_IN:
 					FluidStack held = FluidUtil.getFluidContained(stack);
 					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidCondensate);
@@ -122,6 +137,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	boolean progressed, noPower, outputFull, noInput;
 	boolean redstoneInverted;
 	int sentPhase = -1;
+	int drumState = DRUM_NONE, drumTicks, sentDrumState = -1;
+	public int clientDrumState = DRUM_NONE, clientDrumTicks;
 	boolean sentRunning;
 
 	// ---------- client ----------
@@ -132,16 +149,20 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	/** The step whose one-off sound (load, discharge) was last heard; -2 until the first update from the server. */
 	int heardPhase = -2;
 	/** Where each step sounds (template offsets). */
-	static final int[] FEED_PART = {2, 1, 2}, HEATER_PART = {1, -1, 3}, MOTOR_PART = {1, 0, 0}, DISCHARGE_PART = {1, -1, 6};
+	static final int[] FEED_PART = {1, 1, 2}, HEATER_PART = {1, -1, 3}, MOTOR_PART = {1, 0, 0}, DISCHARGE_PART = {2, -1, 6};
 	/** The loops come in as their starts end (heaters 1.5 s, paddles 3 s). */
-	static final int HEATER_LOOP_DELAY = 28, PADDLES_LOOP_DELAY = 58;
+	static final int HEATER_LOOP_DELAY = 28, PADDLES_LOOP_DELAY = 58, FILL_LOOP_DELAY = 10;
 	final LoopSound heaters = new LoopSound(() -> INContent.soundDryerHeatStart, () -> INContent.soundDryerHeatLoop, () -> INContent.soundDryerHeatStop,
 			HEATER_LOOP_DELAY);
 	/**
 	 * Where the effects come out, in template blocks from the trigger block's corner (as the model draws them): the
-	 * steam from over the rain cap of the condenser's vent stack, the yellowcake's dust at the discharge port's face.
+	 * steam from over the rain cap of the vent stack (model x 4.5..5, y 8.3..8.44, z 9..10), the yellowcake's dust out
+	 * of the spout over the drum station's drum (model x 4.2..5.2, y 3.1, z 10.5..11.5).
 	 */
-	static final double[] STEAM_AT = {2.62, 3.23, 5.38}, DUST_AT = {1.5, -0.6, 7.02};
+	static final double[] STEAM_AT = {2.63, 3.25, 4.75}, DUST_AT = {3.0, 0.55, 5.35};
+	/** The yellowcake pouring into the drum at the station, from the yellowcake port's part under it. */
+	final LoopSound drumFill = new LoopSound(() -> INContent.soundDryerFillStart, () -> INContent.soundDryerFillLoop, () -> INContent.soundDryerFillStop,
+			FILL_LOOP_DELAY);
 	final LoopSound paddles = new LoopSound(() -> INContent.soundDryerDryStart, () -> INContent.soundDryerDryLoop, () -> INContent.soundDryerDryStop,
 			PADDLES_LOOP_DELAY);
 
@@ -230,7 +251,61 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		}
 	}
 
-	final ItemPort wetPort = new ItemPort(SLOT_WET, true), yellowcakePort = new ItemPort(SLOT_YELLOWCAKE, false);
+	final ItemPort wetPort = new ItemPort(SLOT_WET, true), drumPort = new ItemPort(SLOT_DRUM_EMPTY, true);
+
+	/**
+	 * The yellowcake port: the full drums first, then the loose yellowcake, but that only while no drum is waiting or
+	 * being filled, as the station takes it.
+	 */
+	final IItemHandler yellowcakePort = new IItemHandler()
+	{
+		int slot(int i)
+		{
+			return i == 0 ? SLOT_DRUM_FULL : drumsInUse() ? -1 : SLOT_YELLOWCAKE;
+		}
+
+		@Override
+		public int getSlots()
+		{
+			return 2;
+		}
+
+		@Override
+		public ItemStack getStackInSlot(int i)
+		{
+			return slot(i) < 0 ? ItemStack.EMPTY : inventory.getStackInSlot(slot(i));
+		}
+
+		@Override
+		public ItemStack insertItem(int i, ItemStack stack, boolean simulate)
+		{
+			return stack;
+		}
+
+		@Override
+		public ItemStack extractItem(int i, int amount, boolean simulate)
+		{
+			return slot(i) < 0 ? ItemStack.EMPTY : inventory.extractItem(slot(i), amount, simulate);
+		}
+
+		@Override
+		public int getSlotLimit(int i)
+		{
+			return 64;
+		}
+
+		@Override
+		public boolean isItemValid(int i, ItemStack stack)
+		{
+			return false;
+		}
+	};
+
+	/** Drums at the station: the yellowcake goes into them rather than out loose. */
+	boolean drumsInUse()
+	{
+		return !inventory.getStackInSlot(SLOT_DRUM_EMPTY).isEmpty() || !inventory.getStackInSlot(SLOT_DRUM_FILLING).isEmpty();
+	}
 
 	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
 	{
@@ -333,7 +408,7 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
 			right = port == IndustrialDryerStructure.PORT_CONDENSATE;
 		else if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			right = port == IndustrialDryerStructure.PORT_WET || port == IndustrialDryerStructure.PORT_YELLOWCAKE;
+			right = port == IndustrialDryerStructure.PORT_WET || port == IndustrialDryerStructure.PORT_YELLOWCAKE || port == IndustrialDryerStructure.PORT_DRUM;
 		else if(cap == CapabilityEnergy.ENERGY)
 			right = port == IndustrialDryerStructure.PORT_ENERGY;
 		else
@@ -363,7 +438,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 				if(cap == CapabilityEnergy.ENERGY)
 					return CapabilityEnergy.ENERGY.cast(m.energy);
 				if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getPort() == IndustrialDryerStructure.PORT_WET ? m.wetPort : m.yellowcakePort);
+					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getPort() == IndustrialDryerStructure.PORT_WET ? m.wetPort
+							: getPort() == IndustrialDryerStructure.PORT_DRUM ? m.drumPort : m.yellowcakePort);
 				return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.condensate);
 			}
 		}
@@ -377,11 +453,13 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		{
 			if(isMaster())
 				updateClient();
-			TileIndustrialDryer m = isPart(HEATER_PART) || isPart(MOTOR_PART) ? getMaster() : null;
+			TileIndustrialDryer m = isPart(HEATER_PART) || isPart(MOTOR_PART) || isPart(DISCHARGE_PART) ? getMaster() : null;
 			if(isPart(HEATER_PART))
 				heaters.update(this, m != null && m.clientRunning && m.clientPhase == PHASE_HEAT);
 			else if(isPart(MOTOR_PART))
 				paddles.update(this, m != null && m.clientRunning && m.clientPhase == PHASE_DRY);
+			else if(isPart(DISCHARGE_PART))
+				drumFill.update(this, m != null && m.clientDrumState == DRUM_POURING);
 			return;
 		}
 		int port = getPort();
@@ -393,6 +471,7 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		{
 			handleContainers();
 			process();
+			loadDrums();
 			sync();
 		}
 	}
@@ -582,12 +661,121 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 			m.condensate.drainInternal(taken, true);
 	}
 
-	/** The yellowcake port hands the yellowcake to whatever takes items on its face (conveyor, hopper, chest). */
+	/**
+	 * The drum loading station: the conveyor brings the next empty drum from the port to under the discharge
+	 * (DRUM_ARRIVE_TICKS), the drum takes the loose yellowcake up to its capacity, and once full goes on, sealed, into the
+	 * output (DRUM_LEAVE_TICKS, the next drum waits for it).
+	 */
+	void loadDrums()
+	{
+		ItemStack drum = inventory.getStackInSlot(SLOT_DRUM_FILLING);
+		switch(drumState)
+		{
+			case DRUM_ARRIVING:
+				if(drum.isEmpty())
+					drumState = DRUM_NONE;
+				else if(++drumTicks >= DRUM_ARRIVE_TICKS)
+					drumState = DRUM_FILLING;
+				return;
+			case DRUM_LEAVING:
+				if(++drumTicks >= DRUM_LEAVE_TICKS)
+					drumState = DRUM_NONE;
+				return;
+			case DRUM_FILLING:
+			case DRUM_POURING:
+				if(drum.isEmpty())
+				{
+					drumState = DRUM_NONE;
+					return;
+				}
+				break;
+			default:
+				if(drum.isEmpty())
+				{
+					if(inventory.getStackInSlot(SLOT_DRUM_EMPTY).isEmpty())
+						return;
+					inventory.setStackInSlot(SLOT_DRUM_FILLING, inventory.extractItem(SLOT_DRUM_EMPTY, 1, false));
+					drumState = DRUM_ARRIVING;
+					drumTicks = 0;
+					return;
+				}
+				drumState = DRUM_FILLING;
+		}
+		int n = ItemConcentrateDrum.contents(drum);
+		if(n >= TileConcentrateDrum.CAPACITY)
+		{
+			if(inventory.getStackInSlot(SLOT_DRUM_FULL).isEmpty())
+			{
+				inventory.setStackInSlot(SLOT_DRUM_FULL, drum);
+				inventory.setStackInSlot(SLOT_DRUM_FILLING, ItemStack.EMPTY);
+				world.playSound(null, MultiblockIndustrialDryer.toWorld(getTriggerPos(), facing, mirrored, DISCHARGE_PART[0], DISCHARGE_PART[1], DISCHARGE_PART[2]), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, .7F, .6F);
+				drumState = DRUM_LEAVING;
+				drumTicks = 0;
+			}
+			return;
+		}
+		// The loose yellowcake pours into the drum a little at a time, from the spout over it
+		if(inventory.getStackInSlot(SLOT_YELLOWCAKE).isEmpty())
+		{
+			drumState = DRUM_FILLING;
+			return;
+		}
+		if(drumState != DRUM_POURING)
+		{
+			drumState = DRUM_POURING;
+			drumTicks = 0;
+		}
+		if(drumTicks++ % DRUM_POUR_EVERY != 0)
+			return;
+		inventory.extractItem(SLOT_YELLOWCAKE, 1, false);
+		inventory.setStackInSlot(SLOT_DRUM_FILLING, ItemConcentrateDrum.withContents(n + 1));
+	}
+
+	/** The conveyor runs while a drum rides it (client). */
+	public boolean drumMoving()
+	{
+		return clientDrumState == DRUM_ARRIVING || clientDrumState == DRUM_LEAVING;
+	}
+
+	/**
+	 * Where the drum shows, as a template {dx, dz} shift from under the discharge (where the model has it), or null when
+	 * there is none (client). Arriving, it comes off the port onto the conveyor (DRUM_PORT_DX) and down it (DRUM_RUN_DZ);
+	 * leaving, it goes on into the output (DRUM_OUT_DZ). Each move eases in and out.
+	 */
+	public float[] drumShift(float partialTicks)
+	{
+		switch(clientDrumState)
+		{
+			case DRUM_ARRIVING:
+			{
+				float t = ease((clientDrumTicks + partialTicks) / DRUM_ARRIVE_TICKS) * (DRUM_PORT_DX + DRUM_RUN_DZ);
+				return t < DRUM_PORT_DX ? new float[]{DRUM_PORT_DX - t, -DRUM_RUN_DZ} : new float[]{0, t - DRUM_PORT_DX - DRUM_RUN_DZ};
+			}
+			case DRUM_FILLING:
+			case DRUM_POURING:
+				return new float[]{0, 0};
+			case DRUM_LEAVING:
+				return new float[]{0, ease((clientDrumTicks + partialTicks) / DRUM_LEAVE_TICKS) * DRUM_OUT_DZ};
+			default:
+				return null;
+		}
+	}
+
+	static float ease(float t)
+	{
+		t = Math.max(0, Math.min(1, t));
+		return t * t * (3 - 2 * t);
+	}
+
+	/**
+	 * The yellowcake port hands the full drums, then the loose yellowcake (while no drums are in use), to whatever takes
+	 * items on its face (conveyor, hopper, chest).
+	 */
 	void pushYellowcake()
 	{
 		TileIndustrialDryer m = getMaster();
 		EnumFacing face = portWorldFace();
-		if(m == null || face == null || m.inventory.getStackInSlot(SLOT_YELLOWCAKE).isEmpty())
+		if(m == null || face == null)
 			return;
 		TileEntity out = world.getTileEntity(pos.offset(face));
 		if(out == null || !out.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face.getOpposite()))
@@ -595,9 +783,15 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		IItemHandler target = out.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face.getOpposite());
 		if(target == null)
 			return;
-		ItemStack one = m.inventory.extractItem(SLOT_YELLOWCAKE, 1, true);
-		if(ItemHandlerHelper.insertItem(target, one, true).isEmpty())
-			ItemHandlerHelper.insertItem(target, m.inventory.extractItem(SLOT_YELLOWCAKE, 1, false), false);
+		for(int i = 0; i < 2; i++)
+		{
+			ItemStack one = m.yellowcakePort.extractItem(i, 1, true);
+			if(!one.isEmpty() && ItemHandlerHelper.insertItem(target, one, true).isEmpty())
+			{
+				ItemHandlerHelper.insertItem(target, m.yellowcakePort.extractItem(i, 1, false), false);
+				return;
+			}
+		}
 	}
 
 	public void toggleRedstone()
@@ -694,6 +888,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 			state = m.getInteger("state");
 			redstoneInverted = m.getBoolean("redstoneInverted");
 			fines = m.getInteger("fines");
+			drumState = m.getInteger("drumState");
+			drumTicks = m.getInteger("drumTicks");
 		}
 	}
 
@@ -717,6 +913,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 			m.setInteger("state", state);
 			m.setBoolean("redstoneInverted", redstoneInverted);
 			m.setInteger("fines", fines);
+			m.setInteger("drumState", drumState);
+			m.setInteger("drumTicks", drumTicks);
 			nbt.setTag("machine", m);
 		}
 		return nbt;
@@ -786,6 +984,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 			nbt.setInteger("phase", phase);
 			nbt.setInteger("phaseTicks", phaseTicks);
 			nbt.setBoolean("running", state == STATE_RUNNING);
+			nbt.setInteger("drum", drumState);
+			nbt.setInteger("drumTicks", drumTicks);
 		}
 	}
 
@@ -800,6 +1000,10 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 				clientPhaseTicks = nbt.getInteger("phaseTicks");
 			clientPhase = p;
 			clientRunning = nbt.getBoolean("running");
+			int d = nbt.getInteger("drum");
+			if(d != clientDrumState || Math.abs(nbt.getInteger("drumTicks") - clientDrumTicks) > 4)
+				clientDrumTicks = nbt.getInteger("drumTicks");
+			clientDrumState = d;
 			// Joining in the middle of a step does not replay its sound
 			if(heardPhase == -2)
 				heardPhase = p;
@@ -810,8 +1014,9 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	void sync()
 	{
 		boolean running = state == STATE_RUNNING;
-		if(phase != sentPhase || running != sentRunning || world.getTotalWorldTime() % 40 == 0 && running)
+		if(phase != sentPhase || running != sentRunning || drumState != sentDrumState || world.getTotalWorldTime() % 40 == 0 && running)
 		{
+			sentDrumState = drumState;
 			sentPhase = phase;
 			sentRunning = running;
 			IBlockState st = world.getBlockState(pos);
@@ -833,6 +1038,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	{
 		if(clientRunning && clientPhaseTicks < phaseLength(clientPhase))
 			clientPhaseTicks++;
+		if(drumMoving() && clientDrumTicks < (clientDrumState == DRUM_ARRIVING ? DRUM_ARRIVE_TICKS : DRUM_LEAVE_TICKS))
+			clientDrumTicks++;
 		effects();
 		if(!clientRunning || clientPhase == heardPhase || heardPhase == -2)
 			return;
@@ -857,22 +1064,30 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	 */
 	void effects()
 	{
+		java.util.Random r = world.rand;
+		if(clientDrumState == DRUM_POURING)
+			dust(r);
 		if(!clientRunning)
 			return;
-		java.util.Random r = world.rand;
 		int every = clientPhase == PHASE_DRY ? 2 : clientPhase == PHASE_HEAT && clientPhaseTicks > HEAT_TICKS / 2 || clientPhase == PHASE_DISCHARGE ? 8 : 0;
 		if(every > 0 && r.nextInt(every) == 0)
 		{
 			Vec3d p = templatePoint(STEAM_AT[0] + (r.nextDouble() - .5) * .4, STEAM_AT[1], STEAM_AT[2] + (r.nextDouble() - .5) * .4);
 			world.spawnParticle(EnumParticleTypes.CLOUD, p.x, p.y, p.z, (r.nextDouble() - .5) * .02, .06 + r.nextDouble() * .04, (r.nextDouble() - .5) * .02);
 		}
-		if(clientPhase == PHASE_DISCHARGE && clientPhaseTicks < DISCHARGE_TICKS * 3 / 4)
-			for(int k = 0; k < 2; k++)
-			{
-				Vec3d p = templatePoint(DUST_AT[0] + (r.nextDouble() - .5) * .5, DUST_AT[1] + (r.nextDouble() - .5) * .3, DUST_AT[2]);
-				// The redstone particle takes its colour in the speed arguments
-				world.spawnParticle(EnumParticleTypes.REDSTONE, p.x, p.y, p.z, .9, .78, .18);
-			}
+	}
+
+	/** Yellowcake falling from the spout over the drum station. */
+	void dust(java.util.Random r)
+	{
+		for(int k = 0; k < 6; k++)
+		{
+			// A thick stream from the spout down into the drum, spreading a little as it falls
+			double fall = r.nextDouble(), spread = .1 + .14 * fall;
+			Vec3d p = templatePoint(DUST_AT[0] + (r.nextDouble() - .5) * spread, DUST_AT[1] - fall * .55, DUST_AT[2] + (r.nextDouble() - .5) * spread);
+			// The redstone particle takes its colour in the speed arguments
+			world.spawnParticle(EnumParticleTypes.REDSTONE, p.x, p.y, p.z, .9, .78, .18);
+		}
 	}
 
 	/** World point of a point given in template blocks from the trigger block's corner (any turn, mirrored or not). */
@@ -897,6 +1112,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 	{
 		if(isPart(HEATER_PART))
 			return heaters.shouldPlay(this, sound);
+		if(isPart(DISCHARGE_PART))
+			return drumFill.shouldPlay(this, sound);
 		return isPart(MOTOR_PART) && paddles.shouldPlay(this, sound);
 	}
 
@@ -908,6 +1125,8 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 			heaters.stop(this);
 		else if(isPart(MOTOR_PART))
 			paddles.stop(this);
+		else if(isPart(DISCHARGE_PART))
+			drumFill.stop(this);
 	}
 
 	/** Stop the loop when the structure comes apart or the chunk unloads. */

@@ -6,18 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Planned
+- The mod's own computers: multiblocks built with the Control Engineering Block, a data network with player-named
+  variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
+  the machines report every phase of their process.
+
+## [0.1.5-alpha] - 2026-10-27
+
 ### Added
 - **Industrial Dryer** (machine 5), closing line 1: the water is driven out of the Wet Uranium Concentrate and
-  **Yellowcake** comes out. A 4×7×3 multiblock (63 IE blocks): a horizontal drying chamber with paddles and heaters,
-  a feed hopper with a rotary valve, a condenser and a condensate tank. Each batch takes 24 Wet Uranium Concentrate and
-  90 seconds: loading, heating up to 140 °C, 60 seconds of drying while the paddles turn the concentrate over, then
+  **Yellowcake** comes out. A 5×7×4 multiblock (89 blocks): a horizontal drying chamber with paddles and heaters,
+  a feed hopper with a rotary valve, a condenser, a condensate tank and a drum loading station. Each batch takes 24
+  Wet Uranium Concentrate and 90 seconds: loading, heating up to 140 °C, 60 seconds of drying while the paddles turn
+  the concentrate over, then
   cooling and discharge. 16 Yellowcake and 2000 mB of Process Condensate per batch (76800 IF).
   GUI, JEI page (click the chamber in the GUI), a page in the Engineer's Manual, heaters that glow while they run,
-  steam rising from the chamber and yellow dust at the discharge, and a sound for every step.
+  steam rising from the vent stack and a sound for every step.
   A scrubber on the vapour line catches the fines the vapour carries off: every 4 batches they come back as one more
   yellowcake.
 - The Industrial Dryer's Process Condensate goes back into the Chemical Processing Unit through its recycled liquor
   tank, in place of part of the water (unlike the effluents, it saves no reagent).
+- **Concentrate Drum:** a sealed steel drum for yellowcake (one slot, up to 64). Broken, it keeps its yellowcake inside,
+  like a shulker box, so a filled drum travels as a single item. Hoppers, conveyors and pipes fill and empty it; a
+  comparator reads how full it is. Crafted like IE's metal barrel in steel sheetmetal, with a Radioactive Handling
+  block in the middle.
+- Recipes for the four engineering blocks, after IE's own (ingots in the corners, 2 per craft), and three new parts
+  for them: Lead Glass (a reinforced glass block, from IE's Arc Furnace: glass and lead dust), the Remote Manipulator and the Precision Bearing. The
+  Electronic and Relay Modules get recipes too and go into the Control Engineering block.
+- Industrial Dryer: a drum loading station. Concentrate Drums, empty or partly filled, go in at the north end; an
+  animated conveyor takes each one under the spout, where the yellowcake pours into it with its own sound and dust,
+  and full drums come out sealed with the yellowcake. Without drums the yellowcake comes out loose.
+- Building blocks from the Impure Agglomerate (the raw one): fired in a furnace it becomes the Agglomerate Block,
+  smooth like IE's concrete, which makes Agglomerate Tiles (as IE's concrete tile), Agglomerate Bricks and their stairs
+  and slabs.
 - A set of base detail textures for the machines (flanges, hatches, handwheels, vents and more), the Immersive
   Nuclear maker's plate, and a darker graphite finish for the machines' decks.
 
@@ -32,14 +53,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   some view angles and a block placed against them no longer turns their faces black.
 
 ### Fixed
+- Industrial Dryer sounds no longer ring ('plink') at the contactors and the discharge valve.
 - Low frame rate near machines with moving parts (Filtration Unit, Metal Extractor, Precipitation Unit).
 - The Engineer's Hammer on a machine's redstone port now inverts its redstone control (it did nothing before).
-
-### Planned
-- Concentrate Drum (storage for yellowcake).
-- The mod's own computers: multiblocks built with the Control Engineering Block, a data network with player-named
-  variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
-  the machines report every phase of their process.
 
 ## [0.1.4-alpha] - 2026-10-26
 
@@ -184,7 +200,9 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.3-alpha...HEAD
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.5-alpha...HEAD
+[0.1.5-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.5-alpha
+[0.1.4-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.4-alpha
 [0.1.3-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.3-alpha
 [0.1.2-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.2-alpha
 [0.1.1-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.1-alpha

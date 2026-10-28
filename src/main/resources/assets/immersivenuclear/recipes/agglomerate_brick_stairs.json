@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "immersivenuclear:agglomerate_bricks"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:agglomerate_brick_stairs",
+    "count": 4
+  }
+}

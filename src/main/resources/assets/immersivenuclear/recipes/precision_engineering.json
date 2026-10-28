@@ -1,0 +1,29 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "IBI",
+        "RER",
+        "IBI"
+    ],
+    "key": {
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSteel"
+        },
+        "B": {
+            "item": "immersivenuclear:precision_bearing"
+        },
+        "R": {
+            "type": "forge:ore_dict",
+            "ore": "stickSteel"
+        },
+        "E": {
+            "type": "forge:ore_dict",
+            "ore": "ingotElectrum"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:precision_engineering",
+        "count": 2
+    }
+}

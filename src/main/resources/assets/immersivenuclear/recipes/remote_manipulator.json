@@ -1,0 +1,25 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "R R",
+        " C ",
+        "RFR"
+    ],
+    "key": {
+        "R": {
+            "type": "forge:ore_dict",
+            "ore": "stickSteel"
+        },
+        "C": {
+            "type": "forge:ore_dict",
+            "ore": "componentSteel"
+        },
+        "F": {
+            "type": "forge:ore_dict",
+            "ore": "fabricHemp"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:remote_manipulator"
+    }
+}

@@ -1,0 +1,33 @@
+{
+  "textures": {
+    "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+    "#base_actuator": "immersivenuclear:blocks/base_actuator",
+    "#base_brass": "immersivenuclear:blocks/base_brass",
+    "#base_flange": "immersivenuclear:blocks/base_flange",
+    "#base_flange_side": "immersivenuclear:blocks/base_flange_side",
+    "#base_handrail": "immersivenuclear:blocks/base_handrail",
+    "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
+    "#base_hatch": "immersivenuclear:blocks/base_hatch",
+    "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
+    "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
+    "#concentrate_drum_side": "immersivenuclear:blocks/concentrate_drum_side",
+    "#concentrate_drum_top": "immersivenuclear:blocks/concentrate_drum_top",
+    "#conveyor_off": "immersiveengineering:blocks/conveyor_off",
+    "#furnace_heater": "immersivenuclear:blocks/furnace_heater",
+    "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+    "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+    "#metal_device1_thermoelectric_gen_bottom": "immersiveengineering:blocks/metal_device1_thermoelectric_gen_bottom",
+    "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
+    "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+    "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+    "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+    "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+    "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "#wooden_device_windmill_advanced": "immersiveengineering:blocks/wooden_device_windmill_advanced",
+    "particle": "immersiveengineering:blocks/storage_steel"
+  },
+  "parts": {
+    "belt": 0.0,
+    "drum": 0.0
+  }
+}

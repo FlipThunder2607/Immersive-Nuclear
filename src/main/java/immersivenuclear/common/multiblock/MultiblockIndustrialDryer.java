@@ -1,5 +1,7 @@
 package immersivenuclear.common.multiblock;
 
+import blusunrize.immersiveengineering.ImmersiveEngineering;
+import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import static immersivenuclear.common.multiblock.IndustrialDryerStructure.*;
 
 import java.util.LinkedHashMap;
@@ -51,7 +53,13 @@ public class MultiblockIndustrialDryer implements IMultiblock
 			case 'B': return new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta());
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 			case 'I': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.IRON.getMeta());
+			case 'S': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.STEEL.getMeta());
+			// With the conveyor type in its NBT, like IE's own multiblocks: without it the item (manual, projector) has no model
+			case 'c': return ConveyorHandler.getConveyorStack(ImmersiveEngineering.MODID + ":conveyor");
 			case 'a': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.IRON.getMeta());
+			case 'b': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
+			case 'f': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
+			case 'X': return new ItemStack(INContent.blockEngineering[3]);
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -59,7 +67,7 @@ public class MultiblockIndustrialDryer implements IMultiblock
 	/** Required slab half: 0 = lower, -1 = not a slab. Matches IE's TileEntityIESlab.slabType. */
 	static int slabTypeFor(char c)
 	{
-		return c == 'a' ? 0 : -1;
+		return c == 'a' || c == 'b' ? 0 : -1;
 	}
 
 	/** The block state a structure code stands for, or null for air. */
@@ -131,7 +139,7 @@ public class MultiblockIndustrialDryer implements IMultiblock
 					if(!isPart(dx, dy, dz))
 						continue;
 					BlockPos partPos = toWorld(pos, facing, mirror, dx, dy, dz);
-					// Keep the replaced block exactly (slab half, barrel contents, heater facing) to put it back on disassembly
+					// Keep the replaced block exactly (slab half, barrel contents, heater facing, conveyor direction) to put it back on disassembly
 					IBlockState original = world.getBlockState(partPos);
 					TileEntity originalTile = world.getTileEntity(partPos);
 					NBTTagCompound originalNbt = originalTile != null ? originalTile.writeToNBT(new NBTTagCompound()) : null;

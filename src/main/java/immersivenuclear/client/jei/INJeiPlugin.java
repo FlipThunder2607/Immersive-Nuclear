@@ -86,6 +86,10 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeClickArea(GuiIndustrialDryer.class, GuiIndustrialDryer.CHAMBER_X, GuiIndustrialDryer.CHAMBER_Y, GuiIndustrialDryer.CHAMBER_W,
 				GuiIndustrialDryer.CHAMBER_H, IndustrialDryerCategory.UID);
 		registry.addIngredientInfo(dryer, VanillaTypes.ITEM, "jei.immersivenuclear.industrial_dryer.info");
+		registry.addIngredientInfo(new ItemStack(INContent.itemConcentrateDrum), VanillaTypes.ITEM, "jei.immersivenuclear.concentrate_drum.info");
+		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateBlock), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_block.info");
+		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateTile), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_tile.info");
+		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateBricks), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_bricks.info");
 
 		// What each of our materials is for
 		registry.addIngredientInfo(new ItemStack(INContent.itemFilter), VanillaTypes.ITEM, "jei.immersivenuclear.filter.info");
@@ -102,8 +106,12 @@ public class INJeiPlugin implements IModPlugin
 		for(Item item : new Item[]{INContent.itemQuicklime, INContent.itemCake, INContent.itemAgglomerate, INContent.itemPrecipitatingAgent,
 				INContent.itemWetConcentrate, INContent.itemYellowcake})
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
+		// The electronic and relay modules have a recipe and a use now (the Control Engineering block); the rest wait for the computers
 		for(Item item : INContent.itemComputerParts)
-			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei.immersivenuclear.computer_part.info");
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, item == INContent.itemComputerParts[0] || item == INContent.itemComputerParts[1]
+					? "jei." + item.getTranslationKey().substring(5) + ".info" : "jei.immersivenuclear.computer_part.info");
+		for(Item item : new Item[]{INContent.itemLeadedGlass, INContent.itemRemoteManipulator, INContent.itemPrecisionBearing})
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
 		for(Item item : new Item[]{INContent.itemLinkConnector, INContent.itemLinkRelay})
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei.immersivenuclear.computer_part.info");
 		for(Item item : INContent.itemEngineering)

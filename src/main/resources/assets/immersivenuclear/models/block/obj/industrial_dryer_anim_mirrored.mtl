@@ -1,0 +1,12 @@
+newmtl concentrate_drum_side
+map_Kd #concentrate_drum_side
+
+newmtl concentrate_drum_top
+map_Kd #concentrate_drum_top
+
+newmtl conveyor_off
+map_Kd #conveyor_off
+
+newmtl storage_steel
+map_Kd #storage_steel
+

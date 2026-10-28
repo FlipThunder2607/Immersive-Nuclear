@@ -1,0 +1,28 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "PVP",
+        "MAM",
+        "PVP"
+    ],
+    "key": {
+        "P": {
+            "type": "forge:ore_dict",
+            "ore": "plateLead"
+        },
+        "V": {
+            "item": "immersivenuclear:leaded_glass"
+        },
+        "M": {
+            "item": "immersivenuclear:remote_manipulator"
+        },
+        "A": {
+            "item": "immersiveengineering:metal_decoration0",
+            "data": 5
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:radioactive_handling",
+        "count": 2
+    }
+}

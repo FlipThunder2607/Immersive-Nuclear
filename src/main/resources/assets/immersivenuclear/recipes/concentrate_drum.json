@@ -1,0 +1,24 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "SSS",
+        "BRB",
+        "BBB"
+    ],
+    "key": {
+        "S": {
+            "type": "forge:ore_dict",
+            "ore": "slabSheetmetalSteel"
+        },
+        "B": {
+            "type": "forge:ore_dict",
+            "ore": "blockSheetmetalSteel"
+        },
+        "R": {
+            "item": "immersivenuclear:radioactive_handling"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:concentrate_drum"
+    }
+}

@@ -1,6 +1,12 @@
 newmtl arc_furnace_active
 map_Kd #arc_furnace_active
 
+newmtl base_actuator
+map_Kd #base_actuator
+
+newmtl base_brass
+map_Kd #base_brass
+
 newmtl base_flange
 map_Kd #base_flange
 
@@ -19,9 +25,6 @@ map_Kd #base_hatch
 newmtl base_plate_in
 map_Kd #base_plate_in
 
-newmtl base_terminal_box
-map_Kd #base_terminal_box
-
 newmtl base_vent_cap
 map_Kd #base_vent_cap
 
@@ -34,6 +37,9 @@ map_Kd #metal_decoration0_radiator_ctm
 newmtl metal_device1_fluid_pipe
 map_Kd #metal_device1_fluid_pipe
 
+newmtl metal_device1_thermoelectric_gen_bottom
+map_Kd #metal_device1_thermoelectric_gen_bottom
+
 newmtl metal_multiblock_arc_furnace
 map_Kd #metal_multiblock_arc_furnace
 
@@ -43,15 +49,15 @@ map_Kd #metal_multiblock_mixer
 newmtl metal_multiblock_refinery
 map_Kd #metal_multiblock_refinery
 
-newmtl metal_multiblock_refinery_graphite
-map_Kd #metal_multiblock_refinery_graphite
-
 newmtl precipitation_tank_wall
 map_Kd #precipitation_tank_wall
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
 
 newmtl storage_steel
 map_Kd #storage_steel
 
-newmtl storage_uranium_top
-map_Kd #storage_uranium_top
+newmtl wooden_device_windmill_advanced
+map_Kd #wooden_device_windmill_advanced
 

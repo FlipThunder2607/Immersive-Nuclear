@@ -1,0 +1,28 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "IRI",
+        "TET",
+        "IRI"
+    ],
+    "key": {
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSteel"
+        },
+        "R": {
+            "item": "immersivenuclear:relay_module"
+        },
+        "T": {
+            "type": "forge:ore_dict",
+            "ore": "elecTube"
+        },
+        "E": {
+            "item": "immersivenuclear:electronic_module"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:control_engineering",
+        "count": 2
+    }
+}

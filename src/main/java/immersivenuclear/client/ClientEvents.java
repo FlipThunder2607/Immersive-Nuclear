@@ -48,7 +48,9 @@ public class ClientEvents
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
-				INContent.itemWetConcentrate, INContent.itemYellowcake, INContent.itemAgglomerate})
+				INContent.itemWetConcentrate, INContent.itemYellowcake, INContent.itemAgglomerate, INContent.itemConcentrateDrum,
+				INContent.itemAgglomerateBlock, INContent.itemAgglomerateTile, INContent.itemAgglomerateBricks, INContent.itemAgglomerateStairs, INContent.itemAgglomerateSlab,
+				INContent.itemLeadedGlass, INContent.itemRemoteManipulator, INContent.itemPrecisionBearing})
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 		for(Item item : INContent.itemEngineering)
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
@@ -81,6 +83,7 @@ public class ClientEvents
 		ClientRegistry.bindTileEntitySpecialRenderer(TileMetalExtractor.class, new RenderMetalExtractor());
 		// The agitator turning and the batch in the agitated tank
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePrecipitationUnit.class, new RenderPrecipitationUnit());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileIndustrialDryer.class, new RenderIndustrialDryer());
 	}
 
 	/** Textures are stitched by now (the item variant of the blockstate names them all). */
@@ -90,6 +93,7 @@ public class ClientEvents
 		RenderFilterPress.bake();
 		RenderMetalExtractor.bake();
 		RenderPrecipitationUnit.bake();
+		RenderIndustrialDryer.bake();
 		// Every part of a formed machine draws its own slice of the machine's model
 		for(Block b : new Block[]{INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
 				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer})
