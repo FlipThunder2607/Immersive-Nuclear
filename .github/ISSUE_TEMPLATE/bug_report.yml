@@ -9,7 +9,7 @@ body:
     id: version
     attributes:
       label: Immersive Nuclear version
-      placeholder: 0.1.0-alpha.17
+      placeholder: 0.1.6
     validations:
       required: true
   - type: input

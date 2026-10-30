@@ -464,7 +464,7 @@ public class INContent
 				new Object[]{"sand", "sand", new ItemStack(itemCake), "gravel"}, CONCRETE_MIX_ENERGY);
 	}
 
-	/** Registry names used up to 0.1.0-alpha.17, mapped to the current ones so existing worlds keep their items. */
+	/** Registry names used up to 0.1.0, mapped to the current ones so existing worlds keep their items. */
 	static final Map<String, String> RENAMED = new HashMap<>();
 
 	static

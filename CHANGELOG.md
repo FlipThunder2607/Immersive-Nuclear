@@ -2,7 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow `MAJOR.MINOR.PATCH-alpha` while the mod is in alpha: each finished feature is one patch release.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html). While the major version is 0 the mod is in alpha and every
+release is a GitHub pre-release; each finished feature or fix release bumps the patch number. The tag, the JAR and
+the release title always carry the same version.
 
 ## [Unreleased]
 
@@ -11,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
 
-## [0.1.5-alpha] - 2026-10-27
+## [0.1.6] - 2026-10-27
 
 ### Added
 - **Industrial Dryer** (machine 5), closing line 1: the water is driven out of the Wet Uranium Concentrate and
@@ -57,7 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Low frame rate near machines with moving parts (Filtration Unit, Metal Extractor, Precipitation Unit).
 - The Engineer's Hammer on a machine's redstone port now inverts its redstone control (it did nothing before).
 
-## [0.1.4-alpha] - 2026-10-26
+## [0.1.5] - 2026-10-26
 
 ### Added
 - **Precipitation Unit** (machine 4): the uranium dissolved in the Purified Uranium Solution becomes a solid. A 5×7×5
@@ -71,7 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Link cables are drawn between the connectors and relays, sag like IE's HV wire (in space grey), can be cut and
   broken, and stay link cables after the game restarts (#5).
 
-## [0.1.3.1-alpha] - 2026-10-25
+## [0.1.4] - 2026-10-25
 
 ### Added
 - **Engineering blocks**, like IE's light and heavy engineering, as casings for the next machines: Precision
@@ -83,7 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Magnetic Tape, Continuous Form Paper, and the Link Connector and Link Relay blocks (IE's LV connector model, in
   graphite and brushed steel).
 
-## [0.1.3-alpha] - 2026-10-24
+## [0.1.3] - 2026-10-24
 
 ### Added
 - **Metal Extractor** (machine 3.5), a branch after the Chemical Separation Unit. An electrolytic cell takes the
@@ -117,7 +120,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 - The multiblock structures shown in IE's manual (and the projector) were mirrored against the formed machine.
 
-## [0.1.2-alpha] - 2026-10-24
+## [0.1.2] - 2026-10-24
 
 ### Added
 - Recipes:
@@ -138,7 +141,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The Chemical Separation Unit could lock up when the solvent port kept the reservoir full: the returning solvent had
   nowhere to go, so both settlers stopped. Machines locked this way start again on their own.
 
-## [0.1.1-alpha] - 2026-10-24
+## [0.1.1] - 2026-10-24
 
 ### Added
 - **Chemical Separation Unit** (5×4×7 multiblock, 118 blocks), solvent extraction in two mixer-settler stages:
@@ -167,7 +170,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - All machine tanks hold 12000 mB.
 - New item icons (16×16).
 - All registry names, textures, lang keys and code identifiers are now in English, for example `processing_reagent`, `uranium_slurry` and `impure_agglomerate`.
-  - Items and blocks from 0.1.0-alpha.17 worlds are remapped to the new names automatically.
+  - Items and blocks from 0.1.0 worlds are remapped to the new names automatically.
   - Fluids stored in tanks or buckets under the old names are lost.
 - `mcmod.info` now has an English description, authors and credits.
 - The tank textures are the mod's own now.
@@ -175,7 +178,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Removed
 - The Filtration Unit's separate pressurizing sound (the shared pump sound replaces it).
 
-## [0.1.0-alpha.17] - 2026-10-21
+## [0.1.0] - 2026-10-21
 
 First development snapshot published in this repository. Earlier alpha builds were internal test builds.
 
@@ -200,10 +203,11 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.5-alpha...HEAD
-[0.1.5-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.5-alpha
-[0.1.4-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.4-alpha
-[0.1.3-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.3-alpha
-[0.1.2-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.2-alpha
-[0.1.1-alpha]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.1-alpha
-[0.1.0-alpha.17]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.0-alpha.17
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.6
+[0.1.5]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.5
+[0.1.4]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.4
+[0.1.3]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.3
+[0.1.2]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.2
+[0.1.1]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.1
+[0.1.0]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.0
