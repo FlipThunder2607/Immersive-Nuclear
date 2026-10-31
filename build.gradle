@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1.6"
+version = "0.1.7"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -96,3 +96,9 @@ task industrialDryerStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn industrialDryerStructureTest
+
+task sulfuricAcidUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.SulfuricAcidUnitStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn sulfuricAcidUnitStructureTest

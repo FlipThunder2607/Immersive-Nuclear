@@ -7,6 +7,7 @@ import immersivenuclear.client.GuiFilterPress;
 import immersivenuclear.client.GuiIndustrialDryer;
 import immersivenuclear.client.GuiMetalExtractor;
 import immersivenuclear.client.GuiPrecipitationUnit;
+import immersivenuclear.client.GuiSulfuricAcidUnit;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
 import immersivenuclear.common.block.TileConcentrateDrum;
@@ -14,6 +15,7 @@ import immersivenuclear.common.block.TileFilterPress;
 import immersivenuclear.common.block.TileIndustrialDryer;
 import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.block.TilePrecipitationUnit;
+import immersivenuclear.common.block.TileSulfuricAcidUnit;
 import immersivenuclear.common.gui.ContainerChemicalProcessor;
 import immersivenuclear.common.gui.ContainerChemicalSeparator;
 import immersivenuclear.common.gui.ContainerConcentrateDrum;
@@ -21,6 +23,7 @@ import immersivenuclear.common.gui.ContainerFilterPress;
 import immersivenuclear.common.gui.ContainerIndustrialDryer;
 import immersivenuclear.common.gui.ContainerMetalExtractor;
 import immersivenuclear.common.gui.ContainerPrecipitationUnit;
+import immersivenuclear.common.gui.ContainerSulfuricAcidUnit;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +33,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 /** Opened with the master's position; the client class is only touched on the client. */
 public class INGuiHandler implements IGuiHandler
 {
-	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6;
+	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7;
 
 	static TileChemicalProcessor master(World world, int x, int y, int z)
 	{
@@ -68,6 +71,12 @@ public class INGuiHandler implements IGuiHandler
 		return te instanceof TileIndustrialDryer && ((TileIndustrialDryer)te).isMaster() ? (TileIndustrialDryer)te : null;
 	}
 
+	static TileSulfuricAcidUnit acidUnit(World world, int x, int y, int z)
+	{
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+		return te instanceof TileSulfuricAcidUnit && ((TileSulfuricAcidUnit)te).isMaster() ? (TileSulfuricAcidUnit)te : null;
+	}
+
 	static TileConcentrateDrum drum(World world, int x, int y, int z)
 	{
 		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -77,6 +86,11 @@ public class INGuiHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
+		if(id == SULFURIC_ACID_UNIT)
+		{
+			TileSulfuricAcidUnit a = acidUnit(world, x, y, z);
+			return a == null ? null : new ContainerSulfuricAcidUnit(player.inventory, a);
+		}
 		if(id == CONCENTRATE_DRUM)
 		{
 			TileConcentrateDrum d = drum(world, x, y, z);
@@ -114,6 +128,11 @@ public class INGuiHandler implements IGuiHandler
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
+		if(id == SULFURIC_ACID_UNIT)
+		{
+			TileSulfuricAcidUnit a = acidUnit(world, x, y, z);
+			return a == null ? null : new GuiSulfuricAcidUnit(new ContainerSulfuricAcidUnit(player.inventory, a));
+		}
 		if(id == CONCENTRATE_DRUM)
 		{
 			TileConcentrateDrum d = drum(world, x, y, z);

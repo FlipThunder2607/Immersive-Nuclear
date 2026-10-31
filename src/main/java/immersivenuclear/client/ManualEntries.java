@@ -12,6 +12,7 @@ import immersivenuclear.common.multiblock.MultiblockFilterPress;
 import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
+import immersivenuclear.common.multiblock.MultiblockSulfuricAcidUnit;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -53,6 +54,9 @@ public class ManualEntries
 				new ManualPageMultiblock(manual, "in_industrial_dryer0", MultiblockIndustrialDryer.instance),
 				text("in_industrial_dryer1"), text("in_industrial_dryer2"), text("in_industrial_dryer3"),
 				new ManualPages.Crafting(manual, "in_industrial_dryer4", new ItemStack(INContent.itemConcentrateDrum)));
+		ManualHelper.addEntry("in_sulfuric_acid_unit", CATEGORY,
+				new ManualPageMultiblock(manual, "in_sulfuric_acid_unit0", MultiblockSulfuricAcidUnit.instance),
+				text("in_sulfuric_acid_unit1"));
 		ManualHelper.addEntry("in_supplies", CATEGORY,
 				text("in_supplies0"), text("in_supplies1"),
 				new ManualPages.Crafting(manual, "in_supplies2", new ItemStack(INContent.itemPrecipitatingAgent)));

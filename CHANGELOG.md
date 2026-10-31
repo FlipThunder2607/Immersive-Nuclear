@@ -14,6 +14,26 @@ the release title always carry the same version.
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
 
+## [0.1.7] - 2026-10-31
+
+The first machine of line 2 (enrichment): the mod now makes its own sulfuric acid, the start of its own
+hydrofluoric acid, so the line does not depend on other mods.
+
+### Added
+- **Sulfuric Acid Unit**: the contact process in a 5×7×8 multiblock (126 blocks). The sulfur burns with a blue flame
+  in the air from the blower, a waste heat boiler cools the gas and makes steam, a converter with four catalyst beds
+  makes sulfur trioxide and an absorption tower turns it into sulfuric acid; the clean gas leaves by the stack. Each
+  5 s cycle takes 1 sulfur and 500 mB of water and gives 500 mB of Sulfuric Acid and 250 mB of Steam, drawing 32 IF/t
+  (provisional numbers). Sulfur from any mod is taken (dust, gem or crystal); a block of sulfur makes one cycle nine
+  times as long, with nine times the water and the output.
+- Its GUI, an animated flow diagram (flame, glowing boiler tubes, the gas passing through the catalyst beds, acid
+  trickling down the packing), with bucket slots for every tank; JEI page; Engineer's Manual page.
+- Burner flame that lights only while the machine runs; smoke from the stack; with the steam tank full, the steam
+  drum's relief valve vents with a hiss. Sounds for the burner, the pump and the vent.
+- **Sulfuric Acid** and **Steam** fluids, animated, with buckets. The steam is shared with other mods by name
+  (`steam`), so their steam machines can take it.
+- Hazard tooltips: sulfuric acid is corrosive and an oxidizer; steam is hot.
+
 ## [0.1.6] - 2026-10-27
 
 ### Added
@@ -203,7 +223,8 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.7
 [0.1.6]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.6
 [0.1.5]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.5
 [0.1.4]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.4

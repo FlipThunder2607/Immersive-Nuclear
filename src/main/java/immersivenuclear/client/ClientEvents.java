@@ -24,6 +24,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Loader;
@@ -45,6 +46,7 @@ public class ClientEvents
 		ModelLoader.setCustomModelResourceLocation(INContent.itemMetalExtractor, 0, new ModelResourceLocation(INContent.itemMetalExtractor.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemPrecipitationUnit, 0, new ModelResourceLocation(INContent.itemPrecipitationUnit.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemIndustrialDryer, 0, new ModelResourceLocation(INContent.itemIndustrialDryer.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemSulfuricAcidUnit, 0, new ModelResourceLocation(INContent.itemSulfuricAcidUnit.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
@@ -96,7 +98,7 @@ public class ClientEvents
 		RenderIndustrialDryer.bake();
 		// Every part of a formed machine draws its own slice of the machine's model
 		for(Block b : new Block[]{INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
-				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer})
+				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit})
 			for(Map.Entry<IBlockState, ModelResourceLocation> e : event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(b).entrySet())
 			{
 				IBakedModel whole = event.getModelRegistry().getObject(e.getValue());
@@ -106,16 +108,21 @@ public class ClientEvents
 			}
 	}
 
-	/** Our fluids have no world block, so nothing else asks for their textures (bucket, tanks, pipes draw them). */
+	/**
+	 * Our fluids have no world block, so nothing else asks for their textures (bucket, tanks, pipes draw them). A fluid
+	 * shared by name (steam, sulfuric acid) may be another mod's, also without a block: its textures are asked for too.
+	 */
 	@SubscribeEvent
 	public static void onTextureStitch(TextureStitchEvent.Pre event)
 	{
 		if(event.getMap() != Minecraft.getMinecraft().getTextureMapBlocks())
 			return;
 		for(Fluid f : INContent.fluids)
-		{
-			event.getMap().registerSprite(f.getStill());
-			event.getMap().registerSprite(f.getFlowing());
-		}
+			for(Fluid g : new Fluid[]{f, FluidRegistry.getFluid(f.getName())})
+				if(g != null)
+				{
+					event.getMap().registerSprite(g.getStill());
+					event.getMap().registerSprite(g.getFlowing());
+				}
 	}
 }

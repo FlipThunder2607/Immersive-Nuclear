@@ -1,0 +1,330 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true,
+      "ambient": false
+    },
+    "textures": {
+      "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+      "#base_handrail": "immersivenuclear:blocks/base_handrail",
+      "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
+      "#base_hatch": "immersivenuclear:blocks/base_hatch",
+      "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
+      "#burner_flame": "immersivenuclear:blocks/burner_flame",
+      "#burner_glow": "immersivenuclear:blocks/burner_glow",
+      "#glass": "minecraft:blocks/glass",
+      "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+      "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+      "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+      "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+      "#stone_decoration_blastbrick": "immersiveengineering:blocks/stone_decoration_blastbrick",
+      "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "active=false,facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 90,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 90,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 90,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 90,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 0,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 0,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 0,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 0,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 180,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 180,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 180,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 180,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 270,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 270,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 270,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=false,facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 270,
+      "textures": {
+        "#burner_flame": "immersivenuclear:blocks/burner_flame_off",
+        "#burner_glow": "immersivenuclear:blocks/burner_glow_off"
+      }
+    },
+    "active=true,facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 90
+    },
+    "active=true,facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 90
+    },
+    "active=true,facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 90
+    },
+    "active=true,facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 90
+    },
+    "active=true,facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 0
+    },
+    "active=true,facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 0
+    },
+    "active=true,facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 0
+    },
+    "active=true,facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 0
+    },
+    "active=true,facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 180
+    },
+    "active=true,facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 180
+    },
+    "active=true,facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 180
+    },
+    "active=true,facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 180
+    },
+    "active=true,facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 270
+    },
+    "active=true,facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 270
+    },
+    "active=true,facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+      "y": 270
+    },
+    "active=true,facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/sulfuric_acid_unit_mirrored.obj",
+      "y": 270
+    },
+    "inventory": [
+      {
+        "model": "immersivenuclear:obj/sulfuric_acid_unit.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0629,
+              -0.1491,
+              -0.0135
+            ],
+            "scale": 0.0898,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.0,
+              -0.0985,
+              -0.0644
+            ],
+            "scale": 0.0651
+          },
+          "fixed": {
+            "translation": [
+              -0.0,
+              -0.1603,
+              0.1049
+            ],
+            "scale": 0.106,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.04,
+              0.0163,
+              -0.0938
+            ],
+            "scale": 0.0571,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.04,
+              0.0163,
+              -0.0938
+            ],
+            "scale": 0.0571,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0456,
+              -0.0985,
+              -0.0456
+            ],
+            "scale": 0.0651,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0456,
+              -0.0985,
+              0.0456
+            ],
+            "scale": 0.0651,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

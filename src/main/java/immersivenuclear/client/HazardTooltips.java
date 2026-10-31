@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class HazardTooltips
 {
 	static final String RAD = "radioactive", TRACE = "radioactive_traces", CORR = "corrosive", FIRE = "flammable",
-			TOXIC = "toxic", OXID = "oxidizer", CAUSTIC = "caustic";
+			TOXIC = "toxic", OXID = "oxidizer", CAUSTIC = "caustic", HOT = "hot";
 	static Map<Item, String[]> items;
 	static Map<String, String[]> fluids;
 
@@ -47,6 +47,8 @@ public class HazardTooltips
 		fluids.put(INContent.fluidDepletedEffluent.getName(), new String[]{CORR});
 		fluids.put(INContent.fluidSolvent.getName(), new String[]{FIRE});
 		fluids.put(INContent.fluidSludge.getName(), new String[]{TRACE});
+		fluids.put(INContent.fluidSulfuricAcid.getName(), new String[]{CORR, OXID});
+		fluids.put(INContent.fluidSteam.getName(), new String[]{HOT});
 	}
 
 	@SubscribeEvent

@@ -23,6 +23,7 @@ import immersivenuclear.common.block.BlockLinkConnector;
 import immersivenuclear.common.block.BlockFilterPress;
 import immersivenuclear.common.block.BlockMetalExtractor;
 import immersivenuclear.common.block.BlockIndustrialDryer;
+import immersivenuclear.common.block.BlockSulfuricAcidUnit;
 import immersivenuclear.common.block.BlockPrecipitationUnit;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
@@ -30,6 +31,7 @@ import immersivenuclear.common.block.TileFilterPress;
 import immersivenuclear.common.block.TileLinkConnector;
 import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.block.TileIndustrialDryer;
+import immersivenuclear.common.block.TileSulfuricAcidUnit;
 import immersivenuclear.common.block.TilePrecipitationUnit;
 import immersivenuclear.common.item.ItemElectrode;
 import immersivenuclear.common.item.ItemFilter;
@@ -40,6 +42,7 @@ import immersivenuclear.common.multiblock.MultiblockChemicalSeparator;
 import immersivenuclear.common.multiblock.MultiblockFilterPress;
 import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
 import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
+import immersivenuclear.common.multiblock.MultiblockSulfuricAcidUnit;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
@@ -69,6 +72,7 @@ public class INContent
 	public static BlockMetalExtractor blockMetalExtractor;
 	public static BlockPrecipitationUnit blockPrecipitationUnit;
 	public static BlockIndustrialDryer blockIndustrialDryer;
+	public static BlockSulfuricAcidUnit blockSulfuricAcidUnit;
 	public static BlockConcentrateDrum blockConcentrateDrum;
 	public static BlockLeadedGlass blockLeadedGlass;
 
@@ -99,6 +103,7 @@ public class INContent
 	public static Item itemPrecipitationUnit;
 	/** The same for the Industrial Dryer. */
 	public static Item itemIndustrialDryer;
+	public static Item itemSulfuricAcidUnit;
 	public static Item itemConcentrateDrum;
 
 	/** Processing Reagent: consumed one per cycle by the Chemical Processing Unit. */
@@ -152,6 +157,8 @@ public class INContent
 	/** Fluids of the chemical separation, the effluent treatment and the dryer (catalogue); only tanks and pipes
 	 * use them for now. */
 	public static Fluid fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate;
+	/** Line 2: the Sulfuric Acid Unit's acid and steam (shared with other mods by name: theirs is used when they have one). */
+	public static Fluid fluidSulfuricAcid, fluidSteam;
 
 	/** Every fluid of the mod, for texture stitching and the hazard notes. */
 	public static Fluid[] fluids;
@@ -175,6 +182,9 @@ public class INContent
 	public static SoundEvent soundPuScrewStart, soundPuScrewLoop, soundPuScrewStop;
 
 	/** The Industrial Dryer's steps: load (rotary valve), heat (heaters, loop), dry (paddles, loop), discharge (valve). */
+	/** The Sulfuric Acid Unit: the burner with its blower, the acid pump, and the steam drum's relief valve venting. */
+	public static SoundEvent soundAcidBurnerStart, soundAcidBurnerLoop, soundAcidBurnerStop, soundAcidPumpStart, soundAcidPumpLoop, soundAcidPumpStop,
+			soundAcidVentStart, soundAcidVentLoop, soundAcidVentStop;
 	public static SoundEvent soundDryerLoad, soundDryerHeatStart, soundDryerHeatLoop, soundDryerHeatStop, soundDryerDryStart, soundDryerDryLoop,
 			soundDryerDryStop, soundDryerDischarge, soundDryerFillStart, soundDryerFillLoop, soundDryerFillStop;
 
@@ -217,6 +227,15 @@ public class INContent
 		soundDryerFillStart = sound(event, "industrial_dryer_fill_start");
 		soundDryerFillLoop = sound(event, "industrial_dryer_fill_loop");
 		soundDryerFillStop = sound(event, "industrial_dryer_fill_stop");
+		soundAcidBurnerStart = sound(event, "sulfuric_acid_unit_burner_start");
+		soundAcidBurnerLoop = sound(event, "sulfuric_acid_unit_burner_loop");
+		soundAcidBurnerStop = sound(event, "sulfuric_acid_unit_burner_stop");
+		soundAcidPumpStart = sound(event, "sulfuric_acid_unit_pump_start");
+		soundAcidPumpLoop = sound(event, "sulfuric_acid_unit_pump_loop");
+		soundAcidPumpStop = sound(event, "sulfuric_acid_unit_pump_stop");
+		soundAcidVentStart = sound(event, "sulfuric_acid_unit_vent_start");
+		soundAcidVentLoop = sound(event, "sulfuric_acid_unit_vent_loop");
+		soundAcidVentStop = sound(event, "sulfuric_acid_unit_vent_stop");
 	}
 
 	static SoundEvent sound(RegistryEvent.Register<SoundEvent> event, String name)
@@ -225,6 +244,19 @@ public class INContent
 		SoundEvent e = new SoundEvent(id).setRegistryName(id);
 		event.getRegistry().register(e);
 		return e;
+	}
+
+	/**
+	 * Steam, as early as a mod can register anything (its constructor): the first mod to register a fluid name makes it
+	 * that name's default in new worlds, and other mods (turbines, boilers) take steam by name, so ours is the one they
+	 * use there. A world keeps the default it was made with (Forge saves it in level.dat), so in an older world another
+	 * mod's steam may stay the default; the machine's interface draws its steam with our texture anyway.
+	 */
+	public static void constructFluids()
+	{
+		fluidSteam = fluid("steam", -100, 200);
+		if(FluidRegistry.getFluid("steam") == fluidSteam)
+			fluidSteam.setGaseous(true);
 	}
 
 	/** Fluids have to exist before blocks and items are registered (buckets look them up). */
@@ -242,7 +274,10 @@ public class INContent
 		fluidSludge = fluid("neutralized_sludge", 1500, 3500);
 		fluidDepletedEffluent = fluid("depleted_effluent", 1050, 1100);
 		fluidCondensate = fluid("process_condensate", 1000, 1000);
-		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate};
+		fluidSulfuricAcid = fluid("sulfuric_acid", 1830, 2600);
+		if(fluidSteam == null)
+			constructFluids();
+		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate, fluidSulfuricAcid, fluidSteam};
 	}
 
 	/** A building block of the finished agglomerate: heavy like the raw one and IE's concrete (provisional values). */
@@ -287,6 +322,8 @@ public class INContent
 		event.getRegistry().register(itemPrecipitationUnit);
 		itemIndustrialDryer = new Item().setRegistryName(ImmersiveNuclear.MODID, "industrial_dryer").setTranslationKey(ImmersiveNuclear.MODID + ".industrial_dryer").setCreativeTab(TAB);
 		event.getRegistry().register(itemIndustrialDryer);
+		itemSulfuricAcidUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "sulfuric_acid_unit").setTranslationKey(ImmersiveNuclear.MODID + ".sulfuric_acid_unit").setCreativeTab(TAB);
+		event.getRegistry().register(itemSulfuricAcidUnit);
 		itemReagent = new Item().setRegistryName(ImmersiveNuclear.MODID, "processing_reagent").setTranslationKey(ImmersiveNuclear.MODID + ".processing_reagent").setCreativeTab(TAB);
 		event.getRegistry().register(itemReagent);
 		itemResidue = new Item().setRegistryName(ImmersiveNuclear.MODID, "wet_mineral_residue").setTranslationKey(ImmersiveNuclear.MODID + ".wet_mineral_residue").setCreativeTab(TAB);
@@ -359,6 +396,9 @@ public class INContent
 		blockIndustrialDryer = new BlockIndustrialDryer();
 		event.getRegistry().register(blockIndustrialDryer);
 		GameRegistry.registerTileEntity(TileIndustrialDryer.class, new ResourceLocation(ImmersiveNuclear.MODID, "industrial_dryer"));
+		blockSulfuricAcidUnit = new BlockSulfuricAcidUnit();
+		event.getRegistry().register(blockSulfuricAcidUnit);
+		GameRegistry.registerTileEntity(TileSulfuricAcidUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "sulfuric_acid_unit"));
 		blockLeadedGlass = new BlockLeadedGlass();
 		event.getRegistry().register(blockLeadedGlass);
 		blockConcentrateDrum = new BlockConcentrateDrum();
@@ -397,6 +437,7 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockMetalExtractor.instance);
 		MultiblockHandler.registerMultiblock(MultiblockPrecipitationUnit.instance);
 		MultiblockHandler.registerMultiblock(MultiblockIndustrialDryer.instance);
+		MultiblockHandler.registerMultiblock(MultiblockSulfuricAcidUnit.instance);
 		mixerRecipes();
 		cokeOvenRecipes();
 		crusherRecipes();

@@ -21,6 +21,12 @@ public class ImmersiveNuclear
 	@Mod.Instance(MODID)
 	public static ImmersiveNuclear instance;
 
+	/** Steam is registered here, before any mod's preInit (see INContent.constructFluids). */
+	public ImmersiveNuclear()
+	{
+		immersivenuclear.common.INContent.constructFluids();
+	}
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{

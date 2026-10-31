@@ -6,6 +6,7 @@ import immersivenuclear.client.GuiChemicalProcessor;
 import immersivenuclear.client.GuiChemicalSeparator;
 import immersivenuclear.client.GuiFilterPress;
 import immersivenuclear.client.GuiIndustrialDryer;
+import immersivenuclear.client.GuiSulfuricAcidUnit;
 import immersivenuclear.client.GuiMetalExtractor;
 import immersivenuclear.client.GuiPrecipitationUnit;
 import immersivenuclear.common.INContent;
@@ -32,13 +33,15 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new MetalExtractorCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new PrecipitationUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
 	/** Liquids with recipe pages now (our machines, IE's Mixer), not the "coming later" note. */
 	static boolean hasRecipes(Fluid f)
 	{
 		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent
-				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate;
+				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate
+				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam;
 	}
 
 	@Override
@@ -86,6 +89,19 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeClickArea(GuiIndustrialDryer.class, GuiIndustrialDryer.CHAMBER_X, GuiIndustrialDryer.CHAMBER_Y, GuiIndustrialDryer.CHAMBER_W,
 				GuiIndustrialDryer.CHAMBER_H, IndustrialDryerCategory.UID);
 		registry.addIngredientInfo(dryer, VanillaTypes.ITEM, "jei.immersivenuclear.industrial_dryer.info");
+		// Sulfur in any form: one cycle per dust, nine in one long cycle per block (only the forms some mod has)
+		java.util.List<SulfuricAcidUnitRecipe> acid = new java.util.ArrayList<>();
+		for(boolean block : new boolean[]{false, true})
+			if(new SulfuricAcidUnitRecipe(block).hasSulfur())
+				acid.add(new SulfuricAcidUnitRecipe(block));
+		registry.addRecipes(acid, SulfuricAcidUnitCategory.UID);
+		ItemStack acidUnit = new ItemStack(INContent.itemSulfuricAcidUnit);
+		registry.addRecipeCatalyst(acidUnit, SulfuricAcidUnitCategory.UID);
+		// Clicking the converter of the interface shows the recipes
+		registry.addRecipeClickArea(GuiSulfuricAcidUnit.class, GuiSulfuricAcidUnit.CONV_X, GuiSulfuricAcidUnit.CONV_Y, GuiSulfuricAcidUnit.CONV_W,
+				GuiSulfuricAcidUnit.CONV_H, SulfuricAcidUnitCategory.UID);
+		registry.addIngredientInfo(acidUnit, VanillaTypes.ITEM, "jei.immersivenuclear.sulfuric_acid_unit.info");
+		registry.addIngredientInfo(new FluidStack(INContent.fluidSteam, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.steam.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemConcentrateDrum), VanillaTypes.ITEM, "jei.immersivenuclear.concentrate_drum.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateBlock), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_block.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateTile), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_tile.info");

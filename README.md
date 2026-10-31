@@ -26,7 +26,7 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.6)
+## Current content (0.1.7)
 
 ### Machines
 
@@ -38,6 +38,7 @@ Design goals:
 | **Metal Extractor** | 4×4×4 | Electrolytic cell. Plates the metals dissolved in the Chemical Effluent onto six electrode plates, which rise to be scraped over a tray: **Mixed Metal Deposit** and **Depleted Effluent**. Three electrode plates (steel, lead-silver, electrum-coated) with growing yield and life. Animated platform, tray and scraper. |
 | **Precipitation Unit** | 5×7×5 | Agitated tank and screw dewaterer. Turns the purified solution and the Precipitating Agent into **Wet Uranium Concentrate** and **Chemical Effluent**. Animated agitator and liquid behind the tank's window. |
 | **Industrial Dryer** | 5×7×4 | Paddle dryer with heaters and a condenser. Turns the wet concentrate into **Yellowcake**, the end of line 1, and collects the **Process Condensate**. A drum loading station beside it fills **Concentrate Drums** on an animated conveyor. Heaters that glow while they run, steam and dust. |
+| **Sulfuric Acid Unit** | 5×7×8 | Contact process, the first machine of line 2. Burns sulfur (any mod's dust, or a block for nine cycles) and turns it into **Sulfuric Acid** with water, for the enrichment line's own hydrofluoric acid; its waste heat boiler gives **Steam**. Blue burner flame, stack smoke and a relief valve that vents when the steam tank is full. |
 
 The effluent never has to be dumped: it goes back into the Chemical Processing Unit as recycled liquor (saving reagent), through the Metal Extractor, or is neutralized with quicklime in IE's Mixer. The Filtration Unit filters the neutralized sludge into Neutralization Cake and plain water, and the cake replaces clay in IE's concrete.
 
@@ -53,11 +54,11 @@ All machines have:
 ### Items, fluids and blocks
 
 - **Items:** Processing Reagent, Filter, Wet Mineral Residue, Neutralized Mineral Residue, Electrode Plates (steel, lead-silver, electrum-coated), Mixed Metal Deposit, Quicklime, Neutralization Cake, Precipitating Agent, Wet Uranium Concentrate, Uranium Concentrate (Yellowcake)
-- **Fluids** (animated, with buckets): Uranium Slurry, Crude Uranium Solution, Extraction Solvent, Stripping Solution, Purified Uranium Solution, Chemical Effluent, Neutralized Sludge, Depleted Effluent, Process Condensate
+- **Fluids** (animated, with buckets): Uranium Slurry, Crude Uranium Solution, Extraction Solvent, Stripping Solution, Purified Uranium Solution, Chemical Effluent, Neutralized Sludge, Depleted Effluent, Process Condensate, Sulfuric Acid, Steam (shared with other mods by name)
 - **Blocks:** Concentrate Drum, which keeps its yellowcake when broken; Impure Agglomerate, a heavy building block made from process waste, and the building blocks fired from it (Agglomerate Block, Tile, Bricks, Brick Stairs and Slab); four engineering blocks (precision, nuclear, control, radioactive handling), with recipes, that join into connected walls with the CTM mod; Lead Glass
 - **Engineering parts:** Remote Manipulator, Precision Bearing, Electronic and Relay Modules
 - **Computer parts** (in development, creative tab only): electronic and relay modules, core memory, punched card and paper tape, disk pack, magnetic tape, link cable, continuous form paper, link connector and link relay
-- **Hazard tooltips** on materials: radioactive, corrosive, flammable, toxic, oxidizer, caustic. They are informative only for now.
+- **Hazard tooltips** on materials: radioactive, corrosive, flammable, toxic, oxidizer, caustic, hot. They are informative only for now.
 
 Some items and fluids are already registered for the next machines. Until those machines exist, they can only be stored.
 
@@ -79,6 +80,9 @@ Machines 1 to 5 are playable: line 1 is complete.
 A branch after machine 3, the **Metal Extractor** (machine 3.5, playable), recovers dissolved metals from the effluent
 in an electrolytic cell before it is treated.
 
+Line 2 (enrichment) makes its own hydrofluoric acid: the **Sulfuric Acid Unit** (playable) feeds the planned
+Hydrofluoric Acid Kiln, whose acid goes into the Conversion Unit.
+
 ## Roadmap
 
 **Line 1: uranium powder to yellowcake**
@@ -96,8 +100,13 @@ in an electrolytic cell before it is treated.
 - [ ] Contamination system with four kinds of exposure: radiological, chemical, particulate (inhaled dust) and physical (fire, pressure, heat, explosion)
 - [ ] Protective equipment, shielding, dosimetry and decontamination
 
+**Line 2: conversion and enrichment**
+- [x] Sulfuric Acid Unit (contact process)
+- [ ] Hydrofluoric Acid Kiln
+- [ ] Conversion Unit
+- [ ] Enrichment Unit
+
 **Later stages**
-- [ ] Conversion and enrichment
 - [ ] Fuel fabrication
 - [ ] Reactors, with an analog control and automation system (see [`TODO_List_automation.md`](TODO_List_automation.md))
 - [ ] Spent fuel and waste management
