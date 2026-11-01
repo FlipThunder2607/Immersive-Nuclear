@@ -25,10 +25,10 @@ public class ContainerPrecipitationUnit extends Container
 	public static final int[][] SLOT_XY = {
 			{76, 12},  // precipitating agent, on the funnel
 			{192, 12}, // wet concentrate, at the discharge head
-			{18, 38},  // solution container in, its pipe into the tank
-			{18, 82},  // empty container out, under it
+			{18, 36},  // solution container in, its pipe into the tank (on the band's top)
+			{18, 92},  // empty container out, under it (on the band's bottom)
 			{220, 12}, // empty container in, over the effluent tank
-			{220, 96}, // effluent container out, under it
+			{220, 92}, // effluent container out, under it (on the band's bottom)
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

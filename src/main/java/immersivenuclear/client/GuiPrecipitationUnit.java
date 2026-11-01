@@ -42,7 +42,7 @@ public class GuiPrecipitationUnit extends GuiIEContainerBase
 	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/chemical_processor.png";
 
 	// Layout
-	static final int EFFLUENT_X = 218, TANK_Y = 38;
+	static final int EFFLUENT_X = 218, TANK_Y = 34;   // top on the agitated tank's and the screw's
 	/** The agitated tank's well; its liquid starts this far below the top (the lid). */
 	public static final int MIXER_X = 44, MIXER_Y = 34, MIXER_W = 80, MIXER_H = 76;
 	static final int MIXER_LID = 8;
@@ -56,13 +56,13 @@ public class GuiPrecipitationUnit extends GuiIEContainerBase
 	static final int BLADES = 4;
 	/** The screw's well; the screw climbs from its lower left corner to its upper right one. */
 	static final int SCREW_X = 154, SCREW_Y = 34, SCREW_W = 56, SCREW_H = 76;
-	static final int ARROW_X = 130, ARROW_Y = 64;
+	static final int ARROW_X = 130, ARROW_Y = 66;     // centred on the agitated tank
 	/** Pipes: solution from its bucket slot into the tank, slurry from the tank's bottom to the screw's foot, effluent out. */
 	static final int PIPE_Y = ContainerPrecipitationUnit.SLOT_XY[TilePrecipitationUnit.SLOT_SOLUTION_IN][1] + 8, PIPE_X = ContainerPrecipitationUnit.SLOT_XY[TilePrecipitationUnit.SLOT_SOLUTION_IN][0] + 18,
 			SLURRY_Y = MIXER_Y + MIXER_H - 8;
-	static final int ENERGY_X = 248, ENERGY_Y = 16, ENERGY_W = 14, ENERGY_H = 64;
-	static final int BUTTON_X = 247, BUTTON_Y = 86, BUTTON_SIZE = 16;
-	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 112, LIGHT_STEP = 8;
+	static final int ENERGY_X = 248, ENERGY_Y = 34, ENERGY_W = 14, ENERGY_H = 56;
+	static final int BUTTON_X = 247, BUTTON_Y = 94, BUTTON_SIZE = 16;
+	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 117, LIGHT_STEP = 8;
 	static final int PANEL_X = ContainerPrecipitationUnit.INV_X - 8, PANEL_Y = ContainerPrecipitationUnit.INV_Y - 8;
 
 	// IE's pieces in refinery.png

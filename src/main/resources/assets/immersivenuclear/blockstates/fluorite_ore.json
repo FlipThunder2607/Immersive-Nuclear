@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "normal": { "model": "immersivenuclear:fluorite_ore" },
+        "inventory": { "model": "immersivenuclear:fluorite_ore" }
+    }
+}

@@ -1,0 +1,48 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
+newmtl base_handrail
+map_Kd #base_handrail
+
+newmtl base_handwheel
+map_Kd #base_handwheel
+
+newmtl base_hatch
+map_Kd #base_hatch
+
+newmtl base_vent_cap
+map_Kd #base_vent_cap
+
+newmtl burner_flame
+map_Kd #burner_flame
+
+newmtl burner_glow
+map_Kd #burner_glow
+
+newmtl glass
+map_Kd #glass
+
+newmtl metal_decoration0_radiator_ctm
+map_Kd #metal_decoration0_radiator_ctm
+
+newmtl metal_device1_fluid_pipe
+map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl precipitation_tank_wall
+map_Kd #precipitation_tank_wall
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl stone_decoration_blastbrick
+map_Kd #stone_decoration_blastbrick
+
+newmtl storage_steel
+map_Kd #storage_steel
+

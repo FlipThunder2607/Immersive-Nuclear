@@ -3,8 +3,6 @@
     "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
     "#base_actuator": "immersivenuclear:blocks/base_actuator",
     "#base_brass": "immersivenuclear:blocks/base_brass",
-    "#base_flange": "immersivenuclear:blocks/base_flange",
-    "#base_flange_side": "immersivenuclear:blocks/base_flange_side",
     "#base_handrail": "immersivenuclear:blocks/base_handrail",
     "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
     "#base_hatch": "immersivenuclear:blocks/base_hatch",
@@ -28,6 +26,7 @@
   },
   "parts": {
     "belt": 0.0,
-    "drum": 0.0
+    "drum": 0.0,
+    "heaters": 0.0
   }
 }

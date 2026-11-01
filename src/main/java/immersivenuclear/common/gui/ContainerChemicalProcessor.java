@@ -25,8 +25,8 @@ public class ContainerChemicalProcessor extends Container
 	public static final int[][] SLOT_XY = {
 			{70, 12},  // uranium powder, on the hopper
 			{90, 12},  // reagent, on the hopper
-			{10, 18},  // water or effluent container in (each fluid goes to its tank)
-			{32, 18},  // empty container out
+			{12, 18},  // water or effluent container in (each fluid goes to its tank), over the recycled liquor tank
+			{34, 18},  // empty container out, over the water tank
 			{221, 54}, // empty container in (slurry)
 			{221, 85}, // slurry container out
 	};

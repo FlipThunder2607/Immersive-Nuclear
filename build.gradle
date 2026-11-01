@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1.7"
+version = "0.1.8"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -102,3 +102,9 @@ task sulfuricAcidUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn sulfuricAcidUnitStructureTest
+
+task hfKilnStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.HFKilnStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn hfKilnStructureTest

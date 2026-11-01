@@ -49,6 +49,7 @@ public class HazardTooltips
 		fluids.put(INContent.fluidSludge.getName(), new String[]{TRACE});
 		fluids.put(INContent.fluidSulfuricAcid.getName(), new String[]{CORR, OXID});
 		fluids.put(INContent.fluidSteam.getName(), new String[]{HOT});
+		fluids.put(INContent.fluidHydrofluoricAcid.getName(), new String[]{CORR, TOXIC});
 	}
 
 	@SubscribeEvent

@@ -14,6 +14,33 @@ the release title always carry the same version.
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
 
+## [0.1.8] - 2026-10-31
+
+The hydrofluoric acid of line 2, made in the mod from its own fluorite; machines that glow, look and sound alive.
+
+### Added
+- **Fluorite ore** in the Overworld's stone (layers 10 to 60, veins of about 8 blocks), breaking into 1-2 Fluorite
+  (more with Fortune); IE's Crusher grinds the ore into 3 Fluorite Dust (a crystal into 1); a furnace smelts the ore
+  into Fluorite. Also a new vein of IE's Excavator (fluorite with galena and quartz). Shared ore dictionary names
+  (`oreFluorite`, `gemFluorite`, `dustFluorite`), so other mods' fluorite works too. `config/immersivenuclear.cfg`
+  turns the generation or the Excavator vein off, or changes the veins.
+- **Hydrofluoric Acid Kiln** (5×7×3, 84 blocks): a rotary kiln. Each 10 s cycle takes 1 Fluorite Dust and 500 mB of
+  Sulfuric Acid and gives 500 mB of Hydrofluoric Acid and 1 Gypsum, drawing 64 IF/t (provisional numbers). Its copper
+  drum turns on its rollers, driven by the motor, the pinion and the girth gear; its heating coils and heaters glow
+  while it runs. Sounds for the drum, the gears and the coil; animated GUI; JEI page; Engineer's Manual page.
+- **Hydrofluoric Acid** fluid (corrosive and toxic) and **Gypsum**, with three uses: back to Quicklime and sulfur in
+  IE's Arc Furnace with coke dust; in IE's Mixer in place of the clay of concrete, for more concrete; and building
+  blocks: 4 Gypsum make a Plaster Block, which becomes Plaster Tiles, Plaster Bricks, and their slab and stairs.
+- Every fluid of the mod can be poured from its bucket (steam rises).
+- Glowing parts, shining in the dark without lighting the world: the dryer's heaters, the Sulfuric Acid Unit's flame
+  and instrument lamp, the Filtration Unit's and the kiln's signal lamps.
+
+### Changed
+- Every interface lined up on one grid (tanks, process parts, slots, energy bar and button).
+- JEI and the creative tab list the mod's items in order: machines, line 1, line 2, building blocks, engineering,
+  computers.
+- Steam is grey; steam and hydrofluoric acid animate more slowly.
+
 ## [0.1.7] - 2026-10-31
 
 The first machine of line 2 (enrichment): the mod now makes its own sulfuric acid, the start of its own
@@ -223,7 +250,8 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.8
 [0.1.7]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.7
 [0.1.6]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.6
 [0.1.5]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.5

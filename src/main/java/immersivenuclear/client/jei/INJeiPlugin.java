@@ -34,6 +34,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new PrecipitationUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new HFKilnCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
 	/** Liquids with recipe pages now (our machines, IE's Mixer), not the "coming later" note. */
@@ -41,7 +42,7 @@ public class INJeiPlugin implements IModPlugin
 	{
 		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent
 				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate
-				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam;
+				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam || f == INContent.fluidHydrofluoricAcid;
 	}
 
 	@Override
@@ -102,6 +103,15 @@ public class INJeiPlugin implements IModPlugin
 				GuiSulfuricAcidUnit.CONV_H, SulfuricAcidUnitCategory.UID);
 		registry.addIngredientInfo(acidUnit, VanillaTypes.ITEM, "jei.immersivenuclear.sulfuric_acid_unit.info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidSteam, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.steam.info");
+		registry.addRecipes(Collections.singletonList(new HFKilnCategory.Recipe()), HFKilnCategory.UID);
+		ItemStack kiln = new ItemStack(INContent.itemHFKiln);
+		registry.addRecipeCatalyst(kiln, HFKilnCategory.UID);
+		// Clicking the drum of the interface shows the recipe
+		registry.addRecipeClickArea(immersivenuclear.client.GuiHFKiln.class, immersivenuclear.client.GuiHFKiln.DRUM_X, immersivenuclear.client.GuiHFKiln.DRUM_Y, immersivenuclear.client.GuiHFKiln.DRUM_W, immersivenuclear.client.GuiHFKiln.DRUM_H, HFKilnCategory.UID);
+		registry.addIngredientInfo(kiln, VanillaTypes.ITEM, "jei.immersivenuclear.hf_kiln.info");
+		registry.addIngredientInfo(new FluidStack(INContent.fluidHydrofluoricAcid, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.hydrofluoric_acid.info");
+		for(Item item : new Item[]{INContent.itemFluoriteOre, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemPlaster})
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemConcentrateDrum), VanillaTypes.ITEM, "jei.immersivenuclear.concentrate_drum.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateBlock), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_block.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateTile), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_tile.info");

@@ -7,12 +7,6 @@ map_Kd #base_actuator
 newmtl base_brass
 map_Kd #base_brass
 
-newmtl base_flange
-map_Kd #base_flange
-
-newmtl base_flange_side
-map_Kd #base_flange_side
-
 newmtl base_handrail
 map_Kd #base_handrail
 

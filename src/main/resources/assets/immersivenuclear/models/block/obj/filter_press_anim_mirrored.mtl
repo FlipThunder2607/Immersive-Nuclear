@@ -1,3 +1,6 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
 newmtl conveyor_off
 map_Kd #conveyor_off
 
@@ -6,6 +9,9 @@ map_Kd #metal_device1_fluid_pipe
 
 newmtl metal_multiblock_diesel_generator
 map_Kd #metal_multiblock_diesel_generator
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
 
 newmtl metal_multiblock_refinery
 map_Kd #metal_multiblock_refinery

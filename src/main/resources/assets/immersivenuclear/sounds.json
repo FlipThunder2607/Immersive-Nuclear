@@ -289,5 +289,59 @@
     "sounds": [
       "immersivenuclear:sulfuric_acid_unit_vent_stop"
     ]
+  },
+  "hf_kiln_drive_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_drive_start"
+    ]
+  },
+  "hf_kiln_drive_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_drive_loop"
+    ]
+  },
+  "hf_kiln_drive_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_drive_stop"
+    ]
+  },
+  "hf_kiln_heater_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_heater_start"
+    ]
+  },
+  "hf_kiln_heater_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_heater_loop"
+    ]
+  },
+  "hf_kiln_heater_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_heater_stop"
+    ]
+  },
+  "hf_kiln_drum_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_drum_start"
+    ]
+  },
+  "hf_kiln_drum_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_drum_loop"
+    ]
+  },
+  "hf_kiln_drum_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:hf_kiln_drum_stop"
+    ]
   }
 }

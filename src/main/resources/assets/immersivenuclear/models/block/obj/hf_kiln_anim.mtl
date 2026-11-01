@@ -1,0 +1,18 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
+newmtl furnace_heater
+map_Kd #furnace_heater
+
+newmtl kiln_tank_wall
+map_Kd #kiln_tank_wall
+
+newmtl metal_decoration0_coil_lv_side
+map_Kd #metal_decoration0_coil_lv_side
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl storage_steel
+map_Kd #storage_steel
+

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "variant=default": {
+      "model": "immersivenuclear:plaster_bricks"
+    }
+  }
+}

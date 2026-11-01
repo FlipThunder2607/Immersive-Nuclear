@@ -1,0 +1,77 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "uranium_slurry": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "uranium_slurry"
+            }
+        },
+        "crude_uranium_solution": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "crude_uranium_solution"
+            }
+        },
+        "extraction_solvent": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "extraction_solvent"
+            }
+        },
+        "stripping_solution": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "stripping_solution"
+            }
+        },
+        "purified_uranium_solution": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "purified_uranium_solution"
+            }
+        },
+        "chemical_effluent": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "chemical_effluent"
+            }
+        },
+        "neutralized_sludge": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "neutralized_sludge"
+            }
+        },
+        "depleted_effluent": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "depleted_effluent"
+            }
+        },
+        "process_condensate": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "process_condensate"
+            }
+        },
+        "sulfuric_acid": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "sulfuric_acid"
+            }
+        },
+        "steam": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "steam"
+            }
+        },
+        "hydrofluoric_acid": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "hydrofluoric_acid"
+            }
+        }
+    }
+}

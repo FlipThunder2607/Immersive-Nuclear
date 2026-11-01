@@ -24,6 +24,7 @@ import immersivenuclear.common.block.BlockFilterPress;
 import immersivenuclear.common.block.BlockMetalExtractor;
 import immersivenuclear.common.block.BlockIndustrialDryer;
 import immersivenuclear.common.block.BlockSulfuricAcidUnit;
+import immersivenuclear.common.block.BlockHFKiln;
 import immersivenuclear.common.block.BlockPrecipitationUnit;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
@@ -32,6 +33,7 @@ import immersivenuclear.common.block.TileLinkConnector;
 import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.block.TileIndustrialDryer;
 import immersivenuclear.common.block.TileSulfuricAcidUnit;
+import immersivenuclear.common.block.TileHFKiln;
 import immersivenuclear.common.block.TilePrecipitationUnit;
 import immersivenuclear.common.item.ItemElectrode;
 import immersivenuclear.common.item.ItemFilter;
@@ -43,6 +45,7 @@ import immersivenuclear.common.multiblock.MultiblockFilterPress;
 import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
 import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import immersivenuclear.common.multiblock.MultiblockSulfuricAcidUnit;
+import immersivenuclear.common.multiblock.MultiblockHFKiln;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
@@ -73,6 +76,7 @@ public class INContent
 	public static BlockPrecipitationUnit blockPrecipitationUnit;
 	public static BlockIndustrialDryer blockIndustrialDryer;
 	public static BlockSulfuricAcidUnit blockSulfuricAcidUnit;
+	public static BlockHFKiln blockHFKiln;
 	public static BlockConcentrateDrum blockConcentrateDrum;
 	public static BlockLeadedGlass blockLeadedGlass;
 
@@ -104,6 +108,8 @@ public class INContent
 	/** The same for the Industrial Dryer. */
 	public static Item itemIndustrialDryer;
 	public static Item itemSulfuricAcidUnit;
+	/** The same for the Hydrofluoric Acid Kiln. */
+	public static Item itemHFKiln;
 	public static Item itemConcentrateDrum;
 
 	/** Processing Reagent: consumed one per cycle by the Chemical Processing Unit. */
@@ -135,6 +141,16 @@ public class INContent
 
 	/** Impure Agglomerate: heavy building block made of neutralisation cake or filter residue. */
 	public static Block blockAgglomerate;
+	/** Fluorite (line 2): the ore, its crystal and its dust, under the ore dictionary names other mods use. */
+	public static Block blockFluoriteOre;
+	public static Item itemFluoriteOre, itemFluorite, itemFluoriteDust;
+	/** Gypsum, the Hydrofluoric Acid Kiln's solid by-product (dustGypsum). */
+	public static Item itemGypsum;
+	/** Building blocks of gypsum plaster, as the agglomerate's: the block (4 gypsum), its tile, its bricks and the bricks'
+	 * slab and stairs. */
+	public static Block blockPlaster, blockPlasterTile, blockPlasterBricks, blockPlasterStairs;
+	public static BlockSlab blockPlasterSlab, blockPlasterSlabDouble;
+	public static Item itemPlaster, itemPlasterTile, itemPlasterBricks, itemPlasterSlab, itemPlasterStairs;
 	public static Item itemAgglomerate;
 	/** The raw agglomerate fired in a furnace (concrete-like), its tile (as IE's concrete tile), its bricks, and the bricks'
 	 * stairs and slab. */
@@ -158,10 +174,12 @@ public class INContent
 	 * use them for now. */
 	public static Fluid fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate;
 	/** Line 2: the Sulfuric Acid Unit's acid and steam (shared with other mods by name: theirs is used when they have one). */
-	public static Fluid fluidSulfuricAcid, fluidSteam;
+	public static Fluid fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid;
 
 	/** Every fluid of the mod, for texture stitching and the hazard notes. */
 	public static Fluid[] fluids;
+	/** The placed fluids (BlockINFluid), for the fluids this mod registered itself; another mod's keeps its own. */
+	public static java.util.List<Block> fluidBlocks = new java.util.ArrayList<>();
 
 	/** The Filtration Unit's steps: close, release, filter (loop), open; the pressurising is the pump sound. */
 	public static SoundEvent soundFpClose, soundFpRelease, soundFpFilterLoop, soundFpOpen;
@@ -184,7 +202,8 @@ public class INContent
 	/** The Industrial Dryer's steps: load (rotary valve), heat (heaters, loop), dry (paddles, loop), discharge (valve). */
 	/** The Sulfuric Acid Unit: the burner with its blower, the acid pump, and the steam drum's relief valve venting. */
 	public static SoundEvent soundAcidBurnerStart, soundAcidBurnerLoop, soundAcidBurnerStop, soundAcidPumpStart, soundAcidPumpLoop, soundAcidPumpStop,
-			soundAcidVentStart, soundAcidVentLoop, soundAcidVentStop;
+			soundAcidVentStart, soundAcidVentLoop, soundAcidVentStop, soundKilnDriveStart, soundKilnDriveLoop, soundKilnDriveStop,
+			soundKilnHeaterStart, soundKilnHeaterLoop, soundKilnHeaterStop, soundKilnDrumStart, soundKilnDrumLoop, soundKilnDrumStop;
 	public static SoundEvent soundDryerLoad, soundDryerHeatStart, soundDryerHeatLoop, soundDryerHeatStop, soundDryerDryStart, soundDryerDryLoop,
 			soundDryerDryStop, soundDryerDischarge, soundDryerFillStart, soundDryerFillLoop, soundDryerFillStop;
 
@@ -236,6 +255,15 @@ public class INContent
 		soundAcidVentStart = sound(event, "sulfuric_acid_unit_vent_start");
 		soundAcidVentLoop = sound(event, "sulfuric_acid_unit_vent_loop");
 		soundAcidVentStop = sound(event, "sulfuric_acid_unit_vent_stop");
+		soundKilnDriveStart = sound(event, "hf_kiln_drive_start");
+		soundKilnDriveLoop = sound(event, "hf_kiln_drive_loop");
+		soundKilnDriveStop = sound(event, "hf_kiln_drive_stop");
+		soundKilnHeaterStart = sound(event, "hf_kiln_heater_start");
+		soundKilnHeaterLoop = sound(event, "hf_kiln_heater_loop");
+		soundKilnHeaterStop = sound(event, "hf_kiln_heater_stop");
+		soundKilnDrumStart = sound(event, "hf_kiln_drum_start");
+		soundKilnDrumLoop = sound(event, "hf_kiln_drum_loop");
+		soundKilnDrumStop = sound(event, "hf_kiln_drum_stop");
 	}
 
 	static SoundEvent sound(RegistryEvent.Register<SoundEvent> event, String name)
@@ -275,9 +303,11 @@ public class INContent
 		fluidDepletedEffluent = fluid("depleted_effluent", 1050, 1100);
 		fluidCondensate = fluid("process_condensate", 1000, 1000);
 		fluidSulfuricAcid = fluid("sulfuric_acid", 1830, 2600);
+		// thin and dense like the real one; shared by name with other mods (Immersive Intelligence has it too)
+		fluidHydrofluoricAcid = fluid("hydrofluoric_acid", 1150, 900);
 		if(fluidSteam == null)
 			constructFluids();
-		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate, fluidSulfuricAcid, fluidSteam};
+		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate, fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid};
 	}
 
 	/** A building block of the finished agglomerate: heavy like the raw one and IE's concrete (provisional values). */
@@ -286,6 +316,15 @@ public class INContent
 		Block b = new Block(Material.ROCK).setHardness(3f).setResistance(60f).setRegistryName(ImmersiveNuclear.MODID, name)
 				.setTranslationKey(ImmersiveNuclear.MODID + "." + name).setCreativeTab(TAB);
 		b.setHarvestLevel("pickaxe", 1);
+		return b;
+	}
+
+	/** A gypsum plaster building block: lighter than the agglomerate (provisional values). */
+	static Block plaster(String name)
+	{
+		Block b = new Block(Material.ROCK).setHardness(1.5f).setResistance(10f).setRegistryName(ImmersiveNuclear.MODID, name)
+				.setTranslationKey(ImmersiveNuclear.MODID + "." + name).setCreativeTab(TAB);
+		b.setHarvestLevel("pickaxe", 0);
 		return b;
 	}
 
@@ -324,23 +363,25 @@ public class INContent
 		event.getRegistry().register(itemIndustrialDryer);
 		itemSulfuricAcidUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "sulfuric_acid_unit").setTranslationKey(ImmersiveNuclear.MODID + ".sulfuric_acid_unit").setCreativeTab(TAB);
 		event.getRegistry().register(itemSulfuricAcidUnit);
+		itemHFKiln = new Item().setRegistryName(ImmersiveNuclear.MODID, "hf_kiln").setTranslationKey(ImmersiveNuclear.MODID + ".hf_kiln").setCreativeTab(TAB);
+		event.getRegistry().register(itemHFKiln);
+		// The order of registration is the order of JEI's list and of the creative tab: the machines (above), then each
+		// line's materials in the order the process meets them, then building blocks, engineering and computer parts
+		// Line 1: supplies, the main path, residues and their treatment, the Metal Extractor's
 		itemReagent = new Item().setRegistryName(ImmersiveNuclear.MODID, "processing_reagent").setTranslationKey(ImmersiveNuclear.MODID + ".processing_reagent").setCreativeTab(TAB);
 		event.getRegistry().register(itemReagent);
-		itemResidue = new Item().setRegistryName(ImmersiveNuclear.MODID, "wet_mineral_residue").setTranslationKey(ImmersiveNuclear.MODID + ".wet_mineral_residue").setCreativeTab(TAB);
-		event.getRegistry().register(itemResidue);
 		itemFilter = new ItemFilter();
 		event.getRegistry().register(itemFilter);
 		itemQuicklime = item(event, "quicklime");
-		itemLeadedGlass = new ItemBlock(blockLeadedGlass).setRegistryName(blockLeadedGlass.getRegistryName());
-		event.getRegistry().register(itemLeadedGlass);
-		itemRemoteManipulator = item(event, "remote_manipulator");
-		itemPrecisionBearing = item(event, "precision_bearing");
-		itemCake = item(event, "neutralization_cake");
 		itemPrecipitatingAgent = item(event, "precipitating_agent");
 		itemWetConcentrate = item(event, "wet_uranium_concentrate");
 		itemYellowcake = item(event, "yellowcake");
+		itemConcentrateDrum = new ItemConcentrateDrum(blockConcentrateDrum);
+		event.getRegistry().register(itemConcentrateDrum);
+		itemResidue = new Item().setRegistryName(ImmersiveNuclear.MODID, "wet_mineral_residue").setTranslationKey(ImmersiveNuclear.MODID + ".wet_mineral_residue").setCreativeTab(TAB);
+		event.getRegistry().register(itemResidue);
 		itemNeutralizedResidue = item(event, "neutralized_residue");
-		itemMixedDeposit = item(event, "mixed_metal_deposit");
+		itemCake = item(event, "neutralization_cake");
 		// Life in batches, share of the deposit (6 steel plates = the base 6 deposits), share of the recovery's energy
 		itemElectrodeSteel = new ItemElectrode("electrode_steel", 1, 32, 1F, 1F, new float[]{1F, 1F, 1F});
 		itemElectrodeLeadSilver = new ItemElectrode("electrode_lead_silver", 2, 64, 7 / 6F, 0.9F, new float[]{0.78F, 0.82F, 0.95F});
@@ -348,8 +389,14 @@ public class INContent
 		event.getRegistry().register(itemElectrodeSteel);
 		event.getRegistry().register(itemElectrodeLeadSilver);
 		event.getRegistry().register(itemElectrodeElectrum);
-		itemConcentrateDrum = new ItemConcentrateDrum(blockConcentrateDrum);
-		event.getRegistry().register(itemConcentrateDrum);
+		itemMixedDeposit = item(event, "mixed_metal_deposit");
+		// Line 2: fluorite
+		itemFluoriteOre = new ItemBlock(blockFluoriteOre).setRegistryName(blockFluoriteOre.getRegistryName());
+		event.getRegistry().register(itemFluoriteOre);
+		itemFluorite = item(event, "fluorite");
+		itemFluoriteDust = item(event, "fluorite_dust");
+		itemGypsum = item(event, "gypsum");
+		// Building blocks: the agglomerate from the residues, and lead glass
 		itemAgglomerate = new ItemBlock(blockAgglomerate).setRegistryName(blockAgglomerate.getRegistryName());
 		event.getRegistry().register(itemAgglomerate);
 		itemAgglomerateBlock = new ItemBlock(blockAgglomerateBlock).setRegistryName(blockAgglomerateBlock.getRegistryName());
@@ -358,12 +405,24 @@ public class INContent
 		itemAgglomerateStairs = new ItemBlock(blockAgglomerateStairs).setRegistryName(blockAgglomerateStairs.getRegistryName());
 		itemAgglomerateSlab = new ItemSlab(blockAgglomerateSlab, blockAgglomerateSlab, blockAgglomerateSlabDouble).setRegistryName(blockAgglomerateSlab.getRegistryName());
 		event.getRegistry().registerAll(itemAgglomerateBlock, itemAgglomerateTile, itemAgglomerateBricks, itemAgglomerateStairs, itemAgglomerateSlab);
+		itemPlaster = new ItemBlock(blockPlaster).setRegistryName(blockPlaster.getRegistryName());
+		itemPlasterTile = new ItemBlock(blockPlasterTile).setRegistryName(blockPlasterTile.getRegistryName());
+		itemPlasterBricks = new ItemBlock(blockPlasterBricks).setRegistryName(blockPlasterBricks.getRegistryName());
+		itemPlasterStairs = new ItemBlock(blockPlasterStairs).setRegistryName(blockPlasterStairs.getRegistryName());
+		itemPlasterSlab = new ItemSlab(blockPlasterSlab, blockPlasterSlab, blockPlasterSlabDouble).setRegistryName(blockPlasterSlab.getRegistryName());
+		event.getRegistry().registerAll(itemPlaster, itemPlasterTile, itemPlasterBricks, itemPlasterStairs, itemPlasterSlab);
+		itemLeadedGlass = new ItemBlock(blockLeadedGlass).setRegistryName(blockLeadedGlass.getRegistryName());
+		event.getRegistry().register(itemLeadedGlass);
+		// Engineering blocks and their parts
 		itemEngineering = new Item[blockEngineering.length];
 		for(int i = 0; i < blockEngineering.length; i++)
 		{
 			itemEngineering[i] = new ItemBlock(blockEngineering[i]).setRegistryName(blockEngineering[i].getRegistryName());
 			event.getRegistry().register(itemEngineering[i]);
 		}
+		itemRemoteManipulator = item(event, "remote_manipulator");
+		itemPrecisionBearing = item(event, "precision_bearing");
+		// Computer parts
 		itemComputerParts = new Item[COMPUTER_PARTS.length];
 		for(int i = 0; i < COMPUTER_PARTS.length; i++)
 			itemComputerParts[i] = i == 6 ? null : item(event, COMPUTER_PARTS[i]);
@@ -399,6 +458,9 @@ public class INContent
 		blockSulfuricAcidUnit = new BlockSulfuricAcidUnit();
 		event.getRegistry().register(blockSulfuricAcidUnit);
 		GameRegistry.registerTileEntity(TileSulfuricAcidUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "sulfuric_acid_unit"));
+		blockHFKiln = new BlockHFKiln();
+		event.getRegistry().register(blockHFKiln);
+		GameRegistry.registerTileEntity(TileHFKiln.class, new ResourceLocation(ImmersiveNuclear.MODID, "hf_kiln"));
 		blockLeadedGlass = new BlockLeadedGlass();
 		event.getRegistry().register(blockLeadedGlass);
 		blockConcentrateDrum = new BlockConcentrateDrum();
@@ -409,6 +471,8 @@ public class INContent
 				.setTranslationKey(ImmersiveNuclear.MODID + ".impure_agglomerate").setCreativeTab(TAB);
 		blockAgglomerate.setHarvestLevel("pickaxe", 1);
 		event.getRegistry().register(blockAgglomerate);
+		blockFluoriteOre = new immersivenuclear.common.block.BlockFluoriteOre();
+		event.getRegistry().register(blockFluoriteOre);
 		blockAgglomerateBlock = agglomerate("agglomerate_block");
 		blockAgglomerateTile = agglomerate("agglomerate_tile");
 		blockAgglomerateBricks = agglomerate("agglomerate_bricks");
@@ -416,6 +480,14 @@ public class INContent
 		blockAgglomerateSlab = new BlockAgglomerateSlab.Half();
 		blockAgglomerateSlabDouble = new BlockAgglomerateSlab.Double();
 		event.getRegistry().registerAll(blockAgglomerateBlock, blockAgglomerateTile, blockAgglomerateBricks, blockAgglomerateStairs, blockAgglomerateSlab, blockAgglomerateSlabDouble);
+		// Plaster: lighter than the agglomerate (provisional values)
+		blockPlaster = plaster("plaster_block");
+		blockPlasterTile = plaster("plaster_tile");
+		blockPlasterBricks = plaster("plaster_bricks");
+		blockPlasterStairs = new immersivenuclear.common.block.BlockPlasterStairs(blockPlasterBricks.getDefaultState());
+		blockPlasterSlab = new immersivenuclear.common.block.BlockPlasterSlab.Half();
+		blockPlasterSlabDouble = new immersivenuclear.common.block.BlockPlasterSlab.Double();
+		event.getRegistry().registerAll(blockPlaster, blockPlasterTile, blockPlasterBricks, blockPlasterStairs, blockPlasterSlab, blockPlasterSlabDouble);
 		blockEngineering = new Block[BlockEngineering.KINDS.length];
 		for(int i = 0; i < blockEngineering.length; i++)
 		{
@@ -427,6 +499,13 @@ public class INContent
 		GameRegistry.registerTileEntity(TileLinkConnector.class, new ResourceLocation(ImmersiveNuclear.MODID, "link_connector"));
 		blockLinkRelay = new BlockLinkConnector("link_relay", true);
 		event.getRegistry().register(blockLinkRelay);
+		for(Fluid f : fluids)
+			if(f.getBlock() == null && ImmersiveNuclear.MODID.equals(f.getStill().getNamespace()))
+			{
+				Block b = new immersivenuclear.common.block.BlockINFluid(f);
+				event.getRegistry().register(b);
+				fluidBlocks.add(b);
+			}
 	}
 
 	public static void init()
@@ -438,9 +517,36 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockPrecipitationUnit.instance);
 		MultiblockHandler.registerMultiblock(MultiblockIndustrialDryer.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSulfuricAcidUnit.instance);
+		MultiblockHandler.registerMultiblock(MultiblockHFKiln.instance);
+		fluorite();
 		mixerRecipes();
 		cokeOvenRecipes();
 		crusherRecipes();
+	}
+
+	// Fluorite: the Crusher gets more out of the ore than breaking it does (1-2 crystals), as IE's ores
+	public static final int FLUORITE_ORE_DUST = 3, FLUORITE_CRUSH_ENERGY = 4000;
+	public static final int FLUORITE_EXCAVATOR_WEIGHT = 15;
+	public static final float FLUORITE_EXCAVATOR_FAIL = .1F;
+
+	/**
+	 * Fluorite: ore dictionary names shared with other mods (Immersive Intelligence has fluorite too, so either mod's
+	 * works in the other's machines), the Crusher, the furnace, the Overworld's veins and a vein of IE's Excavator:
+	 * fluorite with the galena and quartz it is found with.
+	 */
+	static void fluorite()
+	{
+		net.minecraftforge.oredict.OreDictionary.registerOre("oreFluorite", blockFluoriteOre);
+		net.minecraftforge.oredict.OreDictionary.registerOre("gemFluorite", itemFluorite);
+		net.minecraftforge.oredict.OreDictionary.registerOre("dustFluorite", itemFluoriteDust);
+		net.minecraftforge.oredict.OreDictionary.registerOre("dustGypsum", itemGypsum);
+		CrusherRecipe.addRecipe(new ItemStack(itemFluoriteDust, FLUORITE_ORE_DUST), "oreFluorite", FLUORITE_CRUSH_ENERGY);
+		CrusherRecipe.addRecipe(new ItemStack(itemFluoriteDust), "gemFluorite", FLUORITE_CRUSH_ENERGY / 2);
+		GameRegistry.addSmelting(blockFluoriteOre, new ItemStack(itemFluorite), 0.2f);
+		GameRegistry.registerWorldGenerator(new immersivenuclear.common.world.WorldGenFluorite(), 0);
+		if(INConfig.fluoriteExcavatorVein)
+			blusunrize.immersiveengineering.api.tool.ExcavatorHandler.addMineral("Fluorite", FLUORITE_EXCAVATOR_WEIGHT, FLUORITE_EXCAVATOR_FAIL,
+					new String[]{"oreFluorite", "oreLead", "gemQuartz"}, new float[]{.7F, .2F, .1F});
 	}
 
 	// The Wet Mineral Residue, neutralized with quicklime, is crushed in IE's Crusher for what the leaching left in it
@@ -471,6 +577,10 @@ public class INContent
 	public static final int SOLVENT_MIX_ENERGY = 3200, STRIPPING_MIX_ENERGY = 1600, SLUDGE_MIX_ENERGY = 1600;
 	public static final int QUICKLIME_TICKS = 900;
 	public static final int CONCRETE_PER_MIX = 500, CONCRETE_MIX_ENERGY = 3200;
+	/** Gypsum in IE's Arc Furnace with coke dust: 2 gypsum -> 2 quicklime + 1 sulfur dust (provisional). */
+	public static final int GYPSUM_PER_BURN = 2, GYPSUM_QUICKLIME = 2, GYPSUM_BURN_TICKS = 200, GYPSUM_BURN_ENERGY = 256;
+	/** Gypsum in IE's concrete: it sets the cement, so the batch gives half as much again (provisional). */
+	public static final int GYPSUM_CONCRETE_PER_MIX = 750;
 
 	/** Quicklime: diorite (or limestone, when a mod adds it) burnt in IE's Coke Oven. */
 	static void cokeOvenRecipes()
@@ -480,6 +590,12 @@ public class INContent
 		GameRegistry.addSmelting(blockAgglomerate, new ItemStack(blockAgglomerateBlock), 0.1f);
 		// Lead glass, as it is made: glass melted with lead (provisional time and energy, like IE's alloys)
 		ArcFurnaceRecipe.addRecipe(new ItemStack(itemLeadedGlass), "blockGlass", ItemStack.EMPTY, 100, 512, "dustLead");
+		// Gypsum back to sulfur and quicklime, as the Mueller-Kuehne process: burnt with coke, the sulfur leaves (here as
+		// the slag slot's sulfur dust) and quicklime stays; the sulfur goes back to the Sulfuric Acid Unit
+		java.util.List<ItemStack> sulfur = net.minecraftforge.oredict.OreDictionary.getOres("dustSulfur");
+		if(!sulfur.isEmpty())
+			ArcFurnaceRecipe.addRecipe(new ItemStack(itemQuicklime, GYPSUM_QUICKLIME), new blusunrize.immersiveengineering.api.crafting.IngredientStack("dustGypsum", GYPSUM_PER_BURN),
+					sulfur.get(0).copy(), GYPSUM_BURN_TICKS, GYPSUM_BURN_ENERGY, "dustCoke");
 		if(!net.minecraftforge.oredict.OreDictionary.getOres("stoneLimestone").isEmpty())
 			CokeOvenRecipe.addRecipe(new ItemStack(itemQuicklime, 2), "stoneLimestone", QUICKLIME_TICKS, 0);
 	}
@@ -503,6 +619,9 @@ public class INContent
 		// IE's concrete with the neutralization cake in place of the clay (IE: 500 mB water, 2 sand, clay, gravel, 3200 IF)
 		MixerRecipe.addRecipe(new FluidStack(blusunrize.immersiveengineering.common.IEContent.fluidConcrete, CONCRETE_PER_MIX), new FluidStack(FluidRegistry.WATER, CONCRETE_PER_MIX),
 				new Object[]{"sand", "sand", new ItemStack(itemCake), "gravel"}, CONCRETE_MIX_ENERGY);
+		// IE's concrete with gypsum in place of the clay: gypsum is what sets real cement, so a batch gives more concrete
+		MixerRecipe.addRecipe(new FluidStack(blusunrize.immersiveengineering.common.IEContent.fluidConcrete, GYPSUM_CONCRETE_PER_MIX), new FluidStack(FluidRegistry.WATER, CONCRETE_PER_MIX),
+				new Object[]{"sand", "sand", "dustGypsum", "gravel"}, CONCRETE_MIX_ENERGY);
 	}
 
 	/** Registry names used up to 0.1.0, mapped to the current ones so existing worlds keep their items. */

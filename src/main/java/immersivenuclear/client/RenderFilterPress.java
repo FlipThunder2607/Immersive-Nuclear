@@ -103,6 +103,8 @@ public class RenderFilterPress extends TileEntitySpecialRenderer<TileFilterPress
 			plateX.sort(java.util.Collections.reverseOrder());
 			for(Map.Entry<String, JsonElement> e : side.getAsJsonObject("parts").entrySet())
 			{
+				if(e.getKey().equals("lamp"))
+					continue;          // the signal lamp is the glow layer's (GLOW), drawn only lit
 				if(e.getKey().equals(BELT))
 				{
 					belt = bakeGroup(normal, BELT);
@@ -144,11 +146,16 @@ public class RenderFilterPress extends TileEntitySpecialRenderer<TileFilterPress
 		return model.bake(new OBJModel.OBJState(ImmutableList.of(group), true, TRSRTransformation.identity()), DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
 	}
 
+	/** The pump panel's signal lamp (element "Clock"). */
+	static final GlowLayer GLOW = new GlowLayer("filter_press", new String[]{"lamp"}, ImmutableMap.of("#arc_furnace_active", "immersivenuclear:blocks/arc_furnace_lamp_emissive"));
+
 	@Override
 	public void render(TileFilterPress te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		if(!te.isMaster() || parts.isEmpty())
 			return;
+		// the pump panel's green lamp, lit while it runs
+		GLOW.render(te.getWorld().getBlockState(te.getPos()), te.getFacing(), te.isMirrored(), x, y, z, te.clientRunning);
 		float closed = te.closing(partialTicks);
 		float fall = te.fallTicks(partialTicks);
 

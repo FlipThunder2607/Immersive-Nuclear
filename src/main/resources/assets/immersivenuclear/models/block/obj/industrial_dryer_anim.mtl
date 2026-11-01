@@ -7,6 +7,9 @@ map_Kd #concentrate_drum_top
 newmtl conveyor_off
 map_Kd #conveyor_off
 
+newmtl furnace_heater
+map_Kd #furnace_heater
+
 newmtl storage_steel
 map_Kd #storage_steel
 

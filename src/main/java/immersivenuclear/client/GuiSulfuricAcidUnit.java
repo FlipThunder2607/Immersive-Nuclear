@@ -42,9 +42,9 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 	// Layout (as in the approved sketch, ferramentas/gui_acido_sulfurico.py)
 	static final int BURNER_X = 12, BURNER_Y = 60, BURNER_W = 44, BURNER_H = 30;
 	static final int DRUM_X = 60, DRUM_Y = 30, DRUM_W = 30, DRUM_H = 12;
-	static final int BOILER_X = 64, BOILER_Y = 46, BOILER_W = 22, BOILER_H = 64;
-	public static final int CONV_X = 96, CONV_Y = 26, CONV_W = 22, CONV_H = 86;
-	static final int TOWER_X = 126, TOWER_Y = 26, TOWER_W = 20, TOWER_H = 86;
+	static final int BOILER_X = 64, BOILER_Y = 46, BOILER_W = 22, BOILER_H = 66;
+	public static final int CONV_X = 96, CONV_Y = 30, CONV_W = 22, CONV_H = 82;
+	static final int TOWER_X = 126, TOWER_Y = 30, TOWER_W = 20, TOWER_H = 82;
 	/** The tanks, nearest the tower first: the acid comes in at its side; each has its container slots under it. */
 	static final int ACID_X = 162, WATER_X = 188, STEAM_X = 214, TANK_Y = 30;
 	public static final int ARROW_X = 133, ARROW_Y = 118;
@@ -54,8 +54,8 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 	static final int WATER_OUT_X = WATER_X + 3, WATER_LINE_Y = 20, WATER_DROP_X = 141;
 	/** The steam: over everything, then down into the top of its tank beside the port mark, like the water. */
 	static final int STEAM_LINE_Y = 14, STEAM_IN_X = STEAM_X + 3;
-	static final int ENERGY_X = 248, ENERGY_Y = 24, ENERGY_W = 14, ENERGY_H = 80;
-	static final int BUTTON_X = 247, BUTTON_Y = 112, BUTTON_SIZE = 16;
+	static final int ENERGY_X = 248, ENERGY_Y = 30, ENERGY_W = 14, ENERGY_H = 82;
+	static final int BUTTON_X = 247, BUTTON_Y = 118, BUTTON_SIZE = 16;
 	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 140, LIGHT_STEP = 8;
 	static final int PANEL_X = ContainerSulfuricAcidUnit.INV_X - 8, PANEL_Y = ContainerSulfuricAcidUnit.INV_Y - 8;
 

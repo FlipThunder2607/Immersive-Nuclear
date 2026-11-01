@@ -796,7 +796,9 @@ public class TileSulfuricAcidUnit extends TileEntity implements ITickable, IHamm
 		if(ox != dx || oy != dy || oz != dz || of != facing || om != mirrored)
 			world.markBlockRangeForRenderUpdate(pos, pos);
 		if(isMaster() && lit != clientRunning)
+		{
 			world.markBlockRangeForRenderUpdate(pos.add(-4, -2, -4), pos.add(4, 6, 4));
+		}
 	}
 
 	boolean isPart(int[] part)

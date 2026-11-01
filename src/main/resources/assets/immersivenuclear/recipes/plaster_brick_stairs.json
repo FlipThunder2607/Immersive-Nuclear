@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "immersivenuclear:plaster_bricks"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:plaster_brick_stairs",
+    "count": 4
+  }
+}

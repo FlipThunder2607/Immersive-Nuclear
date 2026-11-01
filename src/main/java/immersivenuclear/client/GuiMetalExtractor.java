@@ -51,7 +51,7 @@ public class GuiMetalExtractor extends GuiIEContainerBase
 	public static final int VAT_X = 56, VAT_Y = 52, VAT_W = 114, VAT_H = 52;
 	static final int WALL = 3, GUIDE_L = 52, GUIDE_R = 170, GUIDE_W = 4;
 	static final int BEAM_H = 4, PLATE_W = 4, PLATE_H = 38, PLATES = 6, BEAM_UP = 10, BEAM_DOWN = 50, TRAY_Y = 47;
-	static final int TANK_X = 197, TANK_Y = 53;
+	static final int TANK_X = 197, TANK_Y = 52;   // top on the vat's
 	static final int CABINET_X = 180, CABINET_Y = 12, DIAL_X = 184, DIAL_Y = 24, DIAL_S = 18;
 	static final int STEPS_X = 56, STEPS_Y = 109, STEP_W = 22, STEP_H = 13, STEP_GAP = 1;
 	static final int DEPOSIT_X = 176, DEPOSIT_Y = 56, CHUTE_TOP = 52;

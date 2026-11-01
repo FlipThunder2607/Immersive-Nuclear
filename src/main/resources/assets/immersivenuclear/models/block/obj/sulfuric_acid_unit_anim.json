@@ -1,0 +1,26 @@
+{
+  "textures": {
+    "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+    "#base_handrail": "immersivenuclear:blocks/base_handrail",
+    "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
+    "#base_hatch": "immersivenuclear:blocks/base_hatch",
+    "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
+    "#burner_flame": "immersivenuclear:blocks/burner_flame",
+    "#burner_glow": "immersivenuclear:blocks/burner_glow",
+    "#glass": "minecraft:blocks/glass",
+    "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+    "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+    "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+    "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+    "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+    "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+    "#stone_decoration_blastbrick": "immersiveengineering:blocks/stone_decoration_blastbrick",
+    "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "particle": "immersiveengineering:blocks/storage_steel"
+  },
+  "parts": {
+    "flame": 0.0,
+    "flameglow": 0.0,
+    "lamp": 0.0
+  }
+}

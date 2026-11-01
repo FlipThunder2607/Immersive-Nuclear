@@ -1,0 +1,12 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
+newmtl burner_flame
+map_Kd #burner_flame
+
+newmtl burner_glow
+map_Kd #burner_glow
+
+newmtl storage_steel
+map_Kd #storage_steel
+

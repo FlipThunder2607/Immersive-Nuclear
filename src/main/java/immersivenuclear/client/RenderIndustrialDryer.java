@@ -74,10 +74,18 @@ public class RenderIndustrialDryer extends TileEntitySpecialRenderer<TileIndustr
 		}
 	}
 
+	/** The furnace heaters' hot elements (texture furnace_heater, lit: furnace_heater_active). */
+	static final GlowLayer GLOW = new GlowLayer("industrial_dryer", new String[]{"heaters"},
+			ImmutableMap.of("#furnace_heater", "immersivenuclear:blocks/furnace_heater_active_emissive"));
+
 	@Override
 	public void render(TileIndustrialDryer te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
-		if(!te.isMaster() || drum == null)
+		if(!te.isMaster())
+			return;
+		// the heaters' hot elements, full bright while they heat
+		GLOW.render(te.getWorld().getBlockState(te.getPos()), te.getFacing(), te.isMirrored(), x, y, z, te.heatersOn());
+		if(drum == null)
 			return;
 		boolean mirrored = te.isMirrored();
 		BlockPos pos = te.getPos();

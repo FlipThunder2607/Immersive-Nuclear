@@ -973,7 +973,9 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		if(ox != dx || oy != dy || oz != dz || of != facing || om != mirrored)
 			world.markBlockRangeForRenderUpdate(pos, pos);
 		if(isMaster() && heaters != heatersOn())
+		{
 			world.markBlockRangeForRenderUpdate(pos.add(-3, -2, -3), pos.add(3, 2, 3));
+		}
 	}
 
 	void writeClient(NBTTagCompound nbt)

@@ -27,7 +27,7 @@ public class ContainerIndustrialDryer extends Container
 			{66, 10},  // wet concentrate, over the feed valve
 			{176, 82}, // yellowcake, after the discharge
 			{220, 12}, // empty container in, over the condensate tank
-			{220, 96}, // condensate container out, under it
+			{220, 90}, // condensate container out, under it (its frame's top on the tank's bottom + 3)
 			{40, 120}, // empty drums, at the conveyor's start
 			{176, 120}, // the drum being filled, under the yellowcake
 			{204, 120}, // the full drum, at the conveyor's end

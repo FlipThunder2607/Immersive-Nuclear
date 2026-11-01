@@ -1,0 +1,8 @@
+{
+  "parent": "block/outer_stairs",
+  "textures": {
+    "bottom": "immersivenuclear:blocks/plaster_bricks",
+    "top": "immersivenuclear:blocks/plaster_bricks",
+    "side": "immersivenuclear:blocks/plaster_bricks"
+  }
+}

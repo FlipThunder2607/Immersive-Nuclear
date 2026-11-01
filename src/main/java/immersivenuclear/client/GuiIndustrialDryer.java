@@ -40,7 +40,7 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 	static final int TEMP_X = 24, TEMP_Y = 34, TEMP_W = 10, TEMP_H = 58;
 	static final int STEPS_X = 40, STEPS_Y = 98, STEPS_W = 108, STEPS_H = 8;
 	static final int COND_X = 176, COND_Y = 14, COND_W = 30, COND_H = 50;
-	static final int TANK_X = 218, TANK_Y = 38;
+	static final int TANK_X = 218, TANK_Y = 34;   // top on the drying chamber's
 	static final int ARROW_X = 152, ARROW_Y = 84;
 	/** The bed's full depth, over the heaters' strip at the bottom of the chamber. */
 	static final int BED_DEPTH = 18, HEATER_H = 4, PADDLES = 9, PADDLE_REACH = 12;
@@ -49,9 +49,9 @@ public class GuiIndustrialDryer extends GuiIEContainerBase
 	/** The scrubber on the vapour line, centred on its pipe (VAPOUR_Y) between the dome and the condenser; its return goes
 	 * down and into the chamber's right end at RETURN_Y. */
 	static final int SCRUB_X = 152, SCRUB_W = 14, SCRUB_H = 16, SCRUB_Y = VAPOUR_Y - SCRUB_H / 2, RETURN_Y = CHAMBER_Y + 6;
-	static final int ENERGY_X = 248, ENERGY_Y = 16, ENERGY_W = 14, ENERGY_H = 64;
-	static final int BUTTON_X = 247, BUTTON_Y = 86, BUTTON_SIZE = 16;
-	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 112, LIGHT_STEP = 8;
+	static final int ENERGY_X = 248, ENERGY_Y = 34, ENERGY_W = 14, ENERGY_H = 58;
+	static final int BUTTON_X = 247, BUTTON_Y = 98, BUTTON_SIZE = 16;
+	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 121, LIGHT_STEP = 8;
 	/** The drum station's conveyor, from the empty drums' slot to the full drum's, through the one being filled. */
 	static final int BELT_X = 58, BELT_Y = 124, BELT_W = 144, BELT_H = 8, FILL_Y = 139;
 	static final int PANEL_X = ContainerIndustrialDryer.INV_X - 8, PANEL_Y = ContainerIndustrialDryer.INV_Y - 8;

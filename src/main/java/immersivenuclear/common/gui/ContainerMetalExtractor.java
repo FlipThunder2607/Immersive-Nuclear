@@ -27,8 +27,8 @@ public class ContainerMetalExtractor extends Container
 			{176, 56}, // deposit out, at the end of the tray's chute
 			{10, 18},  // effluent container in
 			{10, 49},  // empty container out
-			{221, 55}, // empty container in (depleted effluent)
-			{221, 86}, // depleted effluent container out
+			{221, 54}, // empty container in (depleted effluent), on the tank's top
+			{221, 85}, // depleted effluent container out, on the tank's bottom
 			{PLATES_X, PLATES_Y}, {PLATES_X + PLATES_STEP, PLATES_Y}, {PLATES_X + 2 * PLATES_STEP, PLATES_Y}, // electrode plates
 			{PLATES_X + 3 * PLATES_STEP, PLATES_Y}, {PLATES_X + 4 * PLATES_STEP, PLATES_Y}, {PLATES_X + 5 * PLATES_STEP, PLATES_Y},
 	};

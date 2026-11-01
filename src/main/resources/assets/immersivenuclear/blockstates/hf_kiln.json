@@ -1,0 +1,327 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true,
+      "ambient": false
+    },
+    "textures": {
+      "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+      "#base_handrail": "immersivenuclear:blocks/base_handrail",
+      "#furnace_heater": "immersivenuclear:blocks/furnace_heater",
+      "#kiln_tank_wall": "immersivenuclear:blocks/kiln_tank_wall",
+      "#metal_decoration0_coil_lv_side": "immersiveengineering:blocks/metal_decoration0_coil_lv_side",
+      "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+      "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
+      "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+      "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+      "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+      "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "active=false,facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 90
+    },
+    "active=false,facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 90
+    },
+    "active=false,facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 90
+    },
+    "active=false,facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 90
+    },
+    "active=false,facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 0
+    },
+    "active=false,facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 0
+    },
+    "active=false,facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 0
+    },
+    "active=false,facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 0
+    },
+    "active=false,facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 180
+    },
+    "active=false,facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 180
+    },
+    "active=false,facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 180
+    },
+    "active=false,facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 180
+    },
+    "active=false,facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 270
+    },
+    "active=false,facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 270
+    },
+    "active=false,facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 270
+    },
+    "active=false,facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 270
+    },
+    "active=true,facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 90,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 0,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 180,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/hf_kiln.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "active=true,facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/hf_kiln_mirrored.obj",
+      "y": 270,
+      "textures": {
+        "#furnace_heater": "immersivenuclear:blocks/furnace_heater_active",
+        "#metal_decoration0_coil_lv_side": "immersivenuclear:blocks/kiln_coil_glow"
+      }
+    },
+    "inventory": [
+      {
+        "model": "immersivenuclear:obj/hf_kiln_item.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0018,
+              -0.0031,
+              0.0003
+            ],
+            "scale": 0.1022,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.0,
+              -0.0019,
+              -0.0019
+            ],
+            "scale": 0.0741
+          },
+          "fixed": {
+            "translation": [
+              -0.0,
+              -0.003,
+              0.003
+            ],
+            "scale": 0.1207,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0011,
+              0.0007,
+              -0.0019
+            ],
+            "scale": 0.065,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0011,
+              0.0007,
+              -0.0019
+            ],
+            "scale": 0.065,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0013,
+              -0.0019,
+              -0.0013
+            ],
+            "scale": 0.0741,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0013,
+              -0.0019,
+              0.0013
+            ],
+            "scale": 0.0741,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

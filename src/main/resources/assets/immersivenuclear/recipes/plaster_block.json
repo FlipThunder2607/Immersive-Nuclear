@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GG",
+    "GG"
+  ],
+  "key": {
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "dustGypsum"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:plaster_block",
+    "count": 1
+  }
+}
