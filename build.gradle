@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1.8"
+version = "0.1.9"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -42,6 +42,8 @@ dependencies {
     deobfCompile "curse.maven:immersive-engineering-231951:2974106"
     // JEI, only to compile the plugin (the game brings its own JEI; 4.16 API = 4.22 API)
     deobfProvided "mezz.jei:jei_1.12.2:4.16.1.302"
+    // Hwyla, only to compile its plugin (the machine's name and 3D model in the tooltip while picking gives the real block)
+    deobfProvided "curse.maven:hwyla-253449:2568751"
 }
 
 jar {
@@ -108,3 +110,9 @@ task hfKilnStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn hfKilnStructureTest
+
+task electrolyzerStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.ElectrolyzerStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn electrolyzerStructureTest

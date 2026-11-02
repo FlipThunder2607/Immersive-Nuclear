@@ -54,6 +54,8 @@ public class MultiblockSulfuricAcidUnit implements IMultiblock
 			case 'K': return new ItemStack(IEContent.blockStoneDecoration, 1, BlockTypes_StoneDecoration.BLASTBRICK.getMeta());
 			case 'B': return new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta());
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
+			case 'T': return new ItemStack(IEContent.blockStorage, 1, blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE.STEEL.getMeta());
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -260,6 +262,8 @@ public class MultiblockSulfuricAcidUnit implements IMultiblock
 			counts.put('r', count('r'));
 			counts.put('G', count('G'));
 			counts.put('R', count('R'));
+			counts.put('Q', count('Q'));
+			counts.put('T', count('T'));
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

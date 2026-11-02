@@ -56,6 +56,8 @@ public class MultiblockPrecipitationUnit implements IMultiblock
 			case 'A':
 			case 'D': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.IRON.getMeta());
 			case 'b': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
+			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
+			case 'X': return new ItemStack(INContent.blockEngineering[3]);
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -268,6 +270,8 @@ public class MultiblockPrecipitationUnit implements IMultiblock
 			counts.put('r', count('r'));
 			counts.put('p', count('p'));
 			counts.put('R', count('R'));
+			counts.put('Q', count('Q'));
+			counts.put('X', count('X'));
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

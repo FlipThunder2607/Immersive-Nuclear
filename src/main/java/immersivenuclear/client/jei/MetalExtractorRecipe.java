@@ -42,7 +42,7 @@ public class MetalExtractorRecipe implements IRecipeWrapper
 	@Override
 	public void drawInfo(net.minecraft.client.Minecraft mc, int width, int height, int mouseX, int mouseY)
 	{
-		JeiGraphite.text(mc, energy() + " IF   " + ticks() / 20 + " s", MetalExtractorCategory.TEXT_X, MetalExtractorCategory.TEXT_Y, width - MetalExtractorCategory.TEXT_X);
+		JeiGraphite.text(mc, energy() + " IF   " + ticks() / 20 + " s", MetalExtractorCategory.TEXT_X, PageCategory.TEXT_Y, width - MetalExtractorCategory.TEXT_X);
 	}
 
 	/** Ticks to drain one batch. */

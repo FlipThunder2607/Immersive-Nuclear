@@ -26,7 +26,7 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.8)
+## Current content (0.1.9)
 
 ### Machines
 
@@ -40,12 +40,14 @@ Design goals:
 | **Industrial Dryer** | 5×7×4 | Paddle dryer with heaters and a condenser. Turns the wet concentrate into **Yellowcake**, the end of line 1, and collects the **Process Condensate**. A drum loading station beside it fills **Concentrate Drums** on an animated conveyor. Heaters that glow while they run, steam and dust. |
 | **Sulfuric Acid Unit** | 5×7×8 | Contact process, the first machine of line 2. Burns sulfur (any mod's dust, or a block for nine cycles) and turns it into **Sulfuric Acid** with water, for the enrichment line's own hydrofluoric acid; its waste heat boiler gives **Steam**. Blue burner flame, stack smoke and a relief valve that vents when the steam tank is full. |
 | **Hydrofluoric Acid Kiln** | 5×7×3 | Rotary kiln: fluorite dust and sulfuric acid into **Hydrofluoric Acid** for the Conversion Unit, with **Gypsum** as by-product. The drum turns on its rollers, driven by a motor through a pinion and the girth gear; the heating coils and heaters glow while it runs. |
+| **Electrolyzer** | 5×7×5 | Splits water (or steam, with less power) into **Hydrogen**, for the Conversion Unit, and **Oxygen**. A rectifier feeds two alkaline cell stacks; the gases rise with the electrolyte into their separators. A full oxygen tank is vented by its relief valve. The cells glow and bubble while it runs. |
 
 The effluent never has to be dumped: it goes back into the Chemical Processing Unit as recycled liquor (saving reagent), through the Metal Extractor, or is neutralized with quicklime in IE's Mixer. The Filtration Unit filters the neutralized sludge into Neutralization Cake and plain water, and the cake replaces clay in IE's concrete.
 
 All machines have:
 
-- GUI drawn as an animated flow diagram, in graphite steel with IE's own slots, tanks and status lights
+- a GUI that draws the machine itself, animated, between riveted panels with IE's own slots, tanks and status light
+- hit boxes that follow the 3D model; Hwyla/Waila shows the machine, while pick-block gives the block a part replaced
 - redstone control (a signal stops the machine, the hammer inverts it)
 - JEI recipe pages
 - looping and event sounds
@@ -56,9 +58,9 @@ All machines have:
 ### Items, fluids and blocks
 
 - **Ores:** Fluorite Ore (Overworld, and a vein of IE's Excavator); Fluorite and Fluorite Dust
-- **Items:** Gypsum, Processing Reagent, Filter, Wet Mineral Residue, Neutralized Mineral Residue, Electrode Plates (steel, lead-silver, electrum-coated), Mixed Metal Deposit, Quicklime, Neutralization Cake, Precipitating Agent, Wet Uranium Concentrate, Uranium Concentrate (Yellowcake)
-- **Fluids** (animated, with buckets): Uranium Slurry, Crude Uranium Solution, Extraction Solvent, Stripping Solution, Purified Uranium Solution, Chemical Effluent, Neutralized Sludge, Depleted Effluent, Process Condensate, Sulfuric Acid, Steam, Hydrofluoric Acid (the last three shared with other mods by name); every one can be poured from its bucket
-- **Blocks:** Concentrate Drum, which keeps its yellowcake when broken; Impure Agglomerate, a heavy building block made from process waste, and the building blocks fired from it (Agglomerate Block, Tile, Bricks, Brick Stairs and Slab); the gypsum Plaster Block and its Tile, Bricks, Brick Stairs and Slab; four engineering blocks (precision, nuclear, control, radioactive handling), with recipes, that join into connected walls with the CTM mod; Lead Glass
+- **Items:** Gypsum, Processing Reagent, Filter, Wet Mineral Residue, Neutralized Mineral Residue, Electrode Plates (steel, lead-silver, electrum-coated), Mixed Metal Deposit, Quicklime, Neutralization Cake, Precipitating Agent, Wet Uranium Concentrate, Uranium Concentrate (Yellowcake); for later stages, Fluorination Ash, Depleted Uranium Oxide and Depleted Uranium Ingot (IE's Arc Furnace)
+- **Fluids** (animated, with buckets): Uranium Slurry, Crude Uranium Solution, Extraction Solvent, Stripping Solution, Purified Uranium Solution, Chemical Effluent, Neutralized Sludge, Depleted Effluent, Process Condensate, Sulfuric Acid, Steam, Hydrofluoric Acid, Hydrogen, Oxygen (the last five shared with other mods by name), and the five Uranium Hexafluorides of the enrichment line (natural, low, medium, high, depleted; registered, not used yet); every one can be poured from its bucket
+- **Blocks:** Concentrate Drum, which keeps its yellowcake when broken; Impure Agglomerate, a heavy building block made from process waste, and the building blocks fired from it (Agglomerate Block, Tile, Bricks, Brick Stairs and Slab); the gypsum Plaster Block and its Tile, Bricks, Brick Stairs and Slab; five engineering blocks (precision, nuclear, control, radioactive handling, chemical), with recipes, that join into connected walls with the CTM mod; Lead Glass
 - **Engineering parts:** Remote Manipulator, Precision Bearing, Electronic and Relay Modules
 - **Computer parts** (in development, creative tab only): electronic and relay modules, core memory, punched card and paper tape, disk pack, magnetic tape, link cable, continuous form paper, link connector and link relay
 - **Hazard tooltips** on materials: radioactive, corrosive, flammable, toxic, oxidizer, caustic, hot. They are informative only for now.
@@ -84,7 +86,8 @@ A branch after machine 3, the **Metal Extractor** (machine 3.5, playable), recov
 in an electrolytic cell before it is treated.
 
 Line 2 (enrichment) makes its own hydrofluoric acid: the **Sulfuric Acid Unit** feeds the **Hydrofluoric Acid Kiln**
-(both playable), whose acid goes into the planned Conversion Unit. The kiln's gypsum goes back to quicklime and
+(both playable), whose acid goes into the planned Conversion Unit, and the **Electrolyzer** (playable) makes its
+hydrogen. The kiln's gypsum goes back to quicklime and
 sulfur in IE's Arc Furnace, into concrete, or into building blocks.
 
 ## Roadmap
@@ -108,6 +111,7 @@ sulfur in IE's Arc Furnace, into concrete, or into building blocks.
 - [x] Sulfuric Acid Unit (contact process)
 - [x] Fluorite ore
 - [x] Hydrofluoric Acid Kiln
+- [x] Electrolyzer (hydrogen and oxygen)
 - [ ] Conversion Unit
 - [ ] Enrichment Unit
 

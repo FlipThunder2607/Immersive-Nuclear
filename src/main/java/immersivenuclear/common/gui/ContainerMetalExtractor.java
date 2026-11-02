@@ -13,22 +13,23 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Metal Extractor. 272 x 241 (as wide as the other machines'): the vat and its parts on top, the
- * six electrode plate slots under it (one under each plate), the player inventory at the bottom, centred. Vat, depleted tank, energy, step, state and redstone mode go to the
- * client as window properties (all below 32767).
+ * Interface of the Metal Extractor, 290 x 239 (the interface standard, see GuiMetalExtractor): the effluent's buckets in
+ * a small panel at the vat's inlet, the vat and its parts drawn, the plate strip under the vat (one slot under each
+ * plate), the deposit box, the depleted panel; IE's inventory panel centred under it. Vat, depleted tank, energy, step,
+ * state and redstone mode go to the client as window properties (all below 32767).
  */
 public class ContainerMetalExtractor extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 241, INV_X = 56, INV_Y = 160;
+	public static final int WIDTH = 290, HEIGHT = 239, INV_X = 65, INV_Y = 157;
 	/** The plate slots: item x of the first, step, item y (under the vat's six plates). */
-	public static final int PLATES_X = 60, PLATES_STEP = 18, PLATES_Y = 129;
+	public static final int PLATES_X = 62, PLATES_STEP = 18, PLATES_Y = 119;
 	/** Slot positions (top-left of the 16x16 item), in the tile's slot order. */
 	public static final int[][] SLOT_XY = {
-			{176, 56}, // deposit out, at the end of the tray's chute
-			{10, 18},  // effluent container in
-			{10, 49},  // empty container out
-			{221, 54}, // empty container in (depleted effluent), on the tank's top
-			{221, 85}, // depleted effluent container out, on the tank's bottom
+			{199, 119}, // deposit out, in the box at the end of the tray's chute
+			{10, 66},   // effluent container in
+			{10, 90},   // empty container out, under it
+			{242, 39},  // empty container in (depleted effluent), over its tank
+			{242, 119}, // depleted effluent container out, under it
 			{PLATES_X, PLATES_Y}, {PLATES_X + PLATES_STEP, PLATES_Y}, {PLATES_X + 2 * PLATES_STEP, PLATES_Y}, // electrode plates
 			{PLATES_X + 3 * PLATES_STEP, PLATES_Y}, {PLATES_X + 4 * PLATES_STEP, PLATES_Y}, {PLATES_X + 5 * PLATES_STEP, PLATES_Y},
 	};

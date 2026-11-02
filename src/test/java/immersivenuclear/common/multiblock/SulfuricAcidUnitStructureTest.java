@@ -8,19 +8,21 @@ public class SulfuricAcidUnitStructureTest
 	public static void main(String[] args)
 	{
 		// Counts read from the dev world build (x200..204, y4..12, z458..464, 31/10, third build)
-		expect(count('s'), 26, "steel scaffolding");
-		expect(count('S'), 10, "steel sheetmetal");
-		expect(count('I'), 3, "iron sheetmetal");
-		expect(count('b'), 4, "steel sheetmetal slabs");
+		expect(count('s'), 12, "steel scaffolding");
+		expect(count('S'), 18, "steel sheetmetal");
+		expect(count('I'), 2, "iron sheetmetal");
+		expect(count('b'), 3, "steel sheetmetal slabs");
 		expect(count('K'), 11, "blast bricks");
 		expect(count('B'), 43, "metal barrels");
 		expect(count('p'), 18, "fluid pipes");
 		expect(count('l'), 4, "light engineering");
+		expect(count('Q'), 5, "chemical engineering");
 		expect(count('H'), 2, "heavy engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 1, "generators");
 		expect(count('r'), 3, "radiators");
-		expect(totalParts(), 126, "total parts");
+		expect(count('T'), 2, "steel blocks");
+		expect(totalParts(), 125, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'B', "master is a converter barrel");

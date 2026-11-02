@@ -13,22 +13,23 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Precipitation Unit. 272 x 210 (as wide as the other machines'): solution buckets, agitated tank with the
- * agent's funnel on top, screw dewaterer with the concentrate on top, effluent tank; the player inventory at the
- * bottom, centred. Tanks, energy, the batch (step, ticks), state and redstone mode go to the client as window
- * properties (all below 32767).
+ * Interface of the Precipitation Unit, in the interface standard (01/11), 266 x 239: solution buckets at the tank's
+ * inlet, the agitated tank with the agent's slot over its funnel, the screw dewaterer with the wet concentrate's slot
+ * under its head, the effluent column; IE's inventory panel centred under it. Tanks, energy, the batch (step, ticks),
+ * state and redstone mode go to the client as window properties (all below 32767). The hammer on the redstone port
+ * inverts the mode (no button).
  */
 public class ContainerPrecipitationUnit extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 210, INV_X = 56, INV_Y = 129;
+	public static final int WIDTH = 266, HEIGHT = 239, INV_X = 53, INV_Y = 157;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TilePrecipitationUnit's slot order. */
 	public static final int[][] SLOT_XY = {
-			{76, 12},  // precipitating agent, on the funnel
-			{192, 12}, // wet concentrate, at the discharge head
-			{18, 36},  // solution container in, its pipe into the tank (on the band's top)
-			{18, 92},  // empty container out, under it (on the band's bottom)
-			{220, 12}, // empty container in, over the effluent tank
-			{220, 92}, // effluent container out, under it (on the band's bottom)
+			{62, 8},    // precipitating agent, over its funnel on the lid
+			{181, 119}, // wet concentrate, in the box under the screw's head
+			{10, 53},   // solution container in, at the tank's inlet
+			{10, 77},   // empty container out, under it
+			{218, 39},  // empty container in, over the effluent tank
+			{218, 119}, // effluent container out, under it
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

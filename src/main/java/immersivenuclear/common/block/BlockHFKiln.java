@@ -170,7 +170,36 @@ public class BlockHFKiln extends Block implements MachinePartBlock
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
-		return new ItemStack(INContent.itemHFKiln);
+		// The block the part stands for (the template block it replaced), never the machine's model: the machine items are
+		// only icons (JEI, the 3D model) and must not reach an inventory
+		net.minecraft.tileentity.TileEntity te = world.getTileEntity(pos);
+		if(te instanceof TileHFKiln)
+		{
+			ItemStack s = ((TileHFKiln)te).getOriginalStack();
+			if(s != null && !s.isEmpty())
+				return s;
+		}
+		return ItemStack.EMPTY;
+	}
+
+	/** Shaped like the model (MachineBounds): outline, collision and cursor; ports keep the whole block. */
+	@Override
+	public net.minecraft.util.math.AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		return MachineBounds.outline(world, pos);
+	}
+
+	@Override
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, net.minecraft.util.math.AxisAlignedBB entityBox,
+									  java.util.List<net.minecraft.util.math.AxisAlignedBB> boxes, @javax.annotation.Nullable net.minecraft.entity.Entity entity, boolean isActualState)
+	{
+		MachineBounds.addCollision(world, pos, entityBox, boxes, entity);
+	}
+
+	@Override
+	public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, net.minecraft.util.math.Vec3d start, net.minecraft.util.math.Vec3d end)
+	{
+		return MachineBounds.rayTrace(world, pos, start, end);
 	}
 
 	@Override

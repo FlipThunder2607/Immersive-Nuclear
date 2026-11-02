@@ -55,7 +55,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * IE's Mixer (plain water + neutralization cake). The storage tank holds one of them at a time; a batch only starts
  * when the solution tank and the residue slot can take its products.
  */
-public class TileFilterPress extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileFilterPress extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// Gameplay values (provisional), the step lengths follow the length of each step's sound
 	public static final int PRESSURIZE_TICKS = 100, CLOSE_TICKS = 60, RELEASE_TICKS = 40, FILTER_TICKS = 200, OPEN_TICKS = 120;
@@ -377,6 +377,7 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		return FilterPressStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return FilterPressStructure.portAt(dx, dy, dz);
@@ -392,11 +393,25 @@ public class TileFilterPress extends TileEntity implements ITickable, IHammerInt
 		return dx == FilterPressStructure.MASTER_DX && dy == FilterPressStructure.MASTER_DY && dz == FilterPressStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "filter_press";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.FilterPressStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.FilterPressStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.FilterPressStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

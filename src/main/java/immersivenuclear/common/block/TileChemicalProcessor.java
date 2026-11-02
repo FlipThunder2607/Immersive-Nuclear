@@ -53,7 +53,7 @@ import net.minecraftforge.oredict.OreDictionary;
  * Sounds: the machine's own sound while the agitator turns; the mod's pump sound ({@link PumpSound}), on the pump
  * part, while the reactor fills or drains.
  */
-public class TileChemicalProcessor extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileChemicalProcessor extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// One batch (provisional): 8000 mB of water, 16 uranium powder and 16 reagent make 8000 mB of slurry.
 	// Gameplay values, not real chemistry.
@@ -72,7 +72,9 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
 	/** Machine slots, in the order the interface shows them. */
-	public static final int SLOT_URANIUM = 0, SLOT_REAGENT = 1, SLOT_WATER_IN = 2, SLOT_WATER_OUT = 3, SLOT_SLURRY_IN = 4, SLOT_SLURRY_OUT = 5, SLOTS = 6;
+	public static final int SLOT_URANIUM = 0, SLOT_REAGENT = 1, SLOT_WATER_IN = 2, SLOT_WATER_OUT = 3, SLOT_SLURRY_IN = 4, SLOT_SLURRY_OUT = 5,
+			/** The recycled liquor's own container pair (0.1.9; added at the end, so older machines keep their slots). */
+			SLOT_RECYCLED_IN = 6, SLOT_RECYCLED_OUT = 7, SLOTS = 8;
 
 	int dx, dy, dz;
 	EnumFacing facing = EnumFacing.NORTH;
@@ -93,7 +95,10 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				case SLOT_REAGENT: return stack.getItem() == INContent.itemReagent;
 				case SLOT_WATER_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
-					return in != null && (in.getFluid() == FluidRegistry.WATER || isRecycled(in));
+					return in != null && in.getFluid() == FluidRegistry.WATER;
+				case SLOT_RECYCLED_IN:
+					FluidStack liquor = FluidUtil.getFluidContained(stack);
+					return liquor != null && isRecycled(liquor);
 				case SLOT_SLURRY_IN:
 					// An empty container, or one that already holds slurry
 					FluidStack held = FluidUtil.getFluidContained(stack);
@@ -331,6 +336,7 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		return ChemicalProcessorStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return ChemicalProcessorStructure.portAt(dx, dy, dz);
@@ -346,11 +352,25 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		return dx == ChemicalProcessorStructure.MASTER_DX && dy == ChemicalProcessorStructure.MASTER_DY && dz == ChemicalProcessorStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "chemical_processor";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.ChemicalProcessorStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.ChemicalProcessorStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.ChemicalProcessorStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;
@@ -505,22 +525,13 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 		return phase == PHASE_DRAIN ? MIX_STEPS : phase == PHASE_REACT ? phaseTicks * MIX_STEPS / REACT_TICKS : 0;
 	}
 
-	/** Bucket slots, like IE's: a full water container is emptied into the water tank, an empty one is filled with slurry. */
+	/** Bucket slots, like IE's: a full water or recycled liquor container is emptied into its tank (each pair under its
+	 * own tank), an empty one is filled with slurry. */
 	void handleContainers()
 	{
-		ItemStack in = inventory.getStackInSlot(SLOT_WATER_IN);
-		if(!in.isEmpty())
-		{
-			FluidActionResult r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), inlet, Integer.MAX_VALUE, null, false);
-			if(r.isSuccess() && canOutput(SLOT_WATER_OUT, r.getResult()))
-			{
-				r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), inlet, Integer.MAX_VALUE, null, true);
-				output(SLOT_WATER_OUT, r.getResult());
-				in.shrink(1);
-				inventory.setStackInSlot(SLOT_WATER_IN, in);
-			}
-		}
-		in = inventory.getStackInSlot(SLOT_SLURRY_IN);
+		emptyInto(SLOT_WATER_IN, SLOT_WATER_OUT);
+		emptyInto(SLOT_RECYCLED_IN, SLOT_RECYCLED_OUT);
+		ItemStack in = inventory.getStackInSlot(SLOT_SLURRY_IN);
 		if(!in.isEmpty() && slurry.getFluidAmount() > 0)
 		{
 			FluidActionResult r = FluidUtil.tryFillContainer(ItemHandlerHelper.copyStackWithSize(in, 1), slurry, Integer.MAX_VALUE, null, false);
@@ -531,6 +542,22 @@ public class TileChemicalProcessor extends TileEntity implements ITickable, IHam
 				in.shrink(1);
 				inventory.setStackInSlot(SLOT_SLURRY_IN, in);
 			}
+		}
+	}
+
+	/** One full container from {@code from} into the inlet (each fluid finds its tank), the empty one out to {@code to}. */
+	void emptyInto(int from, int to)
+	{
+		ItemStack in = inventory.getStackInSlot(from);
+		if(in.isEmpty())
+			return;
+		FluidActionResult r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), inlet, Integer.MAX_VALUE, null, false);
+		if(r.isSuccess() && canOutput(to, r.getResult()))
+		{
+			r = FluidUtil.tryEmptyContainer(ItemHandlerHelper.copyStackWithSize(in, 1), inlet, Integer.MAX_VALUE, null, true);
+			output(to, r.getResult());
+			in.shrink(1);
+			inventory.setStackInSlot(from, in);
 		}
 	}
 

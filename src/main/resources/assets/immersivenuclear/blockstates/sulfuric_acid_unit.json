@@ -10,6 +10,7 @@
       "#base_handrail": "immersivenuclear:blocks/base_handrail",
       "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
       "#base_hatch": "immersivenuclear:blocks/base_hatch",
+      "#base_sight_glass": "immersivenuclear:blocks/base_sight_glass",
       "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
       "#burner_flame": "immersivenuclear:blocks/burner_flame",
       "#burner_glow": "immersivenuclear:blocks/burner_glow",
@@ -220,7 +221,7 @@
     },
     "inventory": [
       {
-        "model": "immersivenuclear:obj/sulfuric_acid_unit_item.obj",
+        "model": "immersivenuclear:obj/sulfuric_acid_unit_inventory.obj",
         "transform": {
           "gui": {
             "translation": [

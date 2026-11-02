@@ -14,6 +14,36 @@ the release title always carry the same version.
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
 
+## [0.1.9] - 2026-11-01
+
+The hydrogen of line 2, and a new look for every machine's interface and JEI page.
+
+### Added
+- **Electrolyzer** (5×7×5, 106 blocks): splits water into **Hydrogen**, for the Conversion Unit, and **Oxygen**. Each
+  5 s cycle takes 250 mB of water and gives 500 mB of hydrogen and 250 mB of oxygen, drawing 160 IF/t; steam works
+  too, with 110 IF/t (provisional numbers). A full hydrogen tank stops it; a full oxygen tank lifts the relief valve,
+  which vents the gas. The cell stacks glow and bubble while it runs; sounds for the cells, the rectifier, the pumps,
+  the feed and the vent; animated GUI; JEI page; Engineer's Manual page.
+- **Hydrogen** and **Oxygen** fluids (gases, shared with other mods by name).
+- For the next stages (registered, not used yet): the five **Uranium Hexafluoride** fluids (natural, low, medium,
+  high, depleted), **Fluorination Ash**, **Depleted Uranium Oxide** and **Depleted Uranium Ingot** (IE's Arc Furnace:
+  the oxide with coke dust).
+- **Chemical Engineering Block**, a fifth engineering block, used in the line 1 and line 2 structures.
+- Hit boxes that follow each machine's 3D model (selection, collision and aim).
+- Hwyla/Waila shows a formed machine's name and 3D model.
+
+### Changed
+- Every machine's interface redrawn: the machine itself between riveted side panels, with IE's inventory in the
+  middle, shaded pipes and vessels, one status lamp and a single grid for tanks, slots and energy.
+- Every JEI page redrawn as a simplified copy of the machine's interface, within JEI's window.
+- The structures of the Filtration Unit, the Chemical Separation Unit, the Metal Extractor, the Precipitation Unit, the
+  Industrial Dryer, the Sulfuric Acid Unit and the Hydrofluoric Acid Kiln, rebuilt with Chemical Engineering Blocks
+  and steel (see each machine's page in the Engineer's Manual or JEI).
+- New 3D models of the Chemical Processing Unit, the Sulfuric Acid Unit and the Hydrofluoric Acid Kiln.
+- Machine models in the inventory face the player.
+- Pick-block on a formed machine gives the block that part replaced; the machine items are no longer in the creative
+  tab, which lists the mod's items by groups.
+
 ## [0.1.8] - 2026-10-31
 
 The hydrofluoric acid of line 2, made in the mod from its own fluorite; machines that glow, look and sound alive.
@@ -250,7 +280,8 @@ First development snapshot published in this repository. Earlier alpha builds we
 - English and Brazilian Portuguese translations.
 - Structure tests for both multiblocks, run with `gradlew build`.
 
-[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/FlipThunder2607/Immersive-Nuclear/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.9
 [0.1.8]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.8
 [0.1.7]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.7
 [0.1.6]: https://github.com/FlipThunder2607/Immersive-Nuclear/releases/tag/v0.1.6

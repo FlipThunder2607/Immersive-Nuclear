@@ -6,18 +6,17 @@
       "ambient": false
     },
     "textures": {
-      "#glass": "minecraft:blocks/glass",
       "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
       "#metal_multiblock_assembler": "immersiveengineering:blocks/metal_multiblock_assembler",
-      "#metal_multiblock_bottling_machine_a": "immersiveengineering:blocks/metal_multiblock_bottling_machine_a",
       "#metal_multiblock_diesel_generator": "immersiveengineering:blocks/metal_multiblock_diesel_generator",
       "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
       "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
       "#metal_multiblock_squeezer": "immersiveengineering:blocks/metal_multiblock_squeezer",
       "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
       "#storage_steel": "immersiveengineering:blocks/storage_steel",
-      "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
       "#tank_wall": "immersivenuclear:blocks/tank_wall",
+      "#tanque_visor_default_ampliada": "immersivenuclear:blocks/tanque_visor_default_ampliada",
+      "#tanque_visor_hazard_ampliada": "immersivenuclear:blocks/tanque_visor_hazard_ampliada",
       "particle": "immersiveengineering:blocks/storage_steel"
     }
   },
@@ -88,13 +87,13 @@
     },
     "inventory": [
       {
-        "model": "immersivenuclear:obj/chemical_processor.obj",
+        "model": "immersivenuclear:obj/chemical_processor_inventory.obj",
         "transform": {
           "gui": {
             "translation": [
               0.003,
-              -0.0665,
-              -0.0407
+              -0.0671,
+              -0.041
             ],
             "scale": 0.1398,
             "rotation": [
@@ -111,7 +110,7 @@
           "ground": {
             "translation": [
               -0.002,
-              -0.0445,
+              -0.0449,
               -0.0004
             ],
             "scale": 0.0799
@@ -119,7 +118,7 @@
           "fixed": {
             "translation": [
               0.0032,
-              -0.0724,
+              -0.073,
               0.0006
             ],
             "scale": 0.1298,
@@ -132,8 +131,8 @@
           "thirdperson_righthand": {
             "translation": [
               -0.0015,
-              -0.011,
-              -0.0374
+              -0.0111,
+              -0.0377
             ],
             "scale": 0.0699,
             "rotation": [
@@ -150,8 +149,8 @@
           "thirdperson_lefthand": {
             "translation": [
               -0.0015,
-              -0.011,
-              -0.0374
+              -0.0111,
+              -0.0377
             ],
             "scale": 0.0699,
             "rotation": [
@@ -168,7 +167,7 @@
           "firstperson_righthand": {
             "translation": [
               -0.0017,
-              -0.0445,
+              -0.0449,
               0.0011
             ],
             "scale": 0.0799,
@@ -181,7 +180,7 @@
           "firstperson_lefthand": {
             "translation": [
               0.0017,
-              -0.0445,
+              -0.0449,
               -0.0011
             ],
             "scale": 0.0799,

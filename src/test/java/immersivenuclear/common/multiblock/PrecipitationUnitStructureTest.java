@@ -8,23 +8,25 @@ public class PrecipitationUnitStructureTest
 	public static void main(String[] args)
 	{
 		// Counts read from the dev world build (x200..204, y4..8, z440..446, rebuilt 26/10)
-		expect(count('s'), 28, "steel scaffolding");
+		expect(count('s'), 12, "steel scaffolding");
 		expect(count('f'), 10, "steel fences");
-		expect(count('l'), 9, "light engineering");
-		expect(count('H'), 6, "heavy engineering");
+		expect(count('l'), 7, "light engineering");
+		expect(count('H'), 4, "heavy engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 3, "generators");
 		expect(count('r'), 2, "radiators");
-		expect(count('B'), 15, "metal barrels");
+		expect(count('B'), 16, "metal barrels");
 		expect(count('p'), 2, "fluid pipes");
-		expect(count('S'), 6, "steel sheetmetal");
+		expect(count('S'), 15, "steel sheetmetal");
 		expect(count('I'), 5, "iron sheetmetal");
 		expect(count('a') + count('A') + count('D'), 2, "iron sheetmetal slabs");
 		expect(count('b'), 4, "steel sheetmetal slabs");
+		expect(count('Q'), 8, "chemical engineering");
+		expect(count('X'), 2, "radioactive handling");
 		expect(totalParts(), 93, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
-		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'H', "master is the tank's core");
+		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'Q', "master is the tank's core (chemical engineering, 01/11)");
 		expect(portAt(2, -1, -6), PORT_SOLUTION, "solution port");
 		expect(portFace(2, -1, -6)[1], -1, "solution on the north face (left)");
 		expect(portAt(4, -1, -5), PORT_AGENT, "agent port");

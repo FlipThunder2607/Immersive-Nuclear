@@ -7,65 +7,57 @@ import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.block.TileSulfuricAcidUnit;
 import immersivenuclear.common.gui.ContainerSulfuricAcidUnit;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Interface of the Sulfuric Acid Unit, in the mod's graphite finish drawn at run time ({@link GuiGraphite}) with IE's
- * own slots, tanks and markers a little darker, and the same right column as the other machines (energy, redstone
- * button, lights). The contact process left to right, as in the machine:
- *   sulfur > BURNER (blue flame) > BOILER under its STEAM DRUM > CONVERTER (four beds) > ABSORPTION TOWER > acid
- *   water tank > tower top; steam drum > steam tank
- * While a cycle runs the flame flickers, the gas moves through the pipes, the beds glow and the acid trickles down the
- * tower's packing.
+ * Interface of the Sulfuric Acid Unit, in the interface standard (01/11): separate riveted panels with the machine drawn
+ * between them, the world showing through the gaps. The contact process left to right, as in the machine:
+ *   [water: in / tank / out]  the sulfur's slot over its hopper; the brick BURNER (its blue flame); the BOILER up to its
+ *   STEAM DRUM (the level in its glass); the CONVERTER (four catalyst beds, they glow); the ABSORPTION TOWER (the acid
+ *   trickling down its packing)  [acid | steam | energy over the status lamp]
+ * Our sheet (textures/gui/sulfuric_acid_unit_gui.png, made by ferramentas/gui_acido_sulfurico_v9_esboco.py --jogo with
+ * the same numbers) is the fixed background; what moves is drawn here. The JEI page keeps its own sheet.
  */
 public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 {
 	static final String IE = "immersiveengineering:textures/gui/refinery.png";
-	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/chemical_processor.png";
+	static final String SHEET = ImmersiveNuclear.MODID + ":textures/gui/sulfuric_acid_unit_gui.png";
+	static final int SHEET_SIZE = 512;
 
-	// Layout (as in the approved sketch, ferramentas/gui_acido_sulfurico.py)
-	static final int BURNER_X = 12, BURNER_Y = 60, BURNER_W = 44, BURNER_H = 30;
-	static final int DRUM_X = 60, DRUM_Y = 30, DRUM_W = 30, DRUM_H = 12;
-	static final int BOILER_X = 64, BOILER_Y = 46, BOILER_W = 22, BOILER_H = 66;
-	public static final int CONV_X = 96, CONV_Y = 30, CONV_W = 22, CONV_H = 82;
-	static final int TOWER_X = 126, TOWER_Y = 30, TOWER_W = 20, TOWER_H = 82;
-	/** The tanks, nearest the tower first: the acid comes in at its side; each has its container slots under it. */
-	static final int ACID_X = 162, WATER_X = 188, STEAM_X = 214, TANK_Y = 30;
-	public static final int ARROW_X = 133, ARROW_Y = 118;
-	/** The acid: out of the tower's foot into the arrow, up the gap between the tower and the acid tank, into its side. */
-	static final int FOOT_X = 130, ACID_PIPE_X = 154, ACID_IN_Y = TANK_Y + 36;
-	/** The water: out of the top of its tank, over the acid tank, down into the top of the tower. */
-	static final int WATER_OUT_X = WATER_X + 3, WATER_LINE_Y = 20, WATER_DROP_X = 141;
-	/** The steam: over everything, then down into the top of its tank beside the port mark, like the water. */
-	static final int STEAM_LINE_Y = 14, STEAM_IN_X = STEAM_X + 3;
-	static final int ENERGY_X = 248, ENERGY_Y = 30, ENERGY_W = 14, ENERGY_H = 82;
-	static final int BUTTON_X = 247, BUTTON_Y = 118, BUTTON_SIZE = 16;
-	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 140, LIGHT_STEP = 8;
+	// Layout (same as gui_acido_sulfurico_v9_esboco.py)
+	static final int ROW1 = 37, ROW2 = 62, ROW3 = 117, TANK_Y = ROW2;
+	static final int WATER_X = 8, ACID_X = 210, STEAM_X = 240, CONTROL_X = 266;
+	static final int BURNER_X = 42, BURNER_Y = 92, BURNER_W = 44, BURNER_H = 44;
+	static final int FLAME_X = 51, FLAME_Y = 101, FLAME_W = 26, FLAME_H = 26;
+	static final int BOILER_X = 90, BOILER_Y = 80, BOILER_W = 28, BOILER_H = 56;
+	static final int DRUM_X = 86, DRUM_Y = 62, DRUM_W = 36, DRUM_H = 16, GLASS_X = 94, GLASS_Y = 66, GLASS_W = 20, GLASS_H = 6;
+	/** The converter; also JEI's click area (INJeiPlugin). */
+	public static final int CONV_X = 126, CONV_Y = 40, CONV_W = 26, CONV_H = 96;
+	static final int BED_Y0 = 46, BED_STEP = 22, BED_H = 14, BED_X = 131, BED_W = 16;
+	static final int TOWER_X = 162, TOWER_Y = 32, TOWER_W = 30, TOWER_H = 104;
+	static final int PACK_X = 168, PACK_Y = 40, PACK_W = 18, PACK_H = 80;
+	static final int ENERGY_X = CONTROL_X + 2, ENERGY_Y = ROW1, ENERGY_W = 11, ENERGY_H = ROW2 + 51 - ROW1;
+	static final int LAMP_X = CONTROL_X, LAMP_Y = ROW3 + 2, LAMP_SIZE = 16;
 	static final int PANEL_X = ContainerSulfuricAcidUnit.INV_X - 8, PANEL_Y = ContainerSulfuricAcidUnit.INV_Y - 8;
 
+	// Our sprites in the sheet: {u, v, w, h}
+	static final int[] LENS = {0, 330, 10, 10};
 	// IE's pieces in refinery.png
 	static final int[] IE_SLOT = {35, 13, 20, 20}, IE_TANK = {11, 18, 20, 51}, IE_BLUE = {42, 10, 6, 3}, IE_ORANGE = {42, 49, 6, 3};
 
-	static final int COL_PIPE = 0xff2a2c30, COL_PIPE_EDGE = 0xff55585e, COL_STEEL = 0xff96999e, COL_STEEL_DARK = 0xff5c5f64,
-			COL_INSIDE = 0xff24262a, COL_BRICK = 0xff6e3428, COL_MORTAR = 0xff46221c, COL_FIREBOX = 0xff101222,
-			COL_SULFUR = 0xffe8d040, COL_GAS = 0xc8c8d0a0, COL_STEAM = 0xc8b4b6ba, COL_WATER = 0xff3c6ab4, COL_ACID = 0xffd6c896,
-			COL_PACKING = 0xffc8c4b8, COL_TUBE = 0xff8a5a40;
+	static final int COL_WATER = 0xff3a6ac0, COL_ACID = 0xffd8d0a8, COL_ACID_DROP = 0xa0d8d0a8, COL_STEAM = 0xc8e0e4e8, COL_GAS = 0xb4d8c070;
+	static final int[] FLAME = {0xff223ab0, 0xff4a8af0, 0xffd0e8ff};
 
 	final ContainerSulfuricAcidUnit container;
 	int ticks;
@@ -107,100 +99,30 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 			drawRect(guiLeft + x, guiTop + y, guiLeft + x + w, guiTop + y + h, argb);
 	}
 
-	/** A pipe of the background: 5 px, dark core with a light edge. */
-	void pipe(int x0, int y0, int x1, int y1)
-	{
-		if(y0 == y1)
-		{
-			rect(Math.min(x0, x1) - 2, y0 - 2, Math.abs(x1 - x0) + 5, 5, COL_PIPE_EDGE);
-			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, COL_PIPE);
-		}
-		else
-		{
-			rect(x0 - 2, Math.min(y0, y1) - 2, 5, Math.abs(y1 - y0) + 5, COL_PIPE_EDGE);
-			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, COL_PIPE);
-		}
-	}
-
-	/** Moving fluid inside a pipe (its 3 px core), only while the cycle runs. */
-	void flow(int x0, int y0, int x1, int y1, int argb)
-	{
-		if(!running())
-			return;
-		if(y0 == y1)
-			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, argb);
-		else
-			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, argb);
-	}
-
-	/** 0 green running, 1 yellow waiting for input, 2 red stopped (power, full output), 3 grey disabled; -1 idle. */
-	int litLight()
+	/** The lamp's colour: 0 green running, 1 amber waiting (input, or stopped by redstone), 2 red stopped (no power,
+	 * output full), 3 off (idle). */
+	int lamp()
 	{
 		switch(container.state)
 		{
 			case TileSulfuricAcidUnit.STATE_RUNNING: return 0;
-			case TileSulfuricAcidUnit.STATE_NO_INPUT: return 1;
+			case TileSulfuricAcidUnit.STATE_NO_INPUT:
+			case TileSulfuricAcidUnit.STATE_DISABLED: return 1;
 			case TileSulfuricAcidUnit.STATE_NO_POWER:
 			case TileSulfuricAcidUnit.STATE_OUTPUT_FULL: return 2;
-			case TileSulfuricAcidUnit.STATE_DISABLED: return 3;
-			default: return -1;
+			default: return 3;
 		}
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my)
 	{
-		GuiGraphite.panel(guiLeft, guiTop, xSize, ySize);
-
-		// Pipes, with what moves through them while it runs
-		int gasY = BURNER_Y + BURNER_H / 2;
-		pipe(BURNER_X + BURNER_W, gasY, BOILER_X - 1, gasY);
-		flow(BURNER_X + BURNER_W, gasY, BOILER_X - 1, gasY, COL_GAS);
-		pipe(BOILER_X + BOILER_W / 2, BOILER_Y - 1, BOILER_X + BOILER_W / 2, DRUM_Y + DRUM_H);
-		int steamX = DRUM_X + DRUM_W - 4;
-		pipe(steamX, DRUM_Y - 1, steamX, STEAM_LINE_Y);
-		pipe(steamX, STEAM_LINE_Y, STEAM_IN_X, STEAM_LINE_Y);
-		pipe(STEAM_IN_X, STEAM_LINE_Y, STEAM_IN_X, TANK_Y - 1);
-		flow(steamX, DRUM_Y - 1, steamX, STEAM_LINE_Y, COL_STEAM);
-		flow(steamX, STEAM_LINE_Y, STEAM_IN_X, STEAM_LINE_Y, COL_STEAM);
-		flow(STEAM_IN_X, STEAM_LINE_Y, STEAM_IN_X, TANK_Y - 1, COL_STEAM);
-		int toConv = BOILER_Y + 10;
-		pipe(BOILER_X + BOILER_W, toConv, CONV_X - 1, toConv);
-		flow(BOILER_X + BOILER_W, toConv, CONV_X - 1, toConv, COL_GAS);
-		int toTower = CONV_Y + CONV_H - 6;
-		pipe(CONV_X + CONV_W, toTower, TOWER_X - 1, toTower);
-		flow(CONV_X + CONV_W, toTower, TOWER_X - 1, toTower, COL_GAS);
-		// Water: up out of its tank, over the acid tank, down into the tower's top
-		pipe(WATER_OUT_X, TANK_Y - 1, WATER_OUT_X, WATER_LINE_Y);
-		pipe(WATER_OUT_X, WATER_LINE_Y, WATER_DROP_X, WATER_LINE_Y);
-		pipe(WATER_DROP_X, WATER_LINE_Y, WATER_DROP_X, TOWER_Y);
-		flow(WATER_OUT_X, TANK_Y - 1, WATER_OUT_X, WATER_LINE_Y, COL_WATER);
-		flow(WATER_OUT_X, WATER_LINE_Y, WATER_DROP_X, WATER_LINE_Y, COL_WATER);
-		flow(WATER_DROP_X, WATER_LINE_Y, WATER_DROP_X, TOWER_Y, COL_WATER);
-		// Acid: from the tower's foot into the arrow, up the gap beside the tower, into the acid tank's side
-		int acidY = ARROW_Y + 6;
-		pipe(FOOT_X, TOWER_Y + TOWER_H, FOOT_X, acidY);
-		pipe(FOOT_X, acidY, ARROW_X - 1, acidY);
-		pipe(ARROW_X + GuiGraphite.ARROW_W, acidY, ACID_PIPE_X, acidY);
-		pipe(ACID_PIPE_X, acidY, ACID_PIPE_X, ACID_IN_Y);
-		pipe(ACID_PIPE_X, ACID_IN_Y, ACID_X - 1, ACID_IN_Y);
-		flow(FOOT_X, TOWER_Y + TOWER_H, FOOT_X, acidY, COL_ACID);
-		flow(FOOT_X, acidY, ARROW_X - 1, acidY, COL_ACID);
-		flow(ARROW_X + GuiGraphite.ARROW_W, acidY, ACID_PIPE_X, acidY, COL_ACID);
-		flow(ACID_PIPE_X, acidY, ACID_PIPE_X, ACID_IN_Y, COL_ACID);
-		flow(ACID_PIPE_X, ACID_IN_Y, ACID_X - 1, ACID_IN_Y, COL_ACID);
-
-		// The wells over the pipes, so each frame covers the pipe's end where it meets it
-		ClientUtils.bindTexture(GuiGraphite.SHEET);
 		GlStateManager.color(1, 1, 1, 1);
-		for(int[] w : new int[][]{{BURNER_X, BURNER_Y, BURNER_W, BURNER_H}, {DRUM_X, DRUM_Y, DRUM_W, DRUM_H}, {BOILER_X, BOILER_Y, BOILER_W, BOILER_H},
-				{CONV_X, CONV_Y, CONV_W, CONV_H}, {TOWER_X, TOWER_Y, TOWER_W, TOWER_H}, {ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H},
-				{LIGHTS_X, LIGHT_Y - 3, LIGHTS_W, 4 * LIGHT_STEP + 4}})
-			GuiGraphite.well(guiLeft + w[0], guiTop + w[1], w[2], w[3]);
-		GuiGraphite.arrow(guiLeft + ARROW_X, guiTop + ARROW_Y, Math.round(GuiGraphite.ARROW_W * done()));
+		GlStateManager.enableBlend();
+		ClientUtils.bindTexture(SHEET);
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, SHEET_SIZE, SHEET_SIZE);
 
 		// IE's wooden inventory panel; IE's pieces, a little darker
-		GlStateManager.color(1, 1, 1, 1);
 		ClientUtils.bindTexture(IE);
 		drawTexturedModalRect(guiLeft + PANEL_X, guiTop + PANEL_Y, 0, 77, 176, 89);
 		GuiGraphite.ieTint();
@@ -208,40 +130,35 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 		for(int i = 0; i < xy.length; i++)
 		{
 			piece(IE_SLOT, xy[i][0] - 2, xy[i][1] - 2);
-			boolean out = i == TileSulfuricAcidUnit.SLOT_ACID_OUT || i == TileSulfuricAcidUnit.SLOT_WATER_OUT || i == TileSulfuricAcidUnit.SLOT_STEAM_OUT;
-			piece(out ? IE_ORANGE : IE_BLUE, xy[i][0] + 5, xy[i][1] - 5);
+			boolean in = i == TileSulfuricAcidUnit.SLOT_SULFUR || i == TileSulfuricAcidUnit.SLOT_ACID_IN || i == TileSulfuricAcidUnit.SLOT_WATER_IN
+					|| i == TileSulfuricAcidUnit.SLOT_STEAM_IN;
+			piece(in ? IE_BLUE : IE_ORANGE, xy[i][0] + 5, xy[i][1] - 5);
 		}
-		for(int x : new int[]{ACID_X, WATER_X, STEAM_X})
+		for(int x : new int[]{WATER_X, ACID_X, STEAM_X})
 		{
 			piece(IE_TANK, x, TANK_Y);
 			piece(x == WATER_X ? IE_BLUE : IE_ORANGE, x + 7, TANK_Y - 3);
 		}
 		GuiGraphite.endTint();
-		tank(container.acid, ACID_X, mx, my, null);
-		tank(container.water, WATER_X, mx, my, null);
+		GlStateManager.color(1, 1, 1, 1);
+		ClientUtils.handleGuiTank(container.water, guiLeft + WATER_X + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+		ClientUtils.handleGuiTank(container.acid, guiLeft + ACID_X + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
 		drawSteamTank();
 
-		drawFeed();
-		drawBurner();
-		drawBoiler();
+		drawFlows();
+		drawFlame();
+		drawDrum();
 		drawConverter();
 		drawTower();
 
-		// Energy (IE's red gradient), button, lights
+		// Energy (IE's red gradient, inside IE's 7 px) and the lamp's lens
 		int eh = (int)((ENERGY_H - 4) * (container.energy / (float)TileSulfuricAcidUnit.ENERGY_CAPACITY));
 		if(eh > 0)
 			ClientUtils.drawGradientRect(guiLeft + ENERGY_X + 2, guiTop + ENERGY_Y + ENERGY_H - 2 - eh, guiLeft + ENERGY_X + ENERGY_W - 2, guiTop + ENERGY_Y + ENERGY_H - 2, 0xffb51500, 0xff600b00);
 		GlStateManager.color(1, 1, 1, 1);
-		ClientUtils.bindTexture(OWN);
-		drawTexturedModalRect(guiLeft + BUTTON_X, guiTop + BUTTON_Y, 0, 150, BUTTON_SIZE, BUTTON_SIZE);
-		int lit = litLight();
-		for(int i = 0; i < 4; i++)
-			drawTexturedModalRect(guiLeft + LIGHT_X + 1, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
-	}
-
-	void tank(FluidTank tank, int x, int mx, int my, ArrayList<String> tip)
-	{
-		ClientUtils.handleGuiTank(tank, guiLeft + x + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		GlStateManager.enableBlend();
+		ClientUtils.bindTexture(SHEET);
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft + LAMP_X + LAMP_SIZE / 2 - 5, guiTop + LAMP_Y + LAMP_SIZE / 2 - 5, LENS[0] + lamp() * LENS[2], LENS[1], LENS[2], LENS[3], SHEET_SIZE, SHEET_SIZE);
 	}
 
 	/** Our steam, always with our own texture (in an older world another mod's steam may be the one by that name). */
@@ -278,156 +195,98 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 		drawTexturedModalRect(guiLeft + STEAM_X, guiTop + TANK_Y, 177, 31, 20, 51);
 	}
 
-	/** The chute from the sulfur's slot into the burner's hopper, sulfur falling while it runs. */
-	void drawFeed()
+	/** What moves in the visible stretches of the pipes while a cycle runs. */
+	void drawFlows()
 	{
-		int[] s = ContainerSulfuricAcidUnit.SLOT_XY[TileSulfuricAcidUnit.SLOT_SULFUR];
-		int x = s[0] + 3, y = s[1] + 18, h = BURNER_Y - y;
-		rect(x, y, 10, h, COL_STEEL_DARK);
-		rect(x + 2, y + 2, 6, h - 2, COL_PIPE);
-		if(running())
-			for(int k = 0; k < 3; k++)
-				rect(x + 3 + k % 2 * 2, y + 2 + Math.floorMod(ticks * 2 + k * 3, Math.max(1, h - 3)), 2, 2, COL_SULFUR);
+		if(!running())
+			return;
+		// water: up out of its panel, over everything, down into the tower's top
+		rect(17, 19, 2, 9, COL_WATER);
+		rect(17, 19, 161, 2, COL_WATER);
+		rect(176, 19, 2, 8, COL_WATER);
+		// steam: up from the drum, across (where it shows between the vessels) to the steam tank
+		rect(103, 47, 2, DRUM_Y - 47, COL_STEAM);
+		rect(103, 47, CONV_X - 103, 2, COL_STEAM);
+		rect(CONV_X + CONV_W, 47, TOWER_X - CONV_X - CONV_W, 2, COL_STEAM);
+		rect(TOWER_X + TOWER_W, 47, 202 - TOWER_X - TOWER_W, 2, COL_STEAM);
+		// the gas: boiler to the converter, converter to the tower's foot; the acid out of the tower's foot
+		rect(BOILER_X + BOILER_W, 105, CONV_X - BOILER_X - BOILER_W, 2, COL_GAS);
+		rect(CONV_X + CONV_W, 121, TOWER_X - CONV_X - CONV_W, 2, COL_GAS);
+		rect(TOWER_X + TOWER_W, 127, 202 - TOWER_X - TOWER_W, 2, COL_ACID);
 	}
 
-	/** Firebrick lining and the blue sulfur flame, flickering while it runs (embers only when it is out). */
-	void drawBurner()
+	/** The blue flame, flickering while it burns (the part of the machine that glows). */
+	void drawFlame()
 	{
-		int ix = BURNER_X + 2, iy = BURNER_Y + 2, iw = BURNER_W - 4, ih = BURNER_H - 4;
-		rect(ix, iy, iw, ih, COL_BRICK);
-		for(int j = iy; j < iy + ih; j += 4)
+		if(!running())
+			return;
+		float f = 0.82F + 0.1F * (float)Math.sin(ticks * 0.9) + 0.06F * (float)Math.sin(ticks * 2.3 + 1);
+		float cx = FLAME_W / 2F, cy = FLAME_H / 2F + 2;
+		for(int j = 0; j < FLAME_H; j++)
 		{
-			rect(ix, j, iw, 1, COL_MORTAR);
-			for(int i = ix + ((j - iy) / 4 % 2 == 0 ? 0 : 4); i < ix + iw; i += 8)
-				rect(i, j, 1, 4, COL_MORTAR);
-		}
-		int fx = ix + 4, fy = iy + 4, fw = iw - 8, fh = ih - 8;
-		rect(fx, fy, fw, fh, COL_FIREBOX);
-		float strength = running() ? 1 : 0.25F;
-		for(int i = 0; i < fw; i++)
-		{
-			// the flame's height wobbles along its length
-			float wob = running() ? 0.15F * (float)Math.sin((ticks + i * 3) * 0.6) : 0;
-			for(int j = 0; j < fh; j++)
+			// three bands: outer, middle, core; each row's half width from the band's limit
+			for(int band = 0; band < 3; band++)
 			{
-				float d = Math.abs(j - fh / 2F) / (fh / 2F);
-				float k = Math.max(0, 1 - d * (1.3F - wob)) * Math.min(1, (i + 2) / (fw * 0.35F)) * Math.min(1, (fw - i) / (fw * 0.25F)) * strength;
-				if(k > 0.05F)
-				{
-					int r = Math.round(40 + 150 * k * k), g = Math.round(70 + 160 * k * k), b = Math.round(160 + 95 * k);
-					rect(fx + i, fy + j, 1, 1, 0xff000000 | r << 16 | g << 8 | b);
-				}
+				float limit = f * (band == 0 ? 1 : band == 1 ? 0.7F : 0.35F);
+				// tall at the top: the flame licks upwards
+				float dy = Math.abs(j + 0.5F - cy) / (FLAME_H / 2F) * (j < cy ? 0.5F : 0.8F);
+				float half = (limit - dy) * (FLAME_W / 2F);
+				if(half <= 0)
+					continue;
+				int x0 = Math.round(cx - half), x1 = Math.round(cx + half);
+				rect(FLAME_X + Math.max(0, x0), FLAME_Y + j, Math.min(FLAME_W, x1) - Math.max(0, x0), 1, FLAME[band]);
 			}
 		}
-		rect(BURNER_X - 4, BURNER_Y + BURNER_H / 2 - 4, 4, 8, COL_STEEL_DARK);
 	}
 
-	/** A colour from dark to light by t (0..1), opaque. */
-	static int shade(int dark, int light, float t)
+	/** The water's level in the steam drum's glass, boiling while it runs. */
+	void drawDrum()
 	{
-		t = Math.max(0, Math.min(1, t));
-		int c = 0xff000000;
-		for(int sh = 0; sh <= 16; sh += 8)
-			c |= Math.round((dark >> sh & 255) + ((light >> sh & 255) - (dark >> sh & 255)) * t) << sh;
-		return c;
+		float lvl = container.water.getFluidAmount() / (float)TileSulfuricAcidUnit.WATER_CAPACITY;
+		int h = container.water.getFluidAmount() > 0 ? Math.max(1, Math.round(GLASS_H * Math.min(1, 0.3F + 0.7F * lvl))) : 0;
+		rect(GLASS_X, GLASS_Y + GLASS_H - h, GLASS_W, h, COL_WATER);
+		if(running() && h > 1)
+			for(int k = 0; k < 4; k++)
+				rect(GLASS_X + 2 + Math.floorMod(k * 5 + ticks / 2, GLASS_W - 3), GLASS_Y + GLASS_H - h, 1, 1, 0xffd0e0f8);
 	}
 
-	/** The boiler's fire tubes and the steam drum: water below, steam above, two safety valves. While it runs the tubes
-	 * glow, hotter at the bottom where the gas comes in, with a wave of heat rising through them, and bubbles rise
-	 * between them; the water in the drum ripples. */
-	void drawBoiler()
-	{
-		boolean on = running();
-		rect(BOILER_X + 2, BOILER_Y + 2, BOILER_W - 4, BOILER_H - 4, COL_INSIDE);
-		int top = BOILER_Y + 6, bottom = BOILER_Y + BOILER_H - 4;
-		for(int j = top; j < bottom; j += 4)
-		{
-			float heat = 0;
-			if(on)
-			{
-				float depth = (j - top) / (float)(bottom - top);
-				float wave = 0.5F + 0.5F * (float)Math.sin((ticks * 0.25) + depth * 6);
-				heat = 0.25F + 0.45F * depth + 0.3F * wave * depth;
-			}
-			rect(BOILER_X + 4, j, BOILER_W - 8, 2, shade(COL_TUBE, 0xffe8783c, heat));
-		}
-		if(on)
-			for(int k = 0; k < 3; k++)
-			{
-				int span = bottom - top - 4, y = bottom - 3 - Math.floorMod(ticks + k * span / 3, span);
-				if((y - top) % 4 >= 2)
-					rect(BOILER_X + 5 + k * 5, y, 1, 1, 0xffb4c8e0);
-			}
-		int dx = DRUM_X + 2, dy = DRUM_Y + 2, dw = DRUM_W - 4, dh = DRUM_H - 4;
-		rect(dx, dy, dw, dh, COL_INSIDE);
-		rect(dx, dy + dh / 2, dw, dh - dh / 2, COL_WATER);
-		if(on)
-			for(int i = 0; i < dw; i++)
-				if(Math.sin(i * 0.9 + ticks * 0.3) > 0.4)
-					rect(dx + i, dy + dh / 2 - 1, 1, 1, COL_WATER);
-		if(running())
-			for(int k = 0; k < 3; k++)
-				rect(dx + 4 + k * 8 + (ticks / 3 + k) % 3, dy + 1, 3, 1, COL_STEAM);
-		rect(DRUM_X + 4, DRUM_Y - 3, 3, 3, COL_STEEL_DARK);
-		rect(DRUM_X + DRUM_W - 10, DRUM_Y - 3, 3, 3, COL_STEEL_DARK);
-	}
-
-	/** Four catalyst beds, hottest at the top; they glow while it runs. The gas goes down through them: each bed
-	 * brightens as the gas passes, the catalyst sparkles, and the gas drifts down in the gaps between the beds. */
+	/** Four catalyst beds, hottest at the top; they glow while it runs, each brightening as the gas passes it. */
 	void drawConverter()
 	{
 		boolean on = running();
-		rect(CONV_X + 2, CONV_Y + 2, CONV_W - 4, CONV_H - 4, COL_INSIDE);
-		int step = (CONV_H - 12) / 4, bedH = 10, cycle = 4 * 20;
+		int cycle = 4 * 20;
 		for(int k = 0; k < 4; k++)
 		{
-			int y0 = CONV_Y + 6 + k * step;
-			// the pass of the gas: a pulse that reaches each bed a quarter of the cycle after the one above
+			int y0 = BED_Y0 + k * BED_STEP + 5, h = BED_H - 5;
 			float pass = on ? Math.max(0, (float)Math.cos(2 * Math.PI * (Math.floorMod(ticks - k * 20, cycle) / (float)cycle))) : 0;
-			float hot = (1 - k / 4F) * (on ? 0.85F + 0.15F * pass : 0.4F);
-			int r = Math.min(255, Math.round(90 + 120 * hot)), g = Math.min(255, Math.round(60 + 40 * hot)), b = 30;
-			rect(CONV_X + 3, y0, CONV_W - 6, bedH, 0xff000000 | r << 16 | g << 8 | b);
-			for(int i = CONV_X + 4; i < CONV_X + CONV_W - 4; i += 3)
+			float hot = (1 - k / 4F) * (on ? 0.85F + 0.15F * pass : 0.35F);
+			int r = Math.min(255, Math.round(100 + 130 * hot)), g = Math.min(255, Math.round(56 + 70 * hot)), b = 28;
+			rect(BED_X, y0, BED_W, h, 0xff000000 | r << 16 | g << 8 | b);
+			for(int i = BED_X + 1; i < BED_X + BED_W - 1; i += 3)
 			{
-				int sy = y0 + 2 + i % 5;
 				boolean spark = on && Math.floorMod(ticks / 3 + i * 7 + k * 13, 11) == 0;
-				rect(i, sy, 1, 1, spark ? 0xfffff0b0 : 0xff000000 | Math.min(255, r + 50) << 16 | Math.min(255, g + 40) << 8 | 50);
+				rect(i, y0 + (i % 2), 1, 1, spark ? 0xfffff0b0 : 0xff000000 | Math.min(255, r + 40) << 16 | Math.min(255, g + 40) << 8 | 50);
 			}
-			rect(CONV_X + 3, y0 + bedH, CONV_W - 6, 1, COL_STEEL);
-			// the gas in the gap under the bed, drifting down
-			int gap = step - bedH - 1;
-			if(on && gap > 1)
-				for(int i = CONV_X + 4 + Math.floorMod(ticks / 4 + k, 3); i < CONV_X + CONV_W - 4; i += 3)
-					rect(i, y0 + bedH + 1 + Math.floorMod(ticks / 2 + i, gap), 1, 1, COL_GAS);
+			// the gas over the bed, drifting down
+			if(on)
+				for(int i = BED_X + 1 + Math.floorMod(ticks / 4 + k, 3); i < BED_X + BED_W - 1; i += 3)
+					rect(i, y0 - 4 + Math.floorMod(ticks / 5 + i, 4), 1, 1, COL_GAS);
 		}
 	}
 
-	/** The packing, the acid trickling down it while it runs, the acid at the foot and the stack on top. */
+	/** The acid trickling down the packing while it runs, and the acid at the tower's foot. */
 	void drawTower()
 	{
-		rect(TOWER_X + 2, TOWER_Y + 2, TOWER_W - 4, TOWER_H - 4, 0xff222428);
-		for(int j = TOWER_Y + 14; j < TOWER_Y + TOWER_H - 10; j += 3)
-			for(int i = TOWER_X + 3 + j % 2; i < TOWER_X + TOWER_W - 3; i += 3)
-				rect(i, j, 2, 2, COL_PACKING);
-		if(running())
-			for(int i = TOWER_X + 4; i < TOWER_X + TOWER_W - 4; i += 4)
-				rect(i, TOWER_Y + 6 + Math.floorMod(ticks * 2 + i * 5, TOWER_H - 18), 1, 3, COL_ACID);
-		rect(TOWER_X + 2, TOWER_Y + TOWER_H - 10, TOWER_W - 4, 8, COL_ACID);
-		rect(TOWER_X + TOWER_W / 2 - 1, TOWER_Y - 4, 3, 4, COL_STEEL_DARK);
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mx, int my)
-	{
-		// The icon sits inside the button's bevel, a quarter smaller than an item
-		RenderHelper.enableGUIStandardItemLighting();
-		ItemStack icon = new ItemStack(container.redstoneInverted ? Item.getItemFromBlock(Blocks.REDSTONE_TORCH) : Items.REDSTONE);
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(BUTTON_X + 2, BUTTON_Y + 2, 0);
-		GlStateManager.scale(0.75F, 0.75F, 1);
-		itemRender.renderItemIntoGUI(icon, 0, 0);
-		GlStateManager.popMatrix();
-		RenderHelper.disableStandardItemLighting();
+		boolean on = running();
+		if(on)
+			for(int i = PACK_X + 2; i < PACK_X + PACK_W - 1; i += 4)
+				for(int k = 0; k < 4; k++)
+				{
+					int y = PACK_Y + 3 + Math.floorMod(ticks * 2 + i * 5 + k * 19, PACK_H - 12);
+					rect(i, y, 1, 3, COL_ACID_DROP);
+				}
+		int pool = on ? 6 : container.acid.getFluidAmount() > 0 ? 3 : 0;
+		rect(PACK_X, PACK_Y + PACK_H - pool, PACK_W, pool, COL_ACID);
 	}
 
 	boolean over(int mx, int my, int x, int y, int w, int h)
@@ -447,7 +306,7 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 		FluidTank[] tt = {container.acid, container.water};
 		for(int i = 0; i < 2; i++)
 		{
-			tank(tt[i], tx[i], mx, my, tip);
+			ClientUtils.handleGuiTank(tt[i], guiLeft + tx[i] + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
 			if(over(mx, my, tx[i], TANK_Y, 20, 51))
 				tip.add(0, I18n.format(K + tanks[i]));
 		}
@@ -473,18 +332,15 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 		{
 			tip.add(I18n.format(K + "converter"));
 			tip.add("§7" + I18n.format(K + "converter_info"));
+			tip.add("§7" + I18n.format(K + "cycle", TileSulfuricAcidUnit.WATER_PER_CYCLE, TileSulfuricAcidUnit.ACID_PER_CYCLE,
+					TileSulfuricAcidUnit.STEAM_PER_CYCLE, TileSulfuricAcidUnit.CYCLE_TICKS / 20));
+			if(container.progress > 0)
+				tip.add("§7" + I18n.format(K + "progress", Math.round(100 * done())));
 		}
 		if(over(mx, my, TOWER_X, TOWER_Y, TOWER_W, TOWER_H))
 		{
 			tip.add(I18n.format(K + "tower"));
 			tip.add("§7" + I18n.format(K + "tower_info"));
-		}
-		if(over(mx, my, ARROW_X, ARROW_Y, GuiGraphite.ARROW_W, GuiGraphite.ARROW_H))
-		{
-			tip.add(I18n.format(K + "cycle", TileSulfuricAcidUnit.WATER_PER_CYCLE, TileSulfuricAcidUnit.ACID_PER_CYCLE,
-					TileSulfuricAcidUnit.STEAM_PER_CYCLE, TileSulfuricAcidUnit.CYCLE_TICKS / 20));
-			if(container.progress > 0)
-				tip.add("§7" + I18n.format(K + "progress", Math.round(100 * done())));
 		}
 		String[] slotTips = {"sulfur", "acid_in", "acid_out", "water_in", "water_out", "steam_in", "steam_out"};
 		int[][] xy = ContainerSulfuricAcidUnit.SLOT_XY;
@@ -496,33 +352,16 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 			tip.add(container.energy + "/" + TileSulfuricAcidUnit.ENERGY_CAPACITY + " IF");
 			tip.add("§7" + I18n.format(K + "energy", TileSulfuricAcidUnit.ENERGY_PER_TICK));
 		}
-		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))
+		if(over(mx, my, LAMP_X, LAMP_Y, LAMP_SIZE, LAMP_SIZE))
 		{
-			tip.add(I18n.format("gui.immersivenuclear.redstone"));
+			tip.add(I18n.format(K + "state." + container.state));
 			tip.add("§7" + I18n.format(container.redstoneInverted ? "gui.immersivenuclear.redstone.inverted" : "gui.immersivenuclear.redstone.normal"));
 		}
-		for(int i = 0; i < 4; i++)
-			if(over(mx, my, LIGHTS_X, LIGHT_Y + i * LIGHT_STEP - 1, LIGHTS_W, LIGHT_STEP))
-			{
-				boolean on = i == litLight();
-				tip.add(on ? I18n.format(K + "state." + container.state) : "§7" + I18n.format(K + "light." + i));
-			}
 		if(!tip.isEmpty())
 		{
 			// Long lines wrap, and the tooltip stays on the screen
 			GuiUtils.drawHoveringText(tip, mx, my, width, height, GuiGraphite.TOOLTIP_WIDTH, fontRenderer);
 			RenderHelper.enableGUIStandardItemLighting();
-		}
-	}
-
-	@Override
-	protected void mouseClicked(int mx, int my, int button) throws java.io.IOException
-	{
-		super.mouseClicked(mx, my, button);
-		if(button == 0 && over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))
-		{
-			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-			mc.playerController.sendEnchantPacket(inventorySlots.windowId, ContainerSulfuricAcidUnit.BUTTON_REDSTONE);
 		}
 	}
 }

@@ -25,33 +25,33 @@ public final class ChemicalSeparatorStructure
 	/**
 	 * s steel scaffolding, l light engineering, H heavy engineering, R redstone engineering (trigger), G generator,
 	 * S steel sheetmetal, b steel sheetmetal slab (lower half), B metal barrel, P fluid pump (either half),
-	 * p fluid pipe, . air (not checked).
+	 * p fluid pipe, Q chemical engineering, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the left end (north).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
 					"sssll",
-					"sssss",
-					"sssss",
-					"sssPl",
-					"sssss",
-					"sssss",
+					"sSSSs",
+					"sSSSs",
+					"sSSPl",
+					"sSSSs",
+					"sSSSs",
 					"sssll"},
 			{ // y 5
 					"BBBpp",
-					"BBBpp",
-					"BBBSp",
+					"BQBpp",
+					"BBBQp",
 					"RppPH",
-					"BBBSp",
-					"BBBpp",
+					"BBBQp",
+					"BQBpp",
 					"BBBpp"},
 			{ // y 6
 					"BBB..",
-					"BBP..",
-					"BBBS.",
+					"BQP..",
+					"BBBQ.",
 					".pp.H",
-					"BBBS.",
-					"BBPpp",
+					"BBBQ.",
+					"BQPpp",
 					"BBB.."},
 			{ // y 7
 					"bbb..",

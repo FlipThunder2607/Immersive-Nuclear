@@ -14,24 +14,24 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Sulfuric Acid Unit. 272 x 238, as in the approved sketch (ferramentas/gui_acido_sulfurico.py): the
- * sulfur over the burner, the process drawn left to right (burner, boiler and steam drum, converter, absorption tower),
- * then the sulfuric acid, water and steam tanks, each with its container slots (in, out) under it; the player inventory at the bottom,
- * centred. The tanks, energy, the cycle's progress, state and redstone mode go to the client as window properties
- * (all below 32767).
+ * Interface of the Sulfuric Acid Unit, in the interface standard (01/11), 290 x 239: the water column at the left, the
+ * sulfur over the burner's hopper, the process drawn left to right (burner, boiler and steam drum, converter, absorption
+ * tower), the acid and steam columns at the right; IE's inventory panel centred under it. The tanks, energy, the
+ * cycle's progress, state and redstone mode go to the client as window properties (all below 32767). The hammer on the
+ * redstone port inverts the mode (no button).
  */
 public class ContainerSulfuricAcidUnit extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 238, INV_X = 56, INV_Y = 157;
+	public static final int WIDTH = 290, HEIGHT = 239, INV_X = 65, INV_Y = 157;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TileSulfuricAcidUnit's slot order. */
 	public static final int[][] SLOT_XY = {
-			{26, 18},  // sulfur, over the burner's hopper (centred on the burner)
-			{164, 92}, // empty container for acid, under the acid tank
-			{164, 118}, // filled with acid
-			{190, 92}, // water container, under the water tank
-			{190, 118}, // the emptied water container
-			{216, 92}, // empty container for steam, under the steam tank
-			{216, 118}, // filled with steam
+			{55, 59},   // sulfur, over the burner's hopper
+			{212, 39},  // empty container for acid, over the acid tank
+			{212, 119}, // filled with acid, under it
+			{10, 39},   // water container, over the water tank
+			{10, 119},  // the emptied water container, under it
+			{242, 39},  // empty container for steam, over the steam tank
+			{242, 119}, // filled with steam, under it
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

@@ -56,6 +56,7 @@ public class MultiblockHFKiln implements IMultiblock
 			case 'T': return new ItemStack(IEContent.blockStorage, 1, blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE.STEEL.getMeta());
 			case 'B': return new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.BARREL.getMeta());
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -265,6 +266,7 @@ public class MultiblockHFKiln implements IMultiblock
 			counts.put('G', count('G'));
 			counts.put('T', count('T'));
 			counts.put('R', count('R'));
+			counts.put('Q', count('Q'));
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

@@ -1,7 +1,7 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Hydrofluoric Acid Kiln, block by block: 5 wide x 7 long x 3 high, 84 blocks. On a scaffolding floor, the rotary kiln
+ * Hydrofluoric Acid Kiln, block by block: 5 wide x 7 long x 3 high, 85 blocks. On a scaffolding floor, the rotary kiln
  * runs from the north end (feed) to the south end (discharge): a drum of copper sheetmetal with the heating coil (LV
  * coils) round its middle and furnace heaters under it, the feed head at the north end (the light engineering blocks:
  * fluorite in on top, sulfuric acid in at the foot), the discharge head at the south end (gypsum out), the motor
@@ -29,29 +29,30 @@ public final class HFKilnStructure
 	 * s steel scaffolding, S steel sheetmetal, C copper sheetmetal (the drum), b steel sheetmetal slab (lower),
 	 * H heavy engineering, l light engineering, R redstone engineering (trigger), G generator (the motor), T steel block
 	 * (the gearbox), L LV coil (the heating coil), h furnace heater, f steel fence, r radiator, B metal barrel,
-	 * p fluid pipe, . air (not checked).
+	 * p fluid pipe, Q chemical engineering (the acid-proof casing: the pre-mixer, the feed and discharge heads' feet, the
+ * distillation column's base), . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..204, y4..6, z467..473 (31/10/2026).
+	 * Read from the dev world build, x200..204, y4..6, z467..473 (01/11/2026: chemical engineering blocks, a heavy engineering under the pre-mixer's motor). Updated from the user\'s new build (01/11/2026).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
 					"slssH",
-					"sssss",
+					"sSSSH",
 					"shhSs",
 					"shhSs",
-					"sssss",
-					"sssss",
+					"sSSSs",
+					"sSSSs",
 					"slsls"},
 			{ // y 5
-					"RSS.H",
-					"fCC..",
+					"RTTQH",
+					"fCC.H",
 					"fLLG.",
 					"fCCT.",
 					"fCC..",
 					"fCCrp",
-					".SSBB"},
+					".TTQQ"},
 			{ // y 6
-					".lbp.",
+					".lSp.",
 					".CCp.",
 					".LLp.",
 					".CCp.",

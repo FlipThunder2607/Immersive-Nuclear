@@ -89,7 +89,7 @@
     },
     "inventory": [
       {
-        "model": "immersivenuclear:obj/metal_extractor_item.obj",
+        "model": "immersivenuclear:obj/metal_extractor_inventory.obj",
         "transform": {
           "gui": {
             "translation": [

@@ -35,6 +35,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HFKilnCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new ElectrolyzerCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
 	/** Liquids with recipe pages now (our machines, IE's Mixer), not the "coming later" note. */
@@ -59,15 +60,14 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipes(java.util.Arrays.asList(new FilterPressRecipe(false), new FilterPressRecipe(true)), FilterPressCategory.UID);
 		ItemStack press = new ItemStack(INContent.itemFilterPress);
 		registry.addRecipeCatalyst(press, FilterPressCategory.UID);
-		registry.addRecipeClickArea(GuiFilterPress.class, GuiFilterPress.PUMP_X, 16 + GuiFilterPress.PUMP_DY, GuiFilterPress.PUMP_W, GuiFilterPress.PUMP_H, FilterPressCategory.UID);
-		registry.addRecipeClickArea(GuiFilterPress.class, GuiFilterPress.PRESS_X, 16 + GuiFilterPress.PRESS_DY, GuiFilterPress.PRESS_W, GuiFilterPress.PRESS_H, FilterPressCategory.UID);
+		registry.addRecipeClickArea(GuiFilterPress.class, GuiFilterPress.PUMP_X, GuiFilterPress.PUMP_Y, GuiFilterPress.PUMP_W, GuiFilterPress.PUMP_H, FilterPressCategory.UID);
+		registry.addRecipeClickArea(GuiFilterPress.class, GuiFilterPress.PRESS_X, GuiFilterPress.PRESS_Y, GuiFilterPress.PRESS_W, GuiFilterPress.PRESS_H, FilterPressCategory.UID);
 		registry.addIngredientInfo(press, VanillaTypes.ITEM, "jei.immersivenuclear.filter_press.info");
 		registry.addRecipes(Collections.singletonList(new ChemicalSeparatorRecipe()), ChemicalSeparatorCategory.UID);
 		ItemStack separator = new ItemStack(INContent.itemChemicalSeparator);
 		registry.addRecipeCatalyst(separator, ChemicalSeparatorCategory.UID);
-		for(int row : new int[]{GuiChemicalSeparator.ROW_A, GuiChemicalSeparator.ROW_B})
-			registry.addRecipeClickArea(GuiChemicalSeparator.class, GuiChemicalSeparator.SETTLER_X, row + GuiChemicalSeparator.SETTLER_DY,
-					GuiChemicalSeparator.SETTLER_W, GuiChemicalSeparator.SETTLER_H, ChemicalSeparatorCategory.UID);
+		for(int[] s : GuiChemicalSeparator.SETTLERS)
+			registry.addRecipeClickArea(GuiChemicalSeparator.class, s[0], s[1], s[2], s[3], ChemicalSeparatorCategory.UID);
 		registry.addIngredientInfo(separator, VanillaTypes.ITEM, "jei.immersivenuclear.chemical_separator.info");
 		registry.addRecipes(java.util.Arrays.asList(new MetalExtractorRecipe(INContent.itemElectrodeSteel), new MetalExtractorRecipe(INContent.itemElectrodeLeadSilver),
 				new MetalExtractorRecipe(INContent.itemElectrodeElectrum)), MetalExtractorCategory.UID);
@@ -110,7 +110,14 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeClickArea(immersivenuclear.client.GuiHFKiln.class, immersivenuclear.client.GuiHFKiln.DRUM_X, immersivenuclear.client.GuiHFKiln.DRUM_Y, immersivenuclear.client.GuiHFKiln.DRUM_W, immersivenuclear.client.GuiHFKiln.DRUM_H, HFKilnCategory.UID);
 		registry.addIngredientInfo(kiln, VanillaTypes.ITEM, "jei.immersivenuclear.hf_kiln.info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidHydrofluoricAcid, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.hydrofluoric_acid.info");
-		for(Item item : new Item[]{INContent.itemFluoriteOre, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemPlaster})
+		registry.addRecipes(ElectrolyzerCategory.recipes(), ElectrolyzerCategory.UID);
+		ItemStack electrolyzer = new ItemStack(INContent.itemElectrolyzer);
+		registry.addRecipeCatalyst(electrolyzer, ElectrolyzerCategory.UID);
+		// Clicking the cell stacks of the interface shows the recipes
+		registry.addRecipeClickArea(immersivenuclear.client.GuiElectrolyzer.class, immersivenuclear.client.GuiElectrolyzer.STACK_X, immersivenuclear.client.GuiElectrolyzer.STACK_Y,
+				immersivenuclear.client.GuiElectrolyzer.STACK_W, immersivenuclear.client.GuiElectrolyzer.STACK_H, ElectrolyzerCategory.UID);
+		for(Item item : new Item[]{INContent.itemFluoriteOre, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemPlaster,
+				INContent.itemFluorinationAsh, INContent.itemDepletedUraniumOxide, INContent.itemDepletedUraniumIngot})
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemConcentrateDrum), VanillaTypes.ITEM, "jei.immersivenuclear.concentrate_drum.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateBlock), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_block.info");

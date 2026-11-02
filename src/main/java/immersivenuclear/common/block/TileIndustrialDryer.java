@@ -52,7 +52,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * Each step sounds from where it happens: the rotary valve at the feed hopper, the heaters under the chamber, the
  * paddles' motor (the generator) at the drive end, the discharge valve at the yellowcake port.
  */
-public class TileIndustrialDryer extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileIndustrialDryer extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// Provisional values: one batch takes what the Precipitation Unit gives in one batch (24 wet concentrate, 90 s)
 	public static final int WET_PER_BATCH = 24, YELLOWCAKE_PER_BATCH = 16, CONDENSATE_PER_BATCH = 2000;
@@ -339,6 +339,7 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		return IndustrialDryerStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return IndustrialDryerStructure.portAt(dx, dy, dz);
@@ -355,11 +356,25 @@ public class TileIndustrialDryer extends TileEntity implements ITickable, IHamme
 		return dx == IndustrialDryerStructure.MASTER_DX && dy == IndustrialDryerStructure.MASTER_DY && dz == IndustrialDryerStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "industrial_dryer";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.IndustrialDryerStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.IndustrialDryerStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.IndustrialDryerStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

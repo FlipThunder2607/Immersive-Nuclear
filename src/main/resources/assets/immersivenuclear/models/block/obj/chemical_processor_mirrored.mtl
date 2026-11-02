@@ -1,14 +1,8 @@
-newmtl glass
-map_Kd #glass
-
 newmtl metal_device1_fluid_pipe
 map_Kd #metal_device1_fluid_pipe
 
 newmtl metal_multiblock_assembler
 map_Kd #metal_multiblock_assembler
-
-newmtl metal_multiblock_bottling_machine_a
-map_Kd #metal_multiblock_bottling_machine_a
 
 newmtl metal_multiblock_diesel_generator
 map_Kd #metal_multiblock_diesel_generator
@@ -28,9 +22,12 @@ map_Kd #sheetmetal_steel
 newmtl storage_steel
 map_Kd #storage_steel
 
-newmtl storage_uranium_top
-map_Kd #storage_uranium_top
-
 newmtl tank_wall
 map_Kd #tank_wall
+
+newmtl tanque_visor_default_ampliada
+map_Kd #tanque_visor_default_ampliada
+
+newmtl tanque_visor_hazard_ampliada
+map_Kd #tanque_visor_hazard_ampliada
 

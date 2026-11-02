@@ -8,8 +8,8 @@ public class FilterPressStructureTest
 	public static void main(String[] args)
 	{
 		// Counts read from the dev world build (x194..196, y4..6, z425..433, third version)
-		expect(count('l'), 8, "light engineering");
-		expect(count('s'), 1, "steel scaffolding");
+		expect(count('l'), 5, "light engineering");
+		expect(count('s'), 0, "steel scaffolding");
 		expect(count('H'), 2, "heavy engineering");
 		expect(count('I'), 0, "iron sheetmetal");
 		expect(count('a'), 8, "steel scaffolding slabs");
@@ -21,6 +21,7 @@ public class FilterPressStructureTest
 		expect(count('G'), 2, "generators");
 		expect(count('F'), 5, "steel fences");
 		expect(count('R'), 1, "redstone engineering");
+		expect(count('Q'), 4, "chemical engineering");
 		expect(totalParts(), 56, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
@@ -29,7 +30,7 @@ public class FilterPressStructureTest
 		expect(get(0, -1, -8), 'l', "slurry input, front of the pump end");
 		expect(get(0, -1, 0), 'l', "crude solution output, front of the outlet end");
 		expect(get(1, -1, 0), 'l', "residue output, end of the conveyor");
-		expect(get(1, -1, -1), 'l', "conveyor feeds the residue port");
+		expect(get(1, -1, -1), 'Q', "chemical engineering under the conveyor's end (01/11)");
 		expect(get(2, -1, -3), 'l', "filter input, back");
 		expect(get(2, -1, -5), 'l', "spent filter output, back");
 		expect(get(2, -1, -4), 'a', "plain slab between the two filter ports");

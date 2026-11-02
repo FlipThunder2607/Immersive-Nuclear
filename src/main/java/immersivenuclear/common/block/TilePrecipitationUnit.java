@@ -43,7 +43,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * which carries the solid up to the discharge head (wet concentrate, item) while the liquid runs back down and leaves
  * as chemical effluent. Without power the batch waits where it is; a redstone signal stops it (the hammer inverts that).
  */
-public class TilePrecipitationUnit extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TilePrecipitationUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// Provisional values
 	/** The agitated tank holds 12000 mB (the user's choice); a batch is the full tank. */
@@ -279,6 +279,7 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 		return PrecipitationUnitStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return PrecipitationUnitStructure.portAt(dx, dy, dz);
@@ -298,11 +299,25 @@ public class TilePrecipitationUnit extends TileEntity implements ITickable, IHam
 		return dx == PrecipitationUnitStructure.MASTER_DX && dy == PrecipitationUnitStructure.MASTER_DY && dz == PrecipitationUnitStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "precipitation_unit";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.PrecipitationUnitStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.PrecipitationUnitStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.PrecipitationUnitStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

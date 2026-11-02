@@ -343,5 +343,83 @@
     "sounds": [
       "immersivenuclear:hf_kiln_drum_stop"
     ]
+  },
+  "electrolyzer_cells_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_cells_start"
+    ]
+  },
+  "electrolyzer_cells_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_cells_loop"
+    ]
+  },
+  "electrolyzer_cells_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_cells_stop"
+    ]
+  },
+  "electrolyzer_rectifier_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_rectifier_start"
+    ]
+  },
+  "electrolyzer_rectifier_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_rectifier_loop"
+    ]
+  },
+  "electrolyzer_rectifier_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_rectifier_stop"
+    ]
+  },
+  "electrolyzer_feed_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_feed_start"
+    ]
+  },
+  "electrolyzer_feed_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_feed_loop"
+    ]
+  },
+  "electrolyzer_feed_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_feed_stop"
+    ]
+  },
+  "electrolyzer_pump_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_pump_start"
+    ]
+  },
+  "electrolyzer_pump_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_pump_loop"
+    ]
+  },
+  "electrolyzer_pump_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_pump_stop"
+    ]
+  },
+  "electrolyzer_vent": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:electrolyzer_vent"
+    ]
   }
 }

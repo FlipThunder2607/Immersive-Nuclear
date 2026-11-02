@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "normal": {
+            "model": "immersivenuclear:chemical_engineering"
+        },
+        "inventory": {
+            "model": "immersivenuclear:chemical_engineering"
+        }
+    }
+}

@@ -53,6 +53,8 @@ public class MultiblockMetalExtractor implements IMultiblock
 			case 'C': return new ItemStack(IEContent.blockConnectors, 1, BlockTypes_Connector.CONNECTOR_HV.getMeta());
 			case 'P': return new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.FLUID_PUMP.getMeta());
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
+			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
+			case 'T': return new ItemStack(IEContent.blockStorage, 1, blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE.STEEL.getMeta());
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -270,7 +272,7 @@ public class MultiblockMetalExtractor implements IMultiblock
 		if(materials == null)
 		{
 			Map<Character, Integer> counts = new LinkedHashMap<>();
-			for(char c : "SbHlsRpPGC".toCharArray())
+			for(char c : "SbHlsRpPGCQT".toCharArray())
 				counts.put(c, c == 'P' ? count(c) / 2 : count(c));
 			materials = new IngredientStack[counts.size()];
 			int i = 0;

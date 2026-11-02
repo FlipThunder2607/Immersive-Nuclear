@@ -49,7 +49,7 @@ import net.minecraftforge.oredict.OreDictionary;
  * (a cloud and a hiss), so it never stops the machine. Without power the cycle waits; a redstone signal stops it (the
  * hammer inverts that). While it runs a faint plume leaves the absorption tower's stack.
  */
-public class TileSulfuricAcidUnit extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// Provisional values
 	public static final int WATER_PER_CYCLE = 500, ACID_PER_CYCLE = 500, STEAM_PER_CYCLE = 250, CYCLE_TICKS = 100, ENERGY_PER_TICK = 32;
@@ -298,6 +298,7 @@ public class TileSulfuricAcidUnit extends TileEntity implements ITickable, IHamm
 		return SulfuricAcidUnitStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return SulfuricAcidUnitStructure.portAt(dx, dy, dz);
@@ -314,11 +315,25 @@ public class TileSulfuricAcidUnit extends TileEntity implements ITickable, IHamm
 		return dx == SulfuricAcidUnitStructure.MASTER_DX && dy == SulfuricAcidUnitStructure.MASTER_DY && dz == SulfuricAcidUnitStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "sulfuric_acid_unit";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.SulfuricAcidUnitStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.SulfuricAcidUnitStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.SulfuricAcidUnitStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

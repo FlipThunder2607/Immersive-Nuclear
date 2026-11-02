@@ -16,6 +16,9 @@
             },
             "radioactive_handling": {
                 "model": "immersivenuclear:ctm/radioactive_handling"
+            },
+            "chemical_engineering": {
+                "model": "immersivenuclear:ctm/chemical_engineering"
             }
         }
     }

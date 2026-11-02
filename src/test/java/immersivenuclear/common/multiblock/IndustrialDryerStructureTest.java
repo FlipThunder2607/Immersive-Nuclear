@@ -8,28 +8,29 @@ public class IndustrialDryerStructureTest
 	public static void main(String[] args)
 	{
 		// Counts read from the dev world build (x200..204, y4..7, z449..455, 27/10, fourth layer and front fence)
-		expect(count('s'), 22, "steel scaffolding");
+		expect(count('s'), 10, "steel scaffolding");
 		expect(count('F'), 3, "furnace heaters");
-		expect(count('l'), 9, "light engineering");
-		expect(count('H'), 2, "heavy engineering");
+		expect(count('l'), 4, "light engineering");
+		expect(count('H'), 3, "heavy engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 1, "generators");
 		expect(count('r'), 3, "radiators");
 		expect(count('B'), 4, "metal barrels");
-		expect(count('p'), 5, "fluid pipes");
-		expect(count('I'), 13, "iron sheetmetal");
+		expect(count('p'), 4, "fluid pipes");
+		expect(count('I'), 12, "iron sheetmetal");
 		expect(count('c'), 5, "conveyors");
 		expect(count('f'), 6, "steel fences");
-		expect(count('X'), 1, "radioactive handling");
+		expect(count('X'), 3, "radioactive handling");
 		expect(count('a'), 11, "iron sheetmetal slabs");
 		expect(count('b'), 3, "steel sheetmetal slabs");
-		expect(totalParts(), 89, "total parts");
+		expect(count('T'), 1, "steel blocks");
+		expect(totalParts(), 86, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'a', "master is a roof slab of the chamber");
 		expect(portAt(2, 1, 2), PORT_WET, "wet concentrate port");
 		expect(portAt(1, 1, 2), PORT_WET, "wet concentrate under the hopper");
-		expect(get(1, 1, 2), 'I', "wet concentrate through the feed hopper on the chamber's roof");
+		expect(get(1, 1, 2), 'l', "wet concentrate through the feed hopper on the chamber's roof");
 		expect(portAt(4, -1, 1), PORT_DRUM, "empty drum port");
 		expect(portFace(4, -1, 1)[0], 1, "empty drums on the east face (back), at the conveyor's start");
 		expect(get(3, 0, 1), 'c', "the conveyor starts by the drum port");

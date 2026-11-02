@@ -13,11 +13,13 @@ public class MetalExtractorStructureTest
 		expect(count('H'), 5, "heavy engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 2, "generators");
-		expect(count('S'), 9, "steel sheetmetal");
+		expect(count('S'), 0, "steel sheetmetal");
 		expect(count('b'), 9, "steel sheetmetal slabs");
 		expect(count('P'), 2, "fluid pump halves");
 		expect(count('p'), 1, "fluid pipes");
 		expect(count('C'), 3, "HV connectors");
+		expect(count('Q'), 8, "chemical engineering");
+		expect(count('T'), 1, "steel blocks");
 		expect(totalParts(), 44, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");

@@ -14,21 +14,22 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Chemical Separation Unit. 272 x 232: the process plate on top (two rows, one per stage, with the
- * solvent loop between them, bucket slots at both ends), a column for energy, redstone and status on the right, IE's
- * 176 wide inventory panel centred at the bottom. Everything the tile shows goes to the client as window properties
- * (all below 32767).
+ * Interface of the Chemical Separation Unit, 322 x 239 (the interface standard, see GuiChemicalSeparator): the crude and
+ * stripping panel, the two mixer-settler stages drawn side by side, the effluent, purified and control panel; IE's
+ * inventory panel centred under it. Everything the tile shows goes to the client as window properties (all below
+ * 32767).
  */
 public class ContainerChemicalSeparator extends Container
 {
 	/** INV_X: left of IE's inventory panel; INV_Y: top of the first inventory row (the panel starts 8 above). */
-	public static final int WIDTH = 272, HEIGHT = 242, INV_X = 48, INV_Y = 161;
-	/** Bucket slots (top-left of the 16x16 item), in the tile's slot order. */
+	public static final int WIDTH = 314, HEIGHT = 239, INV_X = 69, INV_Y = 157;
+	/** Bucket slots (top-left of the 16x16 item), in the tile's slot order: each over and under its tank (the interface
+	 * standard: in on top, out under it). */
 	public static final int[][] SLOT_XY = {
-			{10, 18}, {10, 49},     // crude solution: full in, empty back
-			{10, 98}, {10, 129},    // stripping solution: full in, empty back
-			{221, 18}, {221, 49},   // effluent: empty in, full out
-			{221, 98}, {221, 129},  // purified solution: empty in, full out
+			{10, 39}, {10, 119},    // crude solution: full in, empty back
+			{40, 39}, {40, 119},    // stripping solution: full in, empty back
+			{236, 39}, {236, 119},  // effluent: empty in, full out
+			{266, 39}, {266, 119},  // purified solution: empty in, full out
 	};
 	public static final int BUTTON_REDSTONE = 0;
 	public static final int V_CRUDE = 0, V_STRIPPING = 1, V_SOLVENT = 2, V_EFFLUENT = 3, V_PURIFIED = 4, V_LOADED = 5, V_ENERGY = 6,

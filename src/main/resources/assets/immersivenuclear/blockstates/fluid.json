@@ -72,6 +72,48 @@
             "custom": {
                 "fluid": "hydrofluoric_acid"
             }
+        },
+        "hydrogen": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "hydrogen"
+            }
+        },
+        "oxygen": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "oxygen"
+            }
+        },
+        "uranium_hexafluoride": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "uranium_hexafluoride"
+            }
+        },
+        "uranium_hexafluoride_low": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "uranium_hexafluoride_low"
+            }
+        },
+        "uranium_hexafluoride_medium": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "uranium_hexafluoride_medium"
+            }
+        },
+        "uranium_hexafluoride_high": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "uranium_hexafluoride_high"
+            }
+        },
+        "depleted_uranium_hexafluoride": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "depleted_uranium_hexafluoride"
+            }
         }
     }
 }

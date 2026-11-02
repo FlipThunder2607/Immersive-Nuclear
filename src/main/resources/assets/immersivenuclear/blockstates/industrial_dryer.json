@@ -210,7 +210,7 @@
     },
     "inventory": [
       {
-        "model": "immersivenuclear:obj/industrial_dryer_item.obj",
+        "model": "immersivenuclear:obj/industrial_dryer_inventory.obj",
         "transform": {
           "gui": {
             "translation": [

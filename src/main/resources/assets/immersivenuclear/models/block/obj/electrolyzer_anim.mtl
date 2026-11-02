@@ -1,0 +1,6 @@
+newmtl arc_furnace_active
+map_Kd #arc_furnace_active
+
+newmtl electrolyzer_cell_stack
+map_Kd #electrolyzer_cell_stack
+

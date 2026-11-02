@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 /** Opened with the master's position; the client class is only touched on the client. */
 public class INGuiHandler implements IGuiHandler
 {
-	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8;
+	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9;
 
 	static TileChemicalProcessor master(World world, int x, int y, int z)
 	{
@@ -83,6 +83,12 @@ public class INGuiHandler implements IGuiHandler
 		return te instanceof immersivenuclear.common.block.TileHFKiln && ((immersivenuclear.common.block.TileHFKiln)te).isMaster() ? (immersivenuclear.common.block.TileHFKiln)te : null;
 	}
 
+	static immersivenuclear.common.block.TileElectrolyzer electrolyzer(World world, int x, int y, int z)
+	{
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+		return te instanceof immersivenuclear.common.block.TileElectrolyzer && ((immersivenuclear.common.block.TileElectrolyzer)te).isMaster() ? (immersivenuclear.common.block.TileElectrolyzer)te : null;
+	}
+
 	static TileConcentrateDrum drum(World world, int x, int y, int z)
 	{
 		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -101,6 +107,11 @@ public class INGuiHandler implements IGuiHandler
 		{
 			immersivenuclear.common.block.TileHFKiln k = kiln(world, x, y, z);
 			return k == null ? null : new immersivenuclear.common.gui.ContainerHFKiln(player.inventory, k);
+		}
+		if(id == ELECTROLYZER)
+		{
+			immersivenuclear.common.block.TileElectrolyzer e = electrolyzer(world, x, y, z);
+			return e == null ? null : new immersivenuclear.common.gui.ContainerElectrolyzer(player.inventory, e);
 		}
 		if(id == CONCENTRATE_DRUM)
 		{
@@ -148,6 +159,11 @@ public class INGuiHandler implements IGuiHandler
 		{
 			immersivenuclear.common.block.TileHFKiln k = kiln(world, x, y, z);
 			return k == null ? null : new immersivenuclear.client.GuiHFKiln(new immersivenuclear.common.gui.ContainerHFKiln(player.inventory, k));
+		}
+		if(id == ELECTROLYZER)
+		{
+			immersivenuclear.common.block.TileElectrolyzer e = electrolyzer(world, x, y, z);
+			return e == null ? null : new immersivenuclear.client.GuiElectrolyzer(new immersivenuclear.common.gui.ContainerElectrolyzer(player.inventory, e));
 		}
 		if(id == CONCENTRATE_DRUM)
 		{

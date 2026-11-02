@@ -10,6 +10,9 @@ map_Kd #base_handwheel
 newmtl base_hatch
 map_Kd #base_hatch
 
+newmtl base_sight_glass
+map_Kd #base_sight_glass
+
 newmtl base_vent_cap
 map_Kd #base_vent_cap
 

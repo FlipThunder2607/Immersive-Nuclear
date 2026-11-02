@@ -61,12 +61,13 @@ public class ClientEvents
 		ModelLoader.setCustomModelResourceLocation(INContent.itemIndustrialDryer, 0, new ModelResourceLocation(INContent.itemIndustrialDryer.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemSulfuricAcidUnit, 0, new ModelResourceLocation(INContent.itemSulfuricAcidUnit.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemHFKiln, 0, new ModelResourceLocation(INContent.itemHFKiln.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemElectrolyzer, 0, new ModelResourceLocation(INContent.itemElectrolyzer.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
 				INContent.itemWetConcentrate, INContent.itemYellowcake, INContent.itemAgglomerate, INContent.itemConcentrateDrum,
 				INContent.itemAgglomerateBlock, INContent.itemAgglomerateTile, INContent.itemAgglomerateBricks, INContent.itemAgglomerateStairs, INContent.itemAgglomerateSlab,
-				INContent.itemLeadedGlass, INContent.itemRemoteManipulator, INContent.itemPrecisionBearing, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemPlaster, INContent.itemPlasterTile, INContent.itemPlasterBricks, INContent.itemPlasterSlab, INContent.itemPlasterStairs,
+				INContent.itemLeadedGlass, INContent.itemRemoteManipulator, INContent.itemPrecisionBearing, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemFluorinationAsh, INContent.itemDepletedUraniumOxide, INContent.itemDepletedUraniumIngot, INContent.itemPlaster, INContent.itemPlasterTile, INContent.itemPlasterBricks, INContent.itemPlasterSlab, INContent.itemPlasterStairs,
 				INContent.itemFluoriteOre})
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 		for(Item item : INContent.itemEngineering)
@@ -101,6 +102,7 @@ public class ClientEvents
 		// The agitator turning and the batch in the agitated tank
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePrecipitationUnit.class, new RenderPrecipitationUnit());
 		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileHFKiln.class, new RenderHFKiln());
+		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileElectrolyzer.class, new RenderElectrolyzer());
 		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileSulfuricAcidUnit.class, new RenderSulfuricAcidUnit());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileIndustrialDryer.class, new RenderIndustrialDryer());
 	}
@@ -116,11 +118,12 @@ public class ClientEvents
 		RenderFilterPress.GLOW.bake();
 		RenderIndustrialDryer.GLOW.bake();
 		RenderHFKiln.GLOW.bake();
+		RenderElectrolyzer.GLOW.bake();
 		RenderSulfuricAcidUnit.GLOW.bake();
 		RenderIndustrialDryer.bake();
 		// Every part of a formed machine draws its own slice of the machine's model
 		for(Block b : new Block[]{INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
-				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit, INContent.blockHFKiln})
+				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit, INContent.blockHFKiln, INContent.blockElectrolyzer})
 			for(Map.Entry<IBlockState, ModelResourceLocation> e : event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(b).entrySet())
 			{
 				IBakedModel whole = event.getModelRegistry().getObject(e.getValue());
@@ -140,7 +143,7 @@ public class ClientEvents
 		if(event.getMap() != Minecraft.getMinecraft().getTextureMapBlocks())
 			return;
 		// Textures only the machines' renderers use (the lit and emissive layers of the glowing parts)
-		for(String t : new String[]{"furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "transparent", "arc_furnace_lamp_emissive"})
+		for(String t : new String[]{"furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
 			event.getMap().registerSprite(new net.minecraft.util.ResourceLocation(ImmersiveNuclear.MODID, "blocks/" + t));
 		for(Fluid f : INContent.fluids)
 			for(Fluid g : new Fluid[]{f, FluidRegistry.getFluid(f.getName())})

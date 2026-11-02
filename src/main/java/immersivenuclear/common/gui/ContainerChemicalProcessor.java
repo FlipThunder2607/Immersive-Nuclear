@@ -14,21 +14,24 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Chemical Processing Unit. 272 x 210 (as wide as the other machines'): the reactor in the middle, the
- * solids hopper on top of it, the player inventory at the bottom, centred. Tanks, energy, the batch (step, ticks,
- * reactor), what moves, state and redstone mode go to the client as window properties (all below 32767).
+ * Interface of the Chemical Processing Unit, 274 x 239 (IE Mixer style, see GuiChemicalProcessor): the water panel on
+ * the left (recycled liquor and water, each with its container pair), the vat in the middle with the solids hopper on
+ * its lid, the slurry panel on the right, the player inventory under it all, centred. Tanks, energy, the batch (step,
+ * ticks, reactor), what moves, state and redstone mode go to the client as window properties (all below 32767).
  */
 public class ContainerChemicalProcessor extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 210, INV_X = 56, INV_Y = 129;
-	/** Slot positions (top-left of the 16x16 item), shared with the GUI. */
+	public static final int WIDTH = 266, HEIGHT = 239, INV_X = 53, INV_Y = 157;
+	/** Slot positions (top-left of the 16x16 item), shared with the GUI, in the tile's slot order. */
 	public static final int[][] SLOT_XY = {
-			{70, 12},  // uranium powder, on the hopper
-			{90, 12},  // reagent, on the hopper
-			{12, 18},  // water or effluent container in (each fluid goes to its tank), over the recycled liquor tank
-			{34, 18},  // empty container out, over the water tank
-			{221, 54}, // empty container in (slurry)
-			{221, 85}, // slurry container out
+			{90, 6},    // uranium powder, on the hopper
+			{112, 6},   // reagent, on the hopper
+			{40, 39},   // water container in, over the water tank
+			{40, 119},  // empty container out, under it
+			{218, 39},  // empty container in, over the slurry tank
+			{218, 119}, // slurry container out, under it
+			{10, 39},   // recycled liquor container in, over its tank
+			{10, 119},  // empty container out, under it
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

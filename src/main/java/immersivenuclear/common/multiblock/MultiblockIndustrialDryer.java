@@ -60,6 +60,7 @@ public class MultiblockIndustrialDryer implements IMultiblock
 			case 'b': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
 			case 'f': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
 			case 'X': return new ItemStack(INContent.blockEngineering[3]);
+			case 'T': return new ItemStack(IEContent.blockStorage, 1, blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE.STEEL.getMeta());
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -265,6 +266,7 @@ public class MultiblockIndustrialDryer implements IMultiblock
 			counts.put('r', count('r'));
 			counts.put('G', count('G'));
 			counts.put('R', count('R'));
+			counts.put('T', count('T'));
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

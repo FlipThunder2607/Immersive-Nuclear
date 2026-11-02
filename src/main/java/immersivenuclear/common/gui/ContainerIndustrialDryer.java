@@ -13,24 +13,25 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Industrial Dryer. 272 x 236 (as wide as the other machines'): wet concentrate over the feed valve,
- * the drying chamber with its thermometer and the batch's steps under it, the condenser, the condensate tank with its
- * container slots, the yellowcake under the discharge; under them the drum loading station's conveyor (empty drums in,
- * the drum being filled under the yellowcake, the full drum out); the player inventory at the bottom, centred. The condensate tank,
- * energy, the batch (step, ticks), state and redstone mode go to the client as window properties (all below 32767).
+ * Interface of the Industrial Dryer, in the interface standard (01/11), 270 x 239: the wet concentrate over its feed
+ * valve, the drying chamber, the scrubber and the condenser, the yellowcake's box beside the discharge; along the bottom
+ * the drum conveyor (empty drums in, the drum being filled under the yellowcake's chute, the full drum out); the
+ * condensate column at the right; IE's inventory panel centred under it. The condensate tank, energy, the batch (step,
+ * ticks), state and redstone mode go to the client as window properties (all below 32767). The hammer on the redstone
+ * port inverts the mode (no button).
  */
 public class ContainerIndustrialDryer extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 236, INV_X = 56, INV_Y = 155;
+	public static final int WIDTH = 270, HEIGHT = 239, INV_X = 55, INV_Y = 157;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TileIndustrialDryer's slot order. */
 	public static final int[][] SLOT_XY = {
-			{66, 10},  // wet concentrate, over the feed valve
-			{176, 82}, // yellowcake, after the discharge
-			{220, 12}, // empty container in, over the condensate tank
-			{220, 90}, // condensate container out, under it (its frame's top on the tank's bottom + 3)
-			{40, 120}, // empty drums, at the conveyor's start
-			{176, 120}, // the drum being filled, under the yellowcake
-			{204, 120}, // the full drum, at the conveyor's end
+			{46, 8},    // wet concentrate, over the funnel and the feed valve
+			{155, 73},  // yellowcake, in its box beside the discharge
+			{222, 39},  // empty container in, over the condensate tank
+			{222, 119}, // condensate container out, under it
+			{32, 119},  // empty drums, at the conveyor's start
+			{155, 119}, // the drum being filled, under the yellowcake's chute
+			{188, 119}, // the full drum, at the conveyor's end
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

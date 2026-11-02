@@ -29,27 +29,27 @@ public final class SulfuricAcidUnitStructure
 	/**
 	 * s steel scaffolding, S steel sheetmetal, I iron sheetmetal, b steel sheetmetal slab (lower), H heavy engineering,
 	 * l light engineering, R redstone engineering (trigger), G generator, r radiator, K blast brick, B metal barrel,
-	 * p fluid pipe, . air (not checked).
+	 * p fluid pipe, Q chemical engineering (the acid-proof casing, under the sulfur melter), T steel block, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..204, y4..12, z458..464 (31/10/2026, third build: the sulfur hopper set into the burner's top, no roof slabs on the converter).
+	 * Read from the dev world build, x200..204, y4..12, z458..464 (01/11/2026, fourth build: chemical engineering under the sulfur melter, the base re-laid in steel sheetmetal, the radiators down a layer). Updated from the user\'s new build (01/11/2026).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
-					"ssssH",
-					"SSssl",
-					"SSsss",
-					"SSsss",
-					"sssss",
-					"sssss",
-					"sssls"},
+					"sTrrH",
+					"sSSSl",
+					"sSSSs",
+					"sSSSs",
+					"sSSSs",
+					"sSSSs",
+					"sSSls"},
 			{ // y 5
-					"RGrrH",
+					"RGQQH",
 					"KKBBp",
 					"KKBB.",
 					"KKBB.",
-					"BBpSS",
+					"BBpQQ",
 					"BB.B.",
-					"SSr.."},
+					"QTr.."},
 			{ // y 6
 					".....",
 					"KlBBp",
@@ -57,7 +57,7 @@ public final class SulfuricAcidUnitStructure
 					"KKBBp",
 					"BB...",
 					"BB.B.",
-					".b..."},
+					"....."},
 			{ // y 7
 					".....",
 					"..BBp",
@@ -87,7 +87,7 @@ public final class SulfuricAcidUnitStructure
 					".....",
 					".....",
 					".....",
-					"bI...",
+					"bS...",
 					"bb...",
 					"....."},
 			{ // y 11

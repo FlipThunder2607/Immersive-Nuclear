@@ -51,7 +51,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * looping sound per block): the two mixers while they mix, the pump of each settler while it drains, and the middle
  * pump while the loaded solvent goes from settler A to its line (see {@link #SOUND_PARTS}).
  */
-public class TileChemicalSeparator extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileChemicalSeparator extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	public static final int TANK_CAPACITY = 12000, SETTLER_CAPACITY = 16000, ENERGY_CAPACITY = 32000;
 	/** One batch of each settler (provisional): A takes 10000 crude + 6000 solvent, B 6000 loaded solvent + 5000 stripping. */
@@ -305,6 +305,7 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		return ChemicalSeparatorStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return ChemicalSeparatorStructure.portAt(dx, dy, dz);
@@ -320,11 +321,25 @@ public class TileChemicalSeparator extends TileEntity implements ITickable, IHam
 		return dx == ChemicalSeparatorStructure.MASTER_DX && dy == ChemicalSeparatorStructure.MASTER_DY && dz == ChemicalSeparatorStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "chemical_separator";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.ChemicalSeparatorStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.ChemicalSeparatorStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.ChemicalSeparatorStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

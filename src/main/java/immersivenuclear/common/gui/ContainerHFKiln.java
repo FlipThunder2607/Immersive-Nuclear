@@ -13,23 +13,23 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Hydrofluoric Acid Kiln. 272 x 238, as in the sketch (ferramentas/gui_forno_hf.py), like the Sulfuric
- * Acid Unit's: the sulfuric acid tank on the left and the fluorite over the feed head, the rotary drum, the gypsum out
- * of the discharge head, then the scrubber, the condenser and the hydrofluoric acid tank; each tank with its container
- * slots (in, out) under it; the player inventory at the bottom, centred. The tanks, energy, the cycle's progress, state
- * and redstone mode go to the client as window properties (all below 32767).
+ * Interface of the Hydrofluoric Acid Kiln, in the interface standard (01/11), 292 x 239: the sulfuric acid column at
+ * the left, the fluorite's box over the feed head, the rotary drum, the gypsum's box against the right panel, the
+ * scrubber and the condenser, the HF column at the right; IE's inventory panel centred under it. The tanks, energy, the
+ * cycle's progress, state and redstone mode go to the client as window properties (all below 32767). The hammer on
+ * the redstone port inverts the mode (no button).
  */
 public class ContainerHFKiln extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 238, INV_X = 56, INV_Y = 157;
+	public static final int WIDTH = 292, HEIGHT = 239, INV_X = 66, INV_Y = 157;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TileHFKiln's slot order. */
 	public static final int[][] SLOT_XY = {
-			{38, 12},  // fluorite, over the feed head's hopper (centred on it)
-			{167, 98}, // gypsum, under the discharge head, on the row of the upper tank slots
-			{10, 98},  // sulfuric acid container, under the acid tank
-			{10, 122}, // the emptied acid container
-			{224, 98}, // empty container for hydrofluoric acid, under its tank
-			{224, 122}, // filled with hydrofluoric acid
+			{46, 39},   // fluorite, in its box over the feed head (on the left panel's top row)
+			{209, 119}, // gypsum, in its box against the right panel
+			{10, 39},   // sulfuric acid container, over the acid tank
+			{10, 119},  // the emptied acid container, under it
+			{244, 39},  // empty container for hydrofluoric acid, over its tank
+			{244, 119}, // filled with hydrofluoric acid, under it
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

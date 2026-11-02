@@ -13,21 +13,22 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
- * Interface of the Filtration Unit. 272 x 248 (as wide as the Chemical Separation Unit's): the process on top, the 28
- * filter slots and the residue below, the player inventory at the bottom, centred. Tanks, energy,
- * pump, step, state and redstone mode go to the client as window properties (all below 32767).
+ * Interface of the Filtration Unit, 322 x 239 (the interface standard, see GuiFilterPress): the slurry panel, the
+ * machine drawn, the solution panel on top; under it the 28 filters in their own panel beside the player inventory,
+ * on the same lines. Tanks, energy, pump, step, state and redstone mode go to the client as window properties (all
+ * below 32767).
  */
 public class ContainerFilterPress extends Container
 {
-	public static final int WIDTH = 272, HEIGHT = 248, INV_X = 56, INV_Y = 167;
-	public static final int FILTERS_X = 9, FILTERS_Y = 84, FILTER_COLUMNS = 7;
+	public static final int WIDTH = 322, HEIGHT = 239, INV_X = 154, INV_Y = 157;
+	public static final int FILTERS_X = 9, FILTERS_Y = 159, FILTER_COLUMNS = 7;
 	/** Slot positions (top-left of the 16x16 item) after the filters, in the tile's slot order. */
 	public static final int[][] SLOT_XY = {
-			{147, 84}, // residue out, under the chute
-			{10, 18},  // slurry container in
-			{10, 49},  // empty container out
-			{221, 18}, // empty container in (solution)
-			{221, 49}, // solution container out
+			{239, 119}, // residue out, in the box under the right actuator, where the belt ends
+			{10, 39},   // slurry container in, over its tank
+			{10, 119},  // empty container out, under it
+			{274, 39},  // empty container in, over the solution tank
+			{274, 119}, // solution container out, under it
 	};
 	public static final int BUTTON_REDSTONE = 0;
 

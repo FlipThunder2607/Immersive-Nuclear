@@ -7,61 +7,57 @@ import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.block.TileHFKiln;
 import immersivenuclear.common.gui.ContainerHFKiln;
-import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 /**
- * Interface of the Hydrofluoric Acid Kiln, in the mod's graphite finish ({@link GuiGraphite}) with IE's own slots,
- * tanks and markers a little darker, and the same right column as the other machines (energy, redstone button,
- * lights). The kiln left to right, as in the machine:
- *   sulfuric acid tank + fluorite > FEED HEAD > ROTARY DRUM (heated zone, riding rings, girth gear, motor) > DISCHARGE
- *   HEAD > gypsum; the gas over the top > SCRUBBER > CONDENSER > hydrofluoric acid tank
- * While a cycle runs the heating coils glow and pulse, the drum's shell bands move (it turns), the bed goes from purple
- * fluorite to white gypsum along it, the girth gear's teeth turn, gypsum falls into its slot and the gas moves through
- * the lines.
+ * Interface of the Hydrofluoric Acid Kiln, in the interface standard (01/11): separate riveted panels with the machine
+ * drawn between them, the world showing through the gaps.
+ *   [sulfuric acid: in / tank / out]  the fluorite's box over the dark FEED HEAD; the copper ROTARY DRUM (its bed in a
+ *   window, purple fluorite to white gypsum; the copper heating coil over 1/4..2/4 of it, it glows; two riding rings;
+ *   the girth gear in the middle, driven through the gearbox by the green motor); the dark DISCHARGE HEAD, its chute into
+ *   the gypsum's box; the gas through the SCRUBBER and the CONDENSER into the HF tank  [HF | energy over the status lamp]
+ * Our sheet (textures/gui/hf_kiln_gui.png, made by ferramentas/gui_forno_hf_v4_esboco.py --jogo with the same numbers)
+ * is the fixed background; what moves is drawn here. The JEI page keeps its own sheet.
  */
 public class GuiHFKiln extends GuiIEContainerBase
 {
 	static final String IE = "immersiveengineering:textures/gui/refinery.png";
-	static final String OWN = ImmersiveNuclear.MODID + ":textures/gui/chemical_processor.png";
+	static final String SHEET = ImmersiveNuclear.MODID + ":textures/gui/hf_kiln_gui.png";
+	static final int SHEET_SIZE = 512;
 
-	// Layout (as in the sketch, ferramentas/gui_forno_hf.py v2), on one grid: the tanks, the feed and discharge heads and the
-	// scrubber over the condenser share the band y 36..87; the drum is centred on it, the motor under the drum; the slots
-	// under the tanks, the gypsum and the arrow share a row, the redstone button the lower one
-	static final int ACID_X = 8, HF_X = 222, TANK_Y = 36;
-	static final int FEED_X = 32, FEED_Y = 36, FEED_W = 28, FEED_H = 51;
-	public static final int DRUM_X = 64, DRUM_Y = 47, DRUM_W = 96, DRUM_H = 30;
-	static final int MOTOR_X = 102, MOTOR_Y = 82, MOTOR_W = 20, MOTOR_H = 14;
-	static final int DISCH_X = 164, DISCH_Y = 36, DISCH_W = 22, DISCH_H = 51;
-	static final int SCRUB_X = 196, SCRUB_Y = 36, SCRUB_W = 18, SCRUB_H = 22;
-	static final int COND_X = 196, COND_Y = 65, COND_W = 18, COND_H = 22;
-	public static final int ARROW_X = 142, ARROW_Y = 100;
-	/** The gas: up out of the feed head, over everything, down into the scrubber. */
-	static final int GAS_Y = 22, GAS_UP_X = 56;
-	static final int ENERGY_X = 248, ENERGY_Y = 36, ENERGY_W = 14, ENERGY_H = 80;
-	static final int BUTTON_X = 247, BUTTON_Y = 122, BUTTON_SIZE = 16;
-	static final int LIGHTS_X = 248, LIGHTS_W = 14, LIGHT_X = 251, LIGHT_Y = 148, LIGHT_STEP = 8;
+	// Layout (same as gui_forno_hf_v4_esboco.py)
+	static final int ROW1 = 37, ROW2 = 62, ROW3 = 117, TANK_Y = ROW2;
+	static final int ACID_X = 8, HF_X = 242, CONTROL_X = 268;
+	static final int FEED_X = 42, FEED_Y = 72, FEED_W = 24, FEED_H = 46;
+	/** The drum; also JEI's click area (INJeiPlugin). */
+	public static final int DRUM_X = 66, DRUM_Y = 82, DRUM_W = 106, DRUM_H = 26;
+	static final int WIN_X0 = 69, WIN_X1 = 169, WIN_Y0 = 90, WIN_Y1 = 100;
+	static final int COIL_X0 = 90, COIL_X1 = 112, GEAR_X = 116;
+	static final int[] RINGS = {72, 156};
+	static final int MOTOR_X = 112, MOTOR_Y = 112, MOTOR_W = 46, MOTOR_H = 24;
+	static final int DISCH_X = 172, DISCH_Y = 72, DISCH_W = 24, DISCH_H = 46;
+	static final int SCRUB_X = 204, SCRUB_Y = 34, SCRUB_W = 18, SCRUB_H = 28;
+	static final int COND_X = 204, COND_Y = 66, COND_W = 18, COND_H = 28;
+	static final int CHUTE_X0 = 196, CHUTE_Y0 = 98, CHUTE_X1 = 213, CHUTE_Y1 = 104;
+	static final int ENERGY_X = CONTROL_X + 2, ENERGY_Y = ROW1, ENERGY_W = 11, ENERGY_H = ROW2 + 51 - ROW1;
+	static final int LAMP_X = CONTROL_X, LAMP_Y = ROW3 + 2, LAMP_SIZE = 16;
 	static final int PANEL_X = ContainerHFKiln.INV_X - 8, PANEL_Y = ContainerHFKiln.INV_Y - 8;
 
+	// Our sprites in the sheet: {u, v, w, h}
+	static final int[] LENS = {0, 330, 10, 10};
 	// IE's pieces in refinery.png
 	static final int[] IE_SLOT = {35, 13, 20, 20}, IE_TANK = {11, 18, 20, 51}, IE_BLUE = {42, 10, 6, 3}, IE_ORANGE = {42, 49, 6, 3};
 
-	static final int COL_PIPE = 0xff2a2c30, COL_PIPE_EDGE = 0xff55585e, COL_STEEL = 0xff96999e, COL_STEEL_DARK = 0xff5c5f64,
-			COL_INSIDE = 0xff24262a, COL_HEAD = 0xff3a3d42, COL_SHELL = 0xff6a3e2a, COL_SHELL_BAND = 0xff5a3424, COL_COIL = 0xffe8783c,
-			COL_COIL_OFF = 0xff7a4a32, COL_FLUORITE = 0xffa06cd0, COL_GYPSUM = 0xffeeece2, COL_ACID = 0xffd6c896, COL_GAS = 0xc8b4e6dc,
-			COL_HF = 0xff5ab4a4, COL_MOTOR = 0xff3c6a3c, COL_FINS = 0xff9cb8c4;
+	static final int[] FLUORITE = {0xa8, 0x78, 0xd8}, GYPSUM = {0xec, 0xea, 0xe4};
+	static final int COL_ACID = 0xffd6c896, COL_GAS = 0xc8b4e6dc, COL_HF = 0xffc8e8e4, COL_GLOW = 0xff9a50, COL_TOOTH = 0xff64686e, COL_TOOTH_DARK = 0xff2a2c30;
 
 	final ContainerHFKiln container;
-	int ticks;
+	int ticks, turn;
 
 	public GuiHFKiln(ContainerHFKiln container)
 	{
@@ -86,6 +82,8 @@ public class GuiHFKiln extends GuiIEContainerBase
 	{
 		super.updateScreen();
 		ticks++;
+		if(running())
+			turn++;
 	}
 
 	// ---------- drawing helpers ----------
@@ -100,87 +98,30 @@ public class GuiHFKiln extends GuiIEContainerBase
 			drawRect(guiLeft + x, guiTop + y, guiLeft + x + w, guiTop + y + h, argb);
 	}
 
-	void pipe(int x0, int y0, int x1, int y1)
-	{
-		if(y0 == y1)
-		{
-			rect(Math.min(x0, x1) - 2, y0 - 2, Math.abs(x1 - x0) + 5, 5, COL_PIPE_EDGE);
-			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, COL_PIPE);
-		}
-		else
-		{
-			rect(x0 - 2, Math.min(y0, y1) - 2, 5, Math.abs(y1 - y0) + 5, COL_PIPE_EDGE);
-			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, COL_PIPE);
-		}
-	}
-
-	/** Moving fluid inside a pipe (its 3 px core), only while the cycle runs. */
-	void flow(int x0, int y0, int x1, int y1, int argb)
-	{
-		if(!running())
-			return;
-		if(y0 == y1)
-			rect(Math.min(x0, x1) - 1, y0 - 1, Math.abs(x1 - x0) + 3, 3, argb);
-		else
-			rect(x0 - 1, Math.min(y0, y1) - 1, 3, Math.abs(y1 - y0) + 3, argb);
-	}
-
-	static int mix(int a, int b, float t)
-	{
-		t = Math.max(0, Math.min(1, t));
-		int c = 0xff000000;
-		for(int sh = 0; sh <= 16; sh += 8)
-			c |= Math.round((a >> sh & 255) + ((b >> sh & 255) - (a >> sh & 255)) * t) << sh;
-		return c;
-	}
-
-	/** 0 green running, 1 yellow waiting for input, 2 red stopped (power, full output), 3 grey disabled; -1 idle. */
-	int litLight()
+	/** The lamp's colour: 0 green running, 1 amber waiting (input, or stopped by redstone), 2 red stopped (no power,
+	 * output full), 3 off (idle). */
+	int lamp()
 	{
 		switch(container.state)
 		{
 			case TileHFKiln.STATE_RUNNING: return 0;
-			case TileHFKiln.STATE_NO_INPUT: return 1;
+			case TileHFKiln.STATE_NO_INPUT:
+			case TileHFKiln.STATE_DISABLED: return 1;
 			case TileHFKiln.STATE_NO_POWER:
 			case TileHFKiln.STATE_OUTPUT_FULL: return 2;
-			case TileHFKiln.STATE_DISABLED: return 3;
-			default: return -1;
+			default: return 3;
 		}
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my)
 	{
-		GuiGraphite.panel(guiLeft, guiTop, xSize, ySize);
-
-		// Pipes first, with what moves through them while it runs; the wells over their ends
-		int acidY = TANK_Y + 30;
-		pipe(ACID_X + 20, acidY, FEED_X - 1, acidY);
-		flow(ACID_X + 20, acidY, FEED_X - 1, acidY, COL_ACID);
-		int scrubMid = SCRUB_X + SCRUB_W / 2;
-		pipe(GAS_UP_X, FEED_Y - 1, GAS_UP_X, GAS_Y);
-		pipe(GAS_UP_X, GAS_Y, scrubMid, GAS_Y);
-		pipe(scrubMid, GAS_Y, scrubMid, SCRUB_Y - 1);
-		pipe(scrubMid, SCRUB_Y + SCRUB_H, scrubMid, COND_Y - 1);
-		flow(GAS_UP_X, FEED_Y - 1, GAS_UP_X, GAS_Y, COL_GAS);
-		flow(GAS_UP_X, GAS_Y, scrubMid, GAS_Y, COL_GAS);
-		flow(scrubMid, GAS_Y, scrubMid, SCRUB_Y - 1, COL_GAS);
-		flow(scrubMid, SCRUB_Y + SCRUB_H, scrubMid, COND_Y - 1, COL_GAS);
-		int hfY = COND_Y + COND_H - 8;
-		pipe(COND_X + COND_W, hfY, HF_X - 1, hfY);
-		flow(COND_X + COND_W, hfY, HF_X - 1, hfY, COL_HF);
-		pipe(MOTOR_X + MOTOR_W / 2, MOTOR_Y - 1, MOTOR_X + MOTOR_W / 2, DRUM_Y + DRUM_H);
-
-		ClientUtils.bindTexture(GuiGraphite.SHEET);
 		GlStateManager.color(1, 1, 1, 1);
-		for(int[] w : new int[][]{{FEED_X, FEED_Y, FEED_W, FEED_H}, {DRUM_X, DRUM_Y, DRUM_W, DRUM_H}, {MOTOR_X, MOTOR_Y, MOTOR_W, MOTOR_H},
-				{DISCH_X, DISCH_Y, DISCH_W, DISCH_H}, {SCRUB_X, SCRUB_Y, SCRUB_W, SCRUB_H}, {COND_X, COND_Y, COND_W, COND_H},
-				{ENERGY_X, ENERGY_Y, ENERGY_W, ENERGY_H}, {LIGHTS_X, LIGHT_Y - 3, LIGHTS_W, 4 * LIGHT_STEP + 4}})
-			GuiGraphite.well(guiLeft + w[0], guiTop + w[1], w[2], w[3]);
-		GuiGraphite.arrow(guiLeft + ARROW_X, guiTop + ARROW_Y, Math.round(GuiGraphite.ARROW_W * done()));
+		GlStateManager.enableBlend();
+		ClientUtils.bindTexture(SHEET);
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft, guiTop, 0, 0, xSize, ySize, SHEET_SIZE, SHEET_SIZE);
 
 		// IE's wooden inventory panel; IE's pieces, a little darker
-		GlStateManager.color(1, 1, 1, 1);
 		ClientUtils.bindTexture(IE);
 		drawTexturedModalRect(guiLeft + PANEL_X, guiTop + PANEL_Y, 0, 77, 176, 89);
 		GuiGraphite.ieTint();
@@ -188,134 +129,100 @@ public class GuiHFKiln extends GuiIEContainerBase
 		for(int i = 0; i < xy.length; i++)
 		{
 			piece(IE_SLOT, xy[i][0] - 2, xy[i][1] - 2);
-			boolean out = i == TileHFKiln.SLOT_GYPSUM || i == TileHFKiln.SLOT_ACID_OUT || i == TileHFKiln.SLOT_HF_OUT;
-			piece(out ? IE_ORANGE : IE_BLUE, xy[i][0] + 5, xy[i][1] - 5);
+			boolean in = i == TileHFKiln.SLOT_FLUORITE || i == TileHFKiln.SLOT_ACID_IN || i == TileHFKiln.SLOT_HF_IN;
+			piece(in ? IE_BLUE : IE_ORANGE, xy[i][0] + 5, xy[i][1] - 5);
 		}
-		for(int x : new int[]{ACID_X, HF_X})
-		{
-			piece(IE_TANK, x, TANK_Y);
-			piece(x == ACID_X ? IE_BLUE : IE_ORANGE, x + 7, TANK_Y - 3);
-		}
+		piece(IE_TANK, ACID_X, TANK_Y);
+		piece(IE_BLUE, ACID_X + 7, TANK_Y - 3);
+		piece(IE_TANK, HF_X, TANK_Y);
+		piece(IE_ORANGE, HF_X + 7, TANK_Y - 3);
 		GuiGraphite.endTint();
-		tank(container.acid, ACID_X, mx, my, null);
-		tank(container.hf, HF_X, mx, my, null);
+		GlStateManager.color(1, 1, 1, 1);
+		ClientUtils.handleGuiTank(container.acid, guiLeft + ACID_X + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
+		ClientUtils.handleGuiTank(container.hf, guiLeft + HF_X + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, null);
 
-		drawChutes();
-		drawHeads();
+		drawFlows();
 		drawDrum();
-		drawGasTrain();
 
-		// Energy (IE's red gradient), button, lights
+		// Energy (IE's red gradient, inside IE's 7 px) and the lamp's lens
 		int eh = (int)((ENERGY_H - 4) * (container.energy / (float)TileHFKiln.ENERGY_CAPACITY));
 		if(eh > 0)
 			ClientUtils.drawGradientRect(guiLeft + ENERGY_X + 2, guiTop + ENERGY_Y + ENERGY_H - 2 - eh, guiLeft + ENERGY_X + ENERGY_W - 2, guiTop + ENERGY_Y + ENERGY_H - 2, 0xffb51500, 0xff600b00);
 		GlStateManager.color(1, 1, 1, 1);
-		ClientUtils.bindTexture(OWN);
-		drawTexturedModalRect(guiLeft + BUTTON_X, guiTop + BUTTON_Y, 0, 150, BUTTON_SIZE, BUTTON_SIZE);
-		int lit = litLight();
-		for(int i = 0; i < 4; i++)
-			drawTexturedModalRect(guiLeft + LIGHT_X + 1, guiTop + LIGHT_Y + i * LIGHT_STEP, i * 8, i == lit ? 90 : 98, 6, 6);
+		GlStateManager.enableBlend();
+		ClientUtils.bindTexture(SHEET);
+		Gui.drawModalRectWithCustomSizedTexture(guiLeft + LAMP_X + LAMP_SIZE / 2 - 5, guiTop + LAMP_Y + LAMP_SIZE / 2 - 5, LENS[0] + lamp() * LENS[2], LENS[1], LENS[2], LENS[3], SHEET_SIZE, SHEET_SIZE);
 	}
 
-	void tank(FluidTank tank, int x, int mx, int my, ArrayList<String> tip)
+	/** What moves in the pipes' cores while a cycle runs: the acid in, the gas up and over, the HF out. */
+	void drawFlows()
 	{
-		ClientUtils.handleGuiTank(tank, guiLeft + x + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
+		if(!running())
+			return;
+		rect(32, 94, 8, 2, COL_ACID);
+		rect(183, 25, 2, DISCH_Y - 25, COL_GAS);
+		rect(183, 25, 31, 2, COL_GAS);
+		rect(212, 25, 2, SCRUB_Y - 25, COL_GAS);
+		rect(212, SCRUB_Y + SCRUB_H, 2, COND_Y - SCRUB_Y - SCRUB_H, COL_GAS);
+		rect(212, COND_Y + COND_H, 2, 2, COL_HF);
+		rect(212, 96, 22, 2, COL_HF);
+		// bubbles in the scrubber's sight glass
+		for(int k = 0; k < 3; k++)
+			rect(SCRUB_X + 6 + k * 2, SCRUB_Y + 9 + Math.floorMod(9 - ticks / 2 - k * 3, 9), 1, 1, 0xffd8f0ec);
 	}
 
-	/** The fluorite's chute into the feed head and the gypsum's out of the discharge head, falling while it runs. */
-	void drawChutes()
+	/** Whether x is in the drum's window where nothing stands in front of it (the coil, the rings, the girth gear). */
+	static boolean bedShows(int x)
 	{
-		int[] f = ContainerHFKiln.SLOT_XY[TileHFKiln.SLOT_FLUORITE];
-		int x = f[0] + 3, y = f[1] + 18, h = FEED_Y - y;
-		rect(x, y, 10, h, COL_STEEL_DARK);
-		rect(x + 2, y + 2, 6, h - 2, COL_PIPE);
-		int[] g = ContainerHFKiln.SLOT_XY[TileHFKiln.SLOT_GYPSUM];
-		int gx = DISCH_X + 6, gy = DISCH_Y + DISCH_H, gh = g[1] - 2 - gy;
-		rect(gx, gy, 10, gh, COL_STEEL_DARK);
-		rect(gx + 2, gy, 6, gh - 2, COL_PIPE);
-		if(running())
-			for(int k = 0; k < 2; k++)
-			{
-				rect(x + 3 + k * 2, y + 2 + Math.floorMod(ticks + k * 5, Math.max(1, h - 3)), 2, 2, COL_FLUORITE);
-				rect(gx + 3 + k * 2, gy + Math.floorMod(ticks + k * 4, Math.max(1, gh - 3)), 2, 2, COL_GYPSUM);
-			}
+		if(x >= COIL_X0 - 1 && x <= COIL_X1)
+			return false;
+		if(x >= GEAR_X - 1 && x <= GEAR_X + 6)
+			return false;
+		for(int r : RINGS)
+			if(x >= r && x < r + 4)
+				return false;
+		return true;
 	}
 
-	/** The feed and discharge heads: steel boxes with the drum's seals; fluorite going in, gypsum coming out. */
-	void drawHeads()
-	{
-		for(int[] h : new int[][]{{FEED_X, FEED_Y, FEED_W, FEED_H}, {DISCH_X, DISCH_Y, DISCH_W, DISCH_H}})
-		{
-			rect(h[0] + 2, h[1] + 2, h[2] - 4, h[3] - 4, COL_HEAD);
-			rect(h[0] + 4, h[1] + h[3] / 2 - 8, h[2] - 8, 16, COL_INSIDE);
-		}
-		rect(FEED_X + 6, FEED_Y + FEED_H / 2 - 4, FEED_W - 12, 8, COL_FLUORITE);
-		for(int i = 0; i < 4; i++)
-			rect(DISCH_X + 5 + i * 3, DISCH_Y + DISCH_H / 2 + 2, 2, 2, COL_GYPSUM);
-	}
-
-	/** The drum, cut open: its shell (bands moving while it turns), the bed from fluorite to gypsum, the heating coils on
-	 * the hot zone (glowing and pulsing while it runs), the riding rings, the girth gear (teeth moving) and the motor. */
+	/** The bed tumbling along the drum, purple fluorite turning into white gypsum; the coil glowing; the gear turning;
+	 * the gypsum going down the chute. */
 	void drawDrum()
 	{
 		boolean on = running();
-		int ix = DRUM_X + 2, iy = DRUM_Y + 2, iw = DRUM_W - 4, ih = DRUM_H - 4;
-		rect(ix, iy, iw, ih, COL_SHELL);
-		int turn = on ? ticks / 2 % 3 : 0;
-		for(int j = iy + turn; j < iy + ih; j += 3)
-			rect(ix, j, iw, 1, COL_SHELL_BAND);
-		rect(ix + 4, iy + 5, iw - 8, ih - 10, 0xff1c1818);
-		for(int i = 0; i < iw - 8; i++)
+		if(on || container.progress > 0)
+			for(int x = WIN_X0; x < WIN_X1; x++)
+			{
+				if(!bedShows(x))
+					continue;
+				float t = (x - DRUM_X) / (float)DRUM_W;
+				int r = Math.round(FLUORITE[0] + (GYPSUM[0] - FLUORITE[0]) * t), g = Math.round(FLUORITE[1] + (GYPSUM[1] - FLUORITE[1]) * t),
+						b = Math.round(FLUORITE[2] + (GYPSUM[2] - FLUORITE[2]) * t);
+				int wave = (int)Math.round(Math.sin(x * 0.6 - turn * 0.25));
+				int top = WIN_Y1 - 4 + wave;
+				rect(x, top, 1, WIN_Y1 - top, 0xff000000 | r << 16 | g << 8 | b);
+			}
+		if(on)
 		{
-			float t = i / (float)(iw - 9);
-			// the bed tumbles a little while the drum turns
-			int wave = on ? Math.round((float)Math.sin((i + ticks * 0.8) / 4.0)) : 0;
-			int top = iy + ih - 11 - Math.round(2 * (1 - t)) + wave;
-			rect(ix + 4 + i, top, 1, iy + ih - 5 - top, mix(COL_FLUORITE, COL_GYPSUM, t));
+			// The heating coil glows (the part of the machine that glows), breathing a little
+			int a = Math.round(150 + 60 * (float)Math.sin(ticks * 0.15));
+			for(int x = COIL_X0 + 1; x < COIL_X1 - 1; x += 2)
+				rect(x, DRUM_Y + 2, 1, DRUM_H - 4, a << 24 | COL_GLOW);
+			// The girth gear's teeth moving round
+			int phase = (turn / 2) % 2;
+			for(int y = DRUM_Y - 4; y < DRUM_Y + DRUM_H + 4; y++)
+			{
+				int c = (y + phase) % 2 == 0 ? COL_TOOTH : COL_TOOTH_DARK;
+				rect(GEAR_X - 1, y, 1, 1, c);
+				rect(GEAR_X + 6, y, 1, 1, c);
+			}
+			// Gypsum flakes going down the chute into the box
+			for(int k = 0; k < 3; k++)
+			{
+				float f = Math.floorMod(ticks + k * 9, 27) / 27F;
+				int x = Math.round(CHUTE_X0 + (CHUTE_X1 - CHUTE_X0) * f), y = Math.round(CHUTE_Y0 + 1 + (CHUTE_Y1 - CHUTE_Y0) * f);
+				rect(x, y, 2, 2, 0xffeceae4);
+			}
 		}
-		for(int i = ix + 4, k = 0; i < ix + 34; i += 3, k++)
-		{
-			float glow = on ? 0.7F + 0.3F * (float)Math.sin(ticks * 0.3 + k) : 0;
-			int c = mix(COL_COIL_OFF, COL_COIL, glow);
-			rect(i, iy, 2, 3, c);
-			rect(i, iy + ih - 3, 2, 3, c);
-		}
-		for(int rx : new int[]{ix + 40, ix + iw - 12})
-			rect(rx, DRUM_Y - 2, 4, DRUM_H + 4, COL_STEEL);
-		int gx = ix + iw / 2 - 3, shift = on ? ticks / 3 % 3 : 0;
-		rect(gx, DRUM_Y - 3, 6, DRUM_H + 6, 0xff4a4c50);
-		for(int j = DRUM_Y - 3 + shift; j < DRUM_Y + DRUM_H + 3; j += 3)
-			rect(gx - 1, j, 8, 1, COL_STEEL);
-		rect(MOTOR_X + 3, MOTOR_Y + 3, MOTOR_W - 6, MOTOR_H - 6, COL_MOTOR);
-		rect(MOTOR_X + 4, MOTOR_Y + 5, MOTOR_W - 8, 1, 0xff5a905a);
-	}
-
-	/** The scrubber's cartridges, the condenser's fins (drops of acid running down them while it runs). */
-	void drawGasTrain()
-	{
-		rect(SCRUB_X + 2, SCRUB_Y + 2, SCRUB_W - 4, SCRUB_H - 4, COL_INSIDE);
-		for(int j = SCRUB_Y + 6; j < SCRUB_Y + SCRUB_H - 4; j += 5)
-			rect(SCRUB_X + 3, j, SCRUB_W - 6, 2, 0xff8c8e92);
-		rect(COND_X + 2, COND_Y + 2, COND_W - 4, COND_H - 4, COL_INSIDE);
-		for(int j = COND_Y + 4; j < COND_Y + COND_H - 3; j += 2)
-			rect(COND_X + 3, j, COND_W - 6, 1, COL_FINS);
-		if(running())
-			for(int k = 0; k < 2; k++)
-				rect(COND_X + 5 + k * 5, COND_Y + 4 + Math.floorMod(ticks + k * 7, COND_H - 8), 1, 2, COL_HF);
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mx, int my)
-	{
-		// The icon sits inside the button's bevel, a quarter smaller than an item
-		RenderHelper.enableGUIStandardItemLighting();
-		ItemStack icon = new ItemStack(container.redstoneInverted ? Item.getItemFromBlock(Blocks.REDSTONE_TORCH) : Items.REDSTONE);
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(BUTTON_X + 2, BUTTON_Y + 2, 0);
-		GlStateManager.scale(0.75F, 0.75F, 1);
-		itemRender.renderItemIntoGUI(icon, 0, 0);
-		GlStateManager.popMatrix();
-		RenderHelper.disableStandardItemLighting();
 	}
 
 	boolean over(int mx, int my, int x, int y, int w, int h)
@@ -335,25 +242,26 @@ public class GuiHFKiln extends GuiIEContainerBase
 		FluidTank[] tt = {container.acid, container.hf};
 		for(int i = 0; i < 2; i++)
 		{
-			tank(tt[i], tx[i], mx, my, tip);
+			ClientUtils.handleGuiTank(tt[i], guiLeft + tx[i] + 2, guiTop + TANK_Y + 2, 16, 47, 177, 31, 20, 51, mx, my, IE, tip);
 			if(over(mx, my, tx[i], TANK_Y, 20, 51))
 				tip.add(0, I18n.format(K + tanks[i]));
 		}
-		String[][] parts = {{"feed"}, {"drum"}, {"motor"}, {"discharge"}, {"scrubber"}, {"condenser"}};
+		String[] parts = {"feed", "drum", "motor", "discharge", "scrubber", "condenser"};
 		int[][] boxes = {{FEED_X, FEED_Y, FEED_W, FEED_H}, {DRUM_X, DRUM_Y, DRUM_W, DRUM_H}, {MOTOR_X, MOTOR_Y, MOTOR_W, MOTOR_H},
 				{DISCH_X, DISCH_Y, DISCH_W, DISCH_H}, {SCRUB_X, SCRUB_Y, SCRUB_W, SCRUB_H}, {COND_X, COND_Y, COND_W, COND_H}};
 		for(int i = 0; i < boxes.length; i++)
 			if(over(mx, my, boxes[i][0], boxes[i][1], boxes[i][2], boxes[i][3]))
 			{
-				tip.add(I18n.format(K + parts[i][0]));
-				tip.add("§7" + I18n.format(K + parts[i][0] + "_info"));
+				tip.add(I18n.format(K + parts[i]));
+				tip.add("§7" + I18n.format(K + parts[i] + "_info"));
+				if(i == 1)
+				{
+					tip.add("§7" + I18n.format(K + "cycle", TileHFKiln.ACID_PER_CYCLE, TileHFKiln.HF_PER_CYCLE, TileHFKiln.GYPSUM_PER_CYCLE, TileHFKiln.CYCLE_TICKS / 20));
+					if(container.progress > 0)
+						tip.add("§7" + I18n.format(K + "progress", Math.round(100 * done())));
+				}
+				break;
 			}
-		if(over(mx, my, ARROW_X, ARROW_Y, GuiGraphite.ARROW_W, GuiGraphite.ARROW_H))
-		{
-			tip.add(I18n.format(K + "cycle", TileHFKiln.ACID_PER_CYCLE, TileHFKiln.HF_PER_CYCLE, TileHFKiln.GYPSUM_PER_CYCLE, TileHFKiln.CYCLE_TICKS / 20));
-			if(container.progress > 0)
-				tip.add("§7" + I18n.format(K + "progress", Math.round(100 * done())));
-		}
 		String[] slotTips = {"fluorite", "gypsum", "acid_in", "acid_out", "hf_in", "hf_out"};
 		int[][] xy = ContainerHFKiln.SLOT_XY;
 		for(int i = 0; i < xy.length; i++)
@@ -364,32 +272,16 @@ public class GuiHFKiln extends GuiIEContainerBase
 			tip.add(container.energy + "/" + TileHFKiln.ENERGY_CAPACITY + " IF");
 			tip.add("§7" + I18n.format(K + "energy", TileHFKiln.ENERGY_PER_TICK));
 		}
-		if(over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))
+		if(over(mx, my, LAMP_X, LAMP_Y, LAMP_SIZE, LAMP_SIZE))
 		{
-			tip.add(I18n.format("gui.immersivenuclear.redstone"));
+			tip.add(I18n.format(K + "state." + container.state));
 			tip.add("§7" + I18n.format(container.redstoneInverted ? "gui.immersivenuclear.redstone.inverted" : "gui.immersivenuclear.redstone.normal"));
 		}
-		for(int i = 0; i < 4; i++)
-			if(over(mx, my, LIGHTS_X, LIGHT_Y + i * LIGHT_STEP - 1, LIGHTS_W, LIGHT_STEP))
-			{
-				boolean on = i == litLight();
-				tip.add(on ? I18n.format(K + "state." + container.state) : "§7" + I18n.format(K + "light." + i));
-			}
 		if(!tip.isEmpty())
 		{
+			// Long lines wrap, and the tooltip stays on the screen
 			GuiUtils.drawHoveringText(tip, mx, my, width, height, GuiGraphite.TOOLTIP_WIDTH, fontRenderer);
 			RenderHelper.enableGUIStandardItemLighting();
-		}
-	}
-
-	@Override
-	protected void mouseClicked(int mx, int my, int button) throws java.io.IOException
-	{
-		super.mouseClicked(mx, my, button);
-		if(button == 0 && over(mx, my, BUTTON_X, BUTTON_Y, BUTTON_SIZE, BUTTON_SIZE))
-		{
-			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-			mc.playerController.sendEnchantPacket(inventorySlots.windowId, ContainerHFKiln.BUTTON_REDSTONE);
 		}
 	}
 }

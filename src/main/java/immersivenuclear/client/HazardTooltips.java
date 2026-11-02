@@ -39,6 +39,9 @@ public class HazardTooltips
 		items.put(INContent.itemAgglomerate, new String[]{TRACE});
 		items.put(INContent.itemWetConcentrate, new String[]{RAD, TOXIC});
 		items.put(INContent.itemYellowcake, new String[]{RAD, TOXIC});
+		items.put(INContent.itemFluorinationAsh, new String[]{RAD, TOXIC});
+		items.put(INContent.itemDepletedUraniumOxide, new String[]{TRACE, TOXIC});
+		items.put(INContent.itemDepletedUraniumIngot, new String[]{TRACE});
 		fluids = new HashMap<>();
 		fluids.put(INContent.fluidSlurry.getName(), new String[]{CORR, RAD});
 		fluids.put(INContent.fluidCrudeSolution.getName(), new String[]{CORR, RAD});
@@ -50,6 +53,11 @@ public class HazardTooltips
 		fluids.put(INContent.fluidSulfuricAcid.getName(), new String[]{CORR, OXID});
 		fluids.put(INContent.fluidSteam.getName(), new String[]{HOT});
 		fluids.put(INContent.fluidHydrofluoricAcid.getName(), new String[]{CORR, TOXIC});
+		fluids.put(INContent.fluidHydrogen.getName(), new String[]{FIRE});
+		fluids.put(INContent.fluidOxygen.getName(), new String[]{OXID});
+		for(net.minecraftforge.fluids.Fluid f : new net.minecraftforge.fluids.Fluid[]{INContent.fluidUF6, INContent.fluidUF6Low, INContent.fluidUF6Medium, INContent.fluidUF6High})
+			fluids.put(f.getName(), new String[]{RAD, CORR, TOXIC});
+		fluids.put(INContent.fluidUF6Depleted.getName(), new String[]{TRACE, CORR, TOXIC});
 	}
 
 	@SubscribeEvent

@@ -49,7 +49,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * only with all six; their materials set the recovery's energy and the batch's deposit, and each batch wears them.
  * Without power the batch waits where it is; a redstone signal stops it (the hammer inverts that).
  */
-public class TileMetalExtractor extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileMetalExtractor extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	public static final int BATCH = 12000, DEPLETED_CAPACITY = 16000, ENERGY_CAPACITY = 32000;
 	// Provisional values
@@ -297,6 +297,7 @@ public class TileMetalExtractor extends TileEntity implements ITickable, IHammer
 		return MetalExtractorStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return MetalExtractorStructure.portAt(dx, dy, dz);
@@ -312,11 +313,25 @@ public class TileMetalExtractor extends TileEntity implements ITickable, IHammer
 		return dx == MetalExtractorStructure.MASTER_DX && dy == MetalExtractorStructure.MASTER_DY && dz == MetalExtractorStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "metal_extractor";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.MetalExtractorStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.MetalExtractorStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.MetalExtractorStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

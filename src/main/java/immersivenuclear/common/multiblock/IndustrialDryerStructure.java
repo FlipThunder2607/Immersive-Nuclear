@@ -33,20 +33,20 @@ public final class IndustrialDryerStructure
 	 * s steel scaffolding, l light engineering, H heavy engineering, R redstone engineering (trigger), G generator,
 	 * r radiator, F furnace heater, B metal barrel, p fluid pipe, I iron sheetmetal, S steel sheetmetal, c conveyor, f steel fence,
 	 * X radioactive handling (this mod's engineering block), a iron sheetmetal slab (lower), b steel sheetmetal slab (lower),
-	 * . air (not checked).
+	 * T steel block, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
-					"slllH",
-					"ssssl",
-					"sFssl",
-					"sFsss",
-					"sFsss",
-					"ssssl",
-					"sllls"},
+					"sTrrH",
+					"sSSSl",
+					"sFSSH",
+					"sFSSs",
+					"sFSSs",
+					"sSSSl",
+					"sXXls"},
 			{ // y 5
-					"RGrrH",
+					"RG..H",
 					"fIIcb",
 					"fIIcb",
 					"fIIcB",
@@ -56,7 +56,7 @@ public final class IndustrialDryerStructure
 			{ // y 6
 					".....",
 					".aa..",
-					".Ia..",
+					".la..",
 					".aa..",
 					".aa.p",
 					".aaX.",
@@ -66,7 +66,7 @@ public final class IndustrialDryerStructure
 					".....",
 					".....",
 					".....",
-					".pppp",
+					"..ppp",
 					"...r.",
 					"....."},
 	};

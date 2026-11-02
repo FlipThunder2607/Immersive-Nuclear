@@ -44,7 +44,7 @@ import net.minecraftforge.oredict.OreDictionary;
  * tank, the gypsum comes out of the discharge head at the end. Without power the cycle waits; a redstone signal stops it
  * (the hammer inverts that).
  */
-public class TileHFKiln extends TileEntity implements ITickable, IHammerInteraction, ISoundTile
+public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// Provisional values
 	public static final int ACID_PER_CYCLE = 500, HF_PER_CYCLE = 500, GYPSUM_PER_CYCLE = 1, CYCLE_TICKS = 200, ENERGY_PER_TICK = 64;
@@ -260,6 +260,7 @@ public class TileHFKiln extends TileEntity implements ITickable, IHammerInteract
 		return HFKilnStructure.get(dx, dy, dz);
 	}
 
+	@Override
 	public int getPort()
 	{
 		return HFKilnStructure.portAt(dx, dy, dz);
@@ -276,11 +277,25 @@ public class TileHFKiln extends TileEntity implements ITickable, IHammerInteract
 		return dx == HFKilnStructure.MASTER_DX && dy == HFKilnStructure.MASTER_DY && dz == HFKilnStructure.MASTER_DZ;
 	}
 
+	@Override
+	public String boundsName()
+	{
+		return "hf_kiln";
+	}
+
+	@Override
+	public int[] fromMaster()
+	{
+		return new int[]{dx - immersivenuclear.common.multiblock.HFKilnStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.HFKilnStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.HFKilnStructure.MASTER_DZ};
+	}
+
+	@Override
 	public EnumFacing getFacing()
 	{
 		return facing;
 	}
 
+	@Override
 	public boolean isMirrored()
 	{
 		return mirrored;

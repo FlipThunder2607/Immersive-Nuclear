@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.Loader;
 public class BlockEngineering extends Block
 {
 	/** Registry names; textures in blocks/<name>.png and blocks/ctm/<name>_ctm.png */
-	public static final String[] KINDS = {"precision_engineering", "nuclear_engineering", "control_engineering", "radioactive_handling"};
+	public static final String[] KINDS = {"precision_engineering", "nuclear_engineering", "control_engineering", "radioactive_handling", "chemical_engineering"};
 
 	public BlockEngineering(String name)
 	{

@@ -75,6 +75,6 @@ public class SulfuricAcidUnitRecipe implements IRecipeWrapper
 	@Override
 	public void drawInfo(Minecraft mc, int w, int h, int mx, int my)
 	{
-		JeiGraphite.text(mc, energy() + " IF   " + ticks() / 20 + " s", 0, SulfuricAcidUnitCategory.TEXT_Y, w);
+		JeiGraphite.text(mc, energy() + " IF   " + ticks() / 20 + " s", 0, PageCategory.TEXT_Y, w);
 	}
 }

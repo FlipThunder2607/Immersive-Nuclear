@@ -1,0 +1,30 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "IPI",
+        "LEL",
+        "IPI"
+    ],
+    "key": {
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSteel"
+        },
+        "P": {
+            "item": "immersiveengineering:metal_device1",
+            "data": 6
+        },
+        "L": {
+            "type": "forge:ore_dict",
+            "ore": "plateLead"
+        },
+        "E": {
+            "item": "immersiveengineering:metal_decoration0",
+            "data": 4
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:chemical_engineering",
+        "count": 2
+    }
+}
