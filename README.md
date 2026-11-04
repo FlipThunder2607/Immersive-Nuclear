@@ -26,11 +26,10 @@ Design goals:
 - **An ecosystem, not a black box.** No machine works alone. Each step needs products, energy and by-products from other IE machines and from the rest of the line.
 - **Grounded, not a chemistry exam.** Processes are inspired by real uranium processing, simplified into game mechanics. Reagents are game abstractions.
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
-- **No computers required.** Machines are controlled with redstone and IE tools.
 
 ## Current content
 
-Machines 1 to 5 and the Metal Extractor are in release 0.1.0. The last three machines of the table and the line 2 items belong to 0.2.0 (build from source to try them).
+Release 0.1.0 has the whole of line 1. The machines marked *(0.2.0)* and the line 2 items are already in the source, but not in the 0.1.0 JAR: build from source to try them.
 
 ### Machines
 
@@ -48,16 +47,13 @@ Machines 1 to 5 and the Metal Extractor are in release 0.1.0. The last three mac
 
 The effluent never has to be dumped: it goes back into the Chemical Processing Unit as recycled liquor (saving reagent), through the Metal Extractor, or is neutralized with quicklime in IE's Mixer. The Filtration Unit filters the neutralized sludge into Neutralization Cake and plain water, and the cake replaces clay in IE's concrete.
 
-All machines have:
+What sets them apart:
 
-- a GUI that draws the machine itself, animated, between riveted panels with IE's own slots, tanks and status light
-- hit boxes that follow the 3D model; Hwyla/Waila shows the machine, while pick-block gives the block a part replaced
-- redstone control (a signal stops the machine, the hammer inverts it)
-- JEI recipe pages
-- looping and event sounds
-- parts that glow while they run (flames, heaters, signal lamps), without lighting the world
-- blue input ports and orange output ports
-- a page in IE's Engineer's Manual, under its own **Immersive Nuclear** category
+- **Animated GUIs** that draw the machine itself between riveted panels, with IE's own slots, tanks and status light
+- **Animated 3D parts**: plates, agitators, conveyors, drums and gears that move while the machine works
+- **Sounds** for the running machine and for every step of its process
+- **Glowing parts** (flames, heaters, cell stacks, signal lamps) that light up while it runs, without lighting the world
+- **Hit boxes that follow the 3D model**, and Hwyla/Waila showing the machine itself
 
 ### Items, fluids and blocks
 
@@ -73,56 +69,51 @@ Some items and fluids are already registered for the next machines. Until those 
 
 ## Production line
 
-Line 1 takes IE uranium powder to yellowcake, the non-enriched uranium concentrate.
+The mod follows uranium from powder to fuel in production lines. Each machine hands its product to the next one,
+and the by-products go back into the line instead of being thrown away.
+
+### Line 1: uranium powder to yellowcake (released in 0.1.0)
 
 ```
 Uranium powder (IE)
-  └─► [1] Chemical Processing Unit ──► Uranium Slurry
-        └─► [2] Filtration Unit ──► Crude Uranium Solution        (+ Wet Mineral Residue)
-              └─► [3] Chemical Separation Unit ──► Purified Solution   (+ Chemical Effluent)
-                    └─► [4] Precipitation Unit ──► Wet Concentrate    (+ Chemical Effluent)
-                          └─► [5] Industrial Dryer ──► Yellowcake     (+ Process Condensate)
+  │
+  ▼  Chemical Processing Unit ──────► Uranium Slurry
+  ▼  Filtration Unit ───────────────► Crude Uranium Solution   (+ Wet Mineral Residue)
+  ▼  Chemical Separation Unit ──────► Purified Solution        (+ Chemical Effluent)
+  ▼  Precipitation Unit ────────────► Wet Uranium Concentrate  (+ Chemical Effluent)
+  ▼  Industrial Dryer ──────────────► Yellowcake               (+ Process Condensate)
 ```
 
-Machines 1 to 5 are playable: line 1 is complete.
+The **Metal Extractor** branches off the separation step and recovers the dissolved metals from the effluent before
+it is treated. The effluent itself is recycled, neutralized with quicklime or filtered into building material.
 
-A branch after machine 3, the **Metal Extractor** (machine 3.5, playable), recovers dissolved metals from the effluent
-in an electrolytic cell before it is treated.
+### Line 2: conversion and enrichment (coming in 0.2.0)
 
-Line 2 (enrichment) makes its own hydrofluoric acid: the **Sulfuric Acid Unit** feeds the **Hydrofluoric Acid Kiln**
-(both playable), whose acid goes into the Conversion Unit (in development: the first machine of line 2 that makes uranium hexafluoride), and the **Electrolyzer** (playable) makes its
-hydrogen. The kiln's gypsum goes back to quicklime and
-sulfur in IE's Arc Furnace, into concrete, or into building blocks.
+Line 2 makes its own supplies instead of depending on other mods:
+
+```
+Sulfur + water ──► Sulfuric Acid Unit ──► Sulfuric Acid ─┐
+Fluorite dust ───────────────────────────────────────────┴─► Hydrofluoric Acid Kiln ──► Hydrofluoric Acid (+ Gypsum)
+Water ───────────► Electrolyzer ────────► Hydrogen, Oxygen
+
+Yellowcake + Hydrogen + Hydrofluoric Acid ──► Conversion Unit ──► Uranium Hexafluoride   (in development)
+```
+
+The kiln's gypsum goes back to quicklime and sulfur in IE's Arc Furnace, into concrete, or into building blocks.
 
 ## Roadmap
 
-**Line 1: uranium powder to yellowcake (released in 0.1.0)**
-- [x] Chemical Processing Unit
-- [x] Filtration Unit
-- [x] Chemical Separation Unit (solvent extraction: extraction and stripping stages)
-- [x] Metal Extractor (machine 3.5: electrolytic recovery of metals from the effluent)
-- [x] Effluent treatment: recycling, neutralization with quicklime, sludge filtration
-- [x] Precipitation Unit
-- [x] Industrial Dryer
-- [x] Concentrate Drum (storage, and the dryer's drum loading station)
-- [ ] Balancing pass (energy, time and quantities are placeholders)
-
-**Hazards**
-- [ ] Contamination system with four kinds of exposure: radiological, chemical, particulate (inhaled dust) and physical (fire, pressure, heat, explosion)
-- [ ] Protective equipment, shielding, dosimetry and decontamination
-
-**Line 2: conversion and enrichment (0.2.0)**
-- [x] Sulfuric Acid Unit (contact process)
-- [x] Fluorite ore
-- [x] Hydrofluoric Acid Kiln
-- [x] Electrolyzer (hydrogen and oxygen)
-- [ ] Conversion Unit (in development)
-- [ ] Enrichment Unit (with a depleted-uranium branch)
-
-**Later stages**
-- [ ] Fuel fabrication
-- [ ] Reactors, with an analog control and automation system (see [`TODO_List_automation.md`](TODO_List_automation.md))
-- [ ] Spent fuel and waste management
+| Stage | Status |
+|---|---|
+| **Line 1**: uranium powder to yellowcake, with effluent treatment and the Concentrate Drum | Released in 0.1.0 |
+| **Line 2, supplies**: sulfuric acid, fluorite and hydrofluoric acid, hydrogen and oxygen | Done, coming in 0.2.0 |
+| **Line 2, Conversion Unit**: yellowcake to uranium hexafluoride | In development |
+| **Line 2, Enrichment Unit** (with a depleted-uranium branch) | Planned |
+| **Hazards**: contamination (radiological, chemical, particulate, physical), protective equipment, shielding, dosimetry, decontamination | Planned |
+| **Fuel fabrication** | Planned |
+| **Reactors**, with an analog control and automation system (see [`TODO_List_automation.md`](TODO_List_automation.md)) | Planned |
+| **Spent fuel and waste management** | Planned |
+| **Balancing pass** (energy, time and quantities are placeholders) | Planned |
 
 ## Requirements
 
