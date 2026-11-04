@@ -1,5 +1,5 @@
-# TODO: Sistema de Controle e Automação para Reator RBMK (Anos 60)
-> **Contexto do Projeto:** Mod para Minecraft 1.12.2 baseado no Immersive Engineering (IE). Sistema computacional e de controle analógico retro-futurista inspirado em instalações nucleares soviéticas da década de 1960.
+# TODO: Sistema de Controle e Automação do Reator (estilo anos 60)
+> **Contexto do Projeto:** Mod para Minecraft 1.12.2 baseado no Immersive Engineering (IE). Sistema computacional e de controle analógico retro-futurista inspirado em instalações nucleares da década de 1960.
 
 ---
 
@@ -9,7 +9,7 @@
   - [ ] Módulo de luzes de status:
     - Verdes acesas: Operação OK / Sistemas dentro da faixa normal.
     - Vermelhas acesas: *Warning* / Erro / Anomalia detectada.
-  - [ ] Painel de botões e seletores analógicos (Start/Stop, SCRAM/AZ-5 manual, Bypass de emergência).
+  - [ ] Painel de botões e seletores analógicos (Start/Stop, SCRAM manual, Bypass de emergência).
   - [ ] Alavancas de controle manual de hastes de absorção de nêutrons (*Control Rods*).
   - [ ] Indicadores analógicos de ponteiro (Galvanômetros) para pressão, fluxo de refrigerante e temperatura.
 
@@ -31,7 +31,7 @@
 
 ---
 
-## 📌 Fase 2: Mapeamento de Sistemas e Interconexão do Reator RBMK
+## 📌 Fase 2: Mapeamento de Sistemas e Interconexão do Reator
 
 - [ ] **2.1. Sensores de Entrada (Telemetria)**
   - [ ] Sensores de temperatura de núcleo e dos canais de combustível.
@@ -43,7 +43,7 @@
   - [ ] Motores de inserção/retirada de hastes de controle (mecanismo hidráulico/elétrico).
   - [ ] Válvulas reguladoras de fluxo de refrigeração.
   - [ ] Válvulas de alívio de pressão de emergência.
-  - [ ] Sistema de acionamento do SCRAM / AZ-5 (Inserção total de emergência).
+  - [ ] Sistema de acionamento do SCRAM (Inserção total de emergência).
 
 ---
 
@@ -114,7 +114,7 @@
   - Paredes de Concreto Denso (*Heavy Concrete*) reduzem a taxa de radiação em X%.
   - Chapas de Chumbo em painéis de controle e racks de fitas magnéticas.
 - [ ] **EPIs (Equipamentos de Proteção):**
-  - Máscaras de gás soviéticas (GP-5 ou similares dos anos 60) para filtrar poeira particulada.
+  - Máscaras de gás (estilo anos 60) para filtrar poeira particulada.
   - Trajes de proteção química/radioativa (Hazmat retro).
 - [ ] **Protocolos de Descontaminação:**
   - Chuveiros de emergência na entrada da sala de controle para lavar resíduos radioativos do inventário/jogador.
