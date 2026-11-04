@@ -9,6 +9,8 @@
 An Immersive Engineering addon that brings the nuclear fuel cycle to life: process uranium through chemical multiblock machines, enrich it, run reactors and manage heat, power and waste, all in the Immersive style.
 
 > **Early alpha.** The mod is under active development. Machines, recipes, numbers and registry names may still change between versions. Do not use it in worlds you care about yet.
+>
+> **Releases:** [0.1.0](../../releases/tag/v0.1.0) is the first pre-release and completes **line 1** (uranium powder to yellowcake). Line 2 (conversion and enrichment) is being built on this branch and will ship as **0.2.0**; what is marked *(0.2.0)* below is in the source but not in the 0.1.0 JAR.
 
 **Wiki:** [flipthunder2607.github.io/Immersive-Nuclear-wiki](https://flipthunder2607.github.io/Immersive-Nuclear-wiki/). Every machine, item and fluid, the production lines as interactive flow charts and the plans for enrichment and fuel fabrication (in Portuguese for now).
 
@@ -26,7 +28,9 @@ Design goals:
 - **IE is enough.** The whole line is playable with Immersive Engineering alone. Other mods (such as Immersive Petroleum) may offer better optional routes, never mandatory ones.
 - **No computers required.** Machines are controlled with redstone and IE tools.
 
-## Current content (0.1.9)
+## Current content
+
+Machines 1 to 5 and the Metal Extractor are in release 0.1.0. The last three machines of the table and the line 2 items belong to 0.2.0 (build from source to try them).
 
 ### Machines
 
@@ -38,9 +42,9 @@ Design goals:
 | **Metal Extractor** | 4×4×4 | Electrolytic cell. Plates the metals dissolved in the Chemical Effluent onto six electrode plates, which rise to be scraped over a tray: **Mixed Metal Deposit** and **Depleted Effluent**. Three electrode plates (steel, lead-silver, electrum-coated) with growing yield and life. Animated platform, tray and scraper. |
 | **Precipitation Unit** | 5×7×5 | Agitated tank and screw dewaterer. Turns the purified solution and the Precipitating Agent into **Wet Uranium Concentrate** and **Chemical Effluent**. Animated agitator and liquid behind the tank's window. |
 | **Industrial Dryer** | 5×7×4 | Paddle dryer with heaters and a condenser. Turns the wet concentrate into **Yellowcake**, the end of line 1, and collects the **Process Condensate**. A drum loading station beside it fills **Concentrate Drums** on an animated conveyor. Heaters that glow while they run, steam and dust. |
-| **Sulfuric Acid Unit** | 5×7×8 | Contact process, the first machine of line 2. Burns sulfur (any mod's dust, or a block for nine cycles) and turns it into **Sulfuric Acid** with water, for the enrichment line's own hydrofluoric acid; its waste heat boiler gives **Steam**. Blue burner flame, stack smoke and a relief valve that vents when the steam tank is full. |
-| **Hydrofluoric Acid Kiln** | 5×7×3 | Rotary kiln: fluorite dust and sulfuric acid into **Hydrofluoric Acid** for the Conversion Unit, with **Gypsum** as by-product. The drum turns on its rollers, driven by a motor through a pinion and the girth gear; the heating coils and heaters glow while it runs. |
-| **Electrolyzer** | 5×7×5 | Splits water (or steam, with less power) into **Hydrogen**, for the Conversion Unit, and **Oxygen**. A rectifier feeds two alkaline cell stacks; the gases rise with the electrolyte into their separators. A full oxygen tank is vented by its relief valve. The cells glow and bubble while it runs. |
+| **Sulfuric Acid Unit** *(0.2.0)* | 5×7×8 | Contact process, the first machine of line 2. Burns sulfur (any mod's dust, or a block for nine cycles) and turns it into **Sulfuric Acid** with water, for the enrichment line's own hydrofluoric acid; its waste heat boiler gives **Steam**. Blue burner flame, stack smoke and a relief valve that vents when the steam tank is full. |
+| **Hydrofluoric Acid Kiln** *(0.2.0)* | 5×7×3 | Rotary kiln: fluorite dust and sulfuric acid into **Hydrofluoric Acid** for the Conversion Unit, with **Gypsum** as by-product. The drum turns on its rollers, driven by a motor through a pinion and the girth gear; the heating coils and heaters glow while it runs. |
+| **Electrolyzer** *(0.2.0)* | 5×7×5 | Splits water (or steam, with less power) into **Hydrogen**, for the Conversion Unit, and **Oxygen**. A rectifier feeds two alkaline cell stacks; the gases rise with the electrolyte into their separators. A full oxygen tank is vented by its relief valve. The cells glow and bubble while it runs. |
 
 The effluent never has to be dumped: it goes back into the Chemical Processing Unit as recycled liquor (saving reagent), through the Metal Extractor, or is neutralized with quicklime in IE's Mixer. The Filtration Unit filters the neutralized sludge into Neutralization Cake and plain water, and the cake replaces clay in IE's concrete.
 
@@ -86,13 +90,13 @@ A branch after machine 3, the **Metal Extractor** (machine 3.5, playable), recov
 in an electrolytic cell before it is treated.
 
 Line 2 (enrichment) makes its own hydrofluoric acid: the **Sulfuric Acid Unit** feeds the **Hydrofluoric Acid Kiln**
-(both playable), whose acid goes into the planned Conversion Unit, and the **Electrolyzer** (playable) makes its
+(both playable), whose acid goes into the Conversion Unit (in development: the first machine of line 2 that makes uranium hexafluoride), and the **Electrolyzer** (playable) makes its
 hydrogen. The kiln's gypsum goes back to quicklime and
 sulfur in IE's Arc Furnace, into concrete, or into building blocks.
 
 ## Roadmap
 
-**Line 1: uranium powder to yellowcake**
+**Line 1: uranium powder to yellowcake (released in 0.1.0)**
 - [x] Chemical Processing Unit
 - [x] Filtration Unit
 - [x] Chemical Separation Unit (solvent extraction: extraction and stripping stages)
@@ -107,13 +111,13 @@ sulfur in IE's Arc Furnace, into concrete, or into building blocks.
 - [ ] Contamination system with four kinds of exposure: radiological, chemical, particulate (inhaled dust) and physical (fire, pressure, heat, explosion)
 - [ ] Protective equipment, shielding, dosimetry and decontamination
 
-**Line 2: conversion and enrichment**
+**Line 2: conversion and enrichment (0.2.0)**
 - [x] Sulfuric Acid Unit (contact process)
 - [x] Fluorite ore
 - [x] Hydrofluoric Acid Kiln
 - [x] Electrolyzer (hydrogen and oxygen)
-- [ ] Conversion Unit
-- [ ] Enrichment Unit
+- [ ] Conversion Unit (in development)
+- [ ] Enrichment Unit (with a depleted-uranium branch)
 
 **Later stages**
 - [ ] Fuel fabrication
@@ -131,7 +135,7 @@ sulfur in IE's Arc Furnace, into concrete, or into building blocks.
 
 ## Installation
 
-There are no public releases yet. Development builds are attached to [Releases](../../releases) when available.
+Download the JAR of the latest pre-release from [Releases](../../releases) (currently 0.1.0, line 1). Line 2 machines need a build from source until 0.2.0 is released.
 
 1. Install Minecraft Forge for 1.12.2.
 2. Put Immersive Engineering and the Immersive Nuclear JAR in the `mods` folder.
