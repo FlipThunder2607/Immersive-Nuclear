@@ -10,7 +10,6 @@ classes/
 *.iml
 *.ipr
 *.iws
-.vscode/
 .settings/
 .classpath
 .project
