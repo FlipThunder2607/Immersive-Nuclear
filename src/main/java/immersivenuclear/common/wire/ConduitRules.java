@@ -11,6 +11,8 @@ public final class ConduitRules
 	public static final int LANES = 8;
 	/** The lanes the power wire takes. */
 	public static final int POWER_LANES = 0b1111;
+	/** The lanes the data cables keep to beside a power wire. */
+	public static final int DATA_LANES = 0b11110000;
 	/** Blocks of conduit one item of wire covers. */
 	public static final int BLOCKS_PER_ITEM = 3;
 
@@ -32,14 +34,49 @@ public final class ConduitRules
 		return Math.max(1, (length + BLOCKS_PER_ITEM - 1) / BLOCKS_PER_ITEM);
 	}
 
-	/** The lane for a new wire, given the lanes taken along its way (one bit each), or -1 if there is none: a wire keeps its lane from end to end. */
-	public static int pickLane(int used, int kind)
+	/**
+	 * The lane of a new wire at each joint along its way, given the lanes taken there (one bit each), or null if it does not fit. The power wire has its own lanes. A data cable stays in a lane as long as it can
+	 * and moves over where it must, keeping out of the power wire's lanes while there is another: otherwise a conduit with room could be left with no lane free from end to end.
+	 */
+	public static int[] assignLanes(int[] used, int kind)
 	{
-		if(kind == POWER)
-			return (used & POWER_LANES) == 0 ? 0 : -1;
-		for(int lane = LANES - 1; lane >= 0; lane--)
-			if((used & 1 << lane) == 0)
-				return lane;
-		return -1;
+		int[] lanes = new int[used.length];
+		for(int i = 0; i < used.length; i++)
+		{
+			if(kind == POWER)
+			{
+				if((used[i] & POWER_LANES) != 0)
+					return null;
+				lanes[i] = 0;
+			}
+			else if(i > 0 && (used[i] & 1 << lanes[i - 1]) == 0)
+				lanes[i] = lanes[i - 1];
+			else
+			{
+				lanes[i] = longestRun(used, i);
+				if(lanes[i] < 0)
+					return null;
+			}
+		}
+		return lanes;
+	}
+
+	/** The free lane at that joint which stays free the furthest, the rightmost of those. -1 if none is free. */
+	private static int longestRun(int[] used, int from)
+	{
+		boolean outside = (used[from] & DATA_LANES) != DATA_LANES;
+		int best = -1, bestRun = 0;
+		for(int lane = LANES - 1; lane >= (outside ? 4 : 0); lane--)
+		{
+			int run = 0;
+			while(from + run < used.length && (used[from + run] & 1 << lane) == 0)
+				run++;
+			if(run > bestRun)
+			{
+				best = lane;
+				bestRun = run;
+			}
+		}
+		return best;
 	}
 }

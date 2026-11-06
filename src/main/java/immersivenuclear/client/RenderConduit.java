@@ -20,7 +20,8 @@ import net.minecraft.util.EnumFacing;
 /**
  * The wires laid in a conduit. Each lies in its lane: a wire running east-west is offset along z, one running north-south along x, one running up or down along both, by the same amount, so all three meet at
  * one point. Lane 0 is south and east, and the wires keep their sides through every turn and crossing (the user, 06/11/2026). That makes them cross each other there: in a block where wires run both ways, the
- * east-west ones climb over the others across the tray and come back down to the bed at its edge. Data cables fill a lane, the power wire four, so a full conduit has no gaps.
+ * east-west ones climb over the others across the tray and come back down to the bed at its edge. Data cables fill a lane, the power wire four, so a full conduit has no gaps. A data cable that changes lanes
+ * in a block crosses over everything, one level higher.
  */
 public class RenderConduit extends TileEntitySpecialRenderer<TileConduit>
 {
@@ -28,7 +29,7 @@ public class RenderConduit extends TileEntitySpecialRenderer<TileConduit>
 	/** Half the height of a wire, and half the width of a data cable and of the power wire. */
 	private static final float HALF = 0.5f * PX, HALF_DATA = 0.48f * PX, HALF_POWER = 1.96f * PX;
 	/** Middle of a wire lying on the tray's bed, and of one climbing over the others. */
-	private static final float LOW = 6 * PX + HALF, HIGH = LOW + PX;
+	private static final float LOW = 6 * PX + HALF, HIGH = LOW + PX, TOP = HIGH + PX;
 	/** The middle of lane 0, the middle of the power wire, and where the lanes begin and end across the tray. */
 	private static final float FIRST_LANE = 11.5f * PX, POWER_MIDDLE = 10 * PX, TRAY_START = 4 * PX, TRAY_END = 12 * PX;
 
@@ -54,7 +55,7 @@ public class RenderConduit extends TileEntitySpecialRenderer<TileConduit>
 		int lanes = 0;    // Branches of the power wire are one wire
 		for(TileConduit.Wire wire : wires)
 		{
-			lanes |= 1 << wire.lane;
+			lanes |= 1 << wire.laneA | 1 << wire.laneB;
 			eastWest |= wire.sideA.getAxis() == EnumFacing.Axis.X || wire.sideB.getAxis() == EnumFacing.Axis.X;
 			northSouth |= wire.sideA.getAxis() == EnumFacing.Axis.Z || wire.sideB.getAxis() == EnumFacing.Axis.Z;
 		}
@@ -63,10 +64,20 @@ public class RenderConduit extends TileEntitySpecialRenderer<TileConduit>
 		{
 			TextureAtlasSprite sprite = wire.kind == ConduitRules.POWER ? power : data;
 			boolean isPower = wire.kind == ConduitRules.POWER;
-			float across = isPower ? POWER_MIDDLE : FIRST_LANE - wire.lane * PX, half = isPower ? HALF_POWER : HALF_DATA;
+			float acrossA = isPower ? POWER_MIDDLE : FIRST_LANE - wire.laneA * PX, acrossB = isPower ? POWER_MIDDLE : FIRST_LANE - wire.laneB * PX, half = isPower ? HALF_POWER : HALF_DATA;
 			boolean a = wire.sideA.getAxis() == EnumFacing.Axis.X, b = wire.sideB.getAxis() == EnumFacing.Axis.X;
-			arm(buffer, sprite, across, half, wire.sideA, crossing);
-			arm(buffer, sprite, across, half, wire.sideB, crossing);
+			arm(buffer, sprite, acrossA, half, wire.sideA, crossing);
+			arm(buffer, sprite, acrossB, half, wire.sideB, crossing);
+			if(wire.laneA != wire.laneB)
+			{
+				float low = Math.min(acrossA, acrossB), high = Math.max(acrossA, acrossB);
+				box(buffer, sprite, acrossA - half, LOW - HALF, acrossA - half, acrossA + half, TOP + HALF, acrossA + half);
+				box(buffer, sprite, acrossB - half, LOW - HALF, acrossB - half, acrossB + half, TOP + HALF, acrossB + half);
+				box(buffer, sprite, acrossA - half, TOP - HALF, low - half, acrossA + half, TOP + HALF, high + half);
+				box(buffer, sprite, low - half, TOP - HALF, acrossB - half, high + half, TOP + HALF, acrossB + half);
+				continue;
+			}
+			float across = acrossA;
 			// A wire turning off the east-west run comes down at the meeting point
 			if(crossing && a != b)
 				box(buffer, sprite, across - half, LOW - HALF, across - half, across + half, HIGH + HALF, across + half);

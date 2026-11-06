@@ -110,11 +110,17 @@ public final class ConduitWiring
 			return say(player, route(world, seeds, from, to, kind, true) == null ? "no_path" : "full");
 		// The conduit a branch leaves from has the wire already: only the new ones count
 		boolean branch = route.seed.link != null;
-		int used = 0;
-		for(int i = branch ? 1 : 0; i < route.path.size(); i++)
-			used |= tile(world, route.path.get(i)).usedLanes();
-		int lane = ConduitRules.pickLane(used, kind);
-		if(lane < 0)
+		int length = route.path.size();
+		int[] used = new int[length + 1];
+		used[0] = branch ? 0 : tile(world, route.path.get(0)).usedLanes(route.seed.side);
+		for(int i = 1; i < length; i++)
+		{
+			EnumFacing d = towards(route.path.get(i - 1), route.path.get(i));
+			used[i] = tile(world, route.path.get(i - 1)).usedLanes(d) | tile(world, route.path.get(i)).usedLanes(d.getOpposite());
+		}
+		used[length] = tile(world, route.path.get(length - 1)).usedLanes(route.last);
+		int[] lanes = ConduitRules.assignLanes(used, kind);
+		if(lanes == null)
 			return say(player, "full");
 		int items = 0;
 		if(!player.capabilities.isCreativeMode)
@@ -137,7 +143,7 @@ public final class ConduitWiring
 				BlockPos conduit = route.seed.link.path.get(i);
 				TileConduit.Wire wire = wireOf(world, route.seed.link, i);
 				if(wire != null)
-					tile(world, conduit).addWire(new TileConduit.Wire(id, kind, wire.lane, wire.sideA, wire.sideB));
+					tile(world, conduit).addWire(new TileConduit.Wire(id, kind, wire.laneA, wire.laneB, wire.sideA, wire.sideB));
 				whole.add(conduit);
 			}
 		for(int i = 0; i < route.path.size(); i++)
@@ -145,7 +151,7 @@ public final class ConduitWiring
 			BlockPos conduit = route.path.get(i);
 			EnumFacing a = i == 0 ? route.seed.side : towards(conduit, route.path.get(i - 1));
 			EnumFacing b = i == route.path.size() - 1 ? route.last : towards(conduit, route.path.get(i + 1));
-			tile(world, conduit).addWire(new TileConduit.Wire(id, kind, lane, a, b));
+			tile(world, conduit).addWire(new TileConduit.Wire(id, kind, lanes[i], lanes[i + 1], a, b));
 			whole.add(conduit);
 		}
 		links.add(new ConduitLinks.Link(id, kind, first, second, whole, items));

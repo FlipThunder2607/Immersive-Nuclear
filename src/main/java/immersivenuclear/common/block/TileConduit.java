@@ -14,17 +14,18 @@ import net.minecraft.util.EnumFacing;
 /** What a conduit keeps besides its support: the sides cut with the Engineer's Hammer, which do not connect (a new conduit has none cut), and the wires laid in it, to draw them and to count them. */
 public class TileConduit extends TileEntity
 {
-	/** A wire through this block: its lane across the tray and the two sides it leaves by. The whole wire is in ConduitLinks, under the same id. */
+	/** A wire through this block: the two sides it leaves by and its lane across the tray at each. The whole wire is in ConduitLinks, under the same id. */
 	public static class Wire
 	{
-		public final int id, kind, lane;
+		public final int id, kind, laneA, laneB;
 		public final EnumFacing sideA, sideB;
 
-		public Wire(int id, int kind, int lane, EnumFacing sideA, EnumFacing sideB)
+		public Wire(int id, int kind, int laneA, int laneB, EnumFacing sideA, EnumFacing sideB)
 		{
 			this.id = id;
 			this.kind = kind;
-			this.lane = lane;
+			this.laneA = laneA;
+			this.laneB = laneB;
 			this.sideA = sideA;
 			this.sideB = sideB;
 		}
@@ -60,12 +61,17 @@ public class TileConduit extends TileEntity
 		return null;
 	}
 
-	/** The lanes taken, one bit each. */
-	public int usedLanes()
+	/** The lanes taken on that side, one bit each. */
+	public int usedLanes(EnumFacing side)
 	{
 		int used = 0;
 		for(Wire wire : wires)
-			used |= wire.kind == ConduitRules.POWER ? ConduitRules.POWER_LANES : 1 << wire.lane;
+		{
+			if(wire.sideA == side)
+				used |= wire.kind == ConduitRules.POWER ? ConduitRules.POWER_LANES : 1 << wire.laneA;
+			if(wire.sideB == side)
+				used |= wire.kind == ConduitRules.POWER ? ConduitRules.POWER_LANES : 1 << wire.laneB;
+		}
 		return used;
 	}
 
@@ -113,9 +119,13 @@ public class TileConduit extends TileEntity
 		super.readFromNBT(nbt);
 		cut = nbt.getByte("cut");
 		wires.clear();
-		int[] saved = nbt.getIntArray("wires");
-		for(int i = 0; i + 4 < saved.length; i += 5)
-			wires.add(new Wire(saved[i], saved[i + 1], saved[i + 2], EnumFacing.byIndex(saved[i + 3]), EnumFacing.byIndex(saved[i + 4])));
+		int[] saved = nbt.getIntArray("wireLanes");
+		for(int i = 0; i + 5 < saved.length; i += 6)
+			wires.add(new Wire(saved[i], saved[i + 1], saved[i + 2], saved[i + 3], EnumFacing.byIndex(saved[i + 4]), EnumFacing.byIndex(saved[i + 5])));
+		// Saved before a wire could change lanes
+		int[] old = nbt.getIntArray("wires");
+		for(int i = 0; i + 4 < old.length; i += 5)
+			wires.add(new Wire(old[i], old[i + 1], old[i + 2], old[i + 2], EnumFacing.byIndex(old[i + 3]), EnumFacing.byIndex(old[i + 4])));
 	}
 
 	@Override
@@ -123,17 +133,18 @@ public class TileConduit extends TileEntity
 	{
 		super.writeToNBT(nbt);
 		nbt.setByte("cut", (byte)cut);
-		int[] saved = new int[wires.size() * 5];
+		int[] saved = new int[wires.size() * 6];
 		for(int i = 0; i < wires.size(); i++)
 		{
 			Wire wire = wires.get(i);
-			saved[i * 5] = wire.id;
-			saved[i * 5 + 1] = wire.kind;
-			saved[i * 5 + 2] = wire.lane;
-			saved[i * 5 + 3] = wire.sideA.getIndex();
-			saved[i * 5 + 4] = wire.sideB.getIndex();
+			saved[i * 6] = wire.id;
+			saved[i * 6 + 1] = wire.kind;
+			saved[i * 6 + 2] = wire.laneA;
+			saved[i * 6 + 3] = wire.laneB;
+			saved[i * 6 + 4] = wire.sideA.getIndex();
+			saved[i * 6 + 5] = wire.sideB.getIndex();
 		}
-		nbt.setIntArray("wires", saved);
+		nbt.setIntArray("wireLanes", saved);
 		return nbt;
 	}
 

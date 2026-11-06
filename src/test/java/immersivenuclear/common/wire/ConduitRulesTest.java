@@ -21,17 +21,27 @@ public class ConduitRulesTest
 		expect(cost(3), 1, "cost of 3 blocks");
 		expect(cost(4), 2, "cost of 4 blocks");
 		expect(cost(9), 3, "cost of 9 blocks");
-		// Power on the left, data from the right
-		expect(pickLane(0, POWER), 0, "power in its lanes");
-		expect(pickLane(0b11110000, POWER), 0, "power beside 4 data cables");
-		expect(pickLane(1, POWER), -1, "the power lanes taken");
-		expect(pickLane(0b1000, POWER), -1, "a data cable in the power lanes");
-		expect(pickLane(0, DATA), 7, "data on the far right");
-		expect(pickLane(0b10000000, DATA), 6, "the next data cable");
-		expect(pickLane(0b11110001, DATA), 3, "data beside the power wire");
-		expect(pickLane(0b11111110, DATA), 0, "the last lane");
-		expect(pickLane(0b11111111, DATA), -1, "no lane left");
+		// Power in its lanes, data from the far side
+		lanes(new int[]{0}, POWER, 0);
+		lanes(new int[]{0b11110000, 0}, POWER, 0, 0);
+		lanes(new int[]{0, 1}, POWER, (int[])null);
+		lanes(new int[]{0b1000}, POWER, (int[])null);
+		lanes(new int[]{0, 0, 0}, DATA, 7, 7, 7);
+		lanes(new int[]{0b10000000}, DATA, 6);
+		lanes(new int[]{0b11110001}, DATA, 3);
+		lanes(new int[]{0b11111110}, DATA, 0);
+		lanes(new int[]{0b11111111}, DATA, (int[])null);
+		// 4 data cables, then a power wire and 2 data cables: room in each, but no lane free in both (dev world, 06/11/2026)
+		lanes(new int[]{0b11110000, 0b11110000, 0b11001111, 0b11001111}, DATA, 3, 3, 5, 5);
+		// It takes the lane that lasts
+		lanes(new int[]{0b00000000, 0b10000000, 0b10000000}, DATA, 6, 6, 6);
 		System.out.println("Conduit rules OK");
+	}
+
+	static void lanes(int[] used, int kind, int... expected)
+	{
+		if(!java.util.Arrays.equals(assignLanes(used, kind), expected))
+			throw new AssertionError(java.util.Arrays.toString(used) + ": expected " + java.util.Arrays.toString(expected) + ", got " + java.util.Arrays.toString(assignLanes(used, kind)));
 	}
 
 	static void check(boolean ok, String what)
