@@ -57,6 +57,8 @@ public class MultiblockFilterPress implements IMultiblock
 			case 'F': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
 			case 'R': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
 			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
+			case 'X': return new ItemStack(INContent.blockEngineering[3]);
+			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -272,8 +274,9 @@ public class MultiblockFilterPress implements IMultiblock
 		if(materials == null)
 		{
 			Map<Character, Integer> counts = new LinkedHashMap<>();
-			for(char c : "abSlsFCHGBPRQ".toCharArray())
+			for(char c : "abSlsFCHGBPRQXp".toCharArray())
 				counts.put(c, c == 'P' ? count(c) / 2 : count(c));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

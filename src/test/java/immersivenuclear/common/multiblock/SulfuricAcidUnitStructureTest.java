@@ -9,8 +9,8 @@ public class SulfuricAcidUnitStructureTest
 	{
 		// Counts read from the dev world build (x200..204, y4..12, z458..464, 31/10, third build)
 		expect(count('s'), 12, "steel scaffolding");
-		expect(count('S'), 18, "steel sheetmetal");
-		expect(count('I'), 2, "iron sheetmetal");
+		expect(count('S'), 20, "steel sheetmetal");
+		expect(count('I'), 0, "iron sheetmetal");
 		expect(count('b'), 3, "steel sheetmetal slabs");
 		expect(count('K'), 11, "blast bricks");
 		expect(count('B'), 43, "metal barrels");
@@ -45,7 +45,7 @@ public class SulfuricAcidUnitStructureTest
 		// The sounds play from these parts (TileSulfuricAcidUnit.BURNER_PART, PUMP_PART)
 		expect(get(1, 0, 2), 'K', "burner sound from the burner's brick");
 		expect(get(3, 0, 5), 'B', "pump sound from the pump tank");
-		expect(get(3, 3, 1), 'I', "relief valve's hiss from the steam drum");
+		expect(get(3, 3, 1), 'S', "relief valve's hiss from the steam drum");
 		for(int[] p : PORTS)
 		{
 			if(get(p[0], p[1], p[2]) == '.')

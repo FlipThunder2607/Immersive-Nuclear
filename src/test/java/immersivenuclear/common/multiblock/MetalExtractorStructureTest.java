@@ -18,8 +18,9 @@ public class MetalExtractorStructureTest
 		expect(count('P'), 2, "fluid pump halves");
 		expect(count('p'), 1, "fluid pipes");
 		expect(count('C'), 3, "HV connectors");
-		expect(count('Q'), 8, "chemical engineering");
+		expect(count('Q'), 6, "chemical engineering");
 		expect(count('T'), 1, "steel blocks");
+		expect(count('X'), 2, "radioactive handling");
 		expect(totalParts(), 44, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");

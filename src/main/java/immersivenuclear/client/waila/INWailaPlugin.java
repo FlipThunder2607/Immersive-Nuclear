@@ -32,6 +32,18 @@ public class INWailaPlugin implements IWailaPlugin
 		machine(registrar, BlockSulfuricAcidUnit.class, () -> INContent.itemSulfuricAcidUnit);
 		machine(registrar, BlockHFKiln.class, () -> INContent.itemHFKiln);
 		machine(registrar, BlockElectrolyzer.class, () -> INContent.itemElectrolyzer);
+		machine(registrar, immersivenuclear.common.block.BlockConversionUnit.class, () -> INContent.itemConversionUnit);
+		registrar.registerStackProvider(new IWailaDataProvider()
+		{
+			@Override
+			public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config)
+			{
+				// Hwyla's accessor can still hold the block from before the structure formed: ask the world, and take no stack from anything else
+				Block block = accessor.getWorld().getBlockState(accessor.getPosition()).getBlock();
+				return block instanceof immersivenuclear.common.block.BlockComputerMachine
+						? new ItemStack(INContent.itemComputerMachines[((immersivenuclear.common.block.BlockComputerMachine)block).structure.index]) : ItemStack.EMPTY;
+			}
+		}, immersivenuclear.common.block.BlockComputerMachine.class);
 	}
 
 	static void machine(IWailaRegistrar registrar, Class<? extends Block> block, java.util.function.Supplier<Item> item)

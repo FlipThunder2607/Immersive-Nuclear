@@ -17,13 +17,13 @@ public class PrecipitationUnitStructureTest
 		expect(count('r'), 2, "radiators");
 		expect(count('B'), 16, "metal barrels");
 		expect(count('p'), 2, "fluid pipes");
-		expect(count('S'), 15, "steel sheetmetal");
-		expect(count('I'), 5, "iron sheetmetal");
-		expect(count('a') + count('A') + count('D'), 2, "iron sheetmetal slabs");
-		expect(count('b'), 4, "steel sheetmetal slabs");
-		expect(count('Q'), 8, "chemical engineering");
-		expect(count('X'), 2, "radioactive handling");
-		expect(totalParts(), 93, "total parts");
+		expect(count('S'), 19, "steel sheetmetal");
+		expect(count('I'), 0, "iron sheetmetal");
+		expect(count('a') + count('A') + count('D'), 0, "iron sheetmetal slabs");
+		expect(count('b') + count('U'), 6, "steel sheetmetal slabs");
+		expect(count('Q'), 4, "chemical engineering");
+		expect(count('X'), 6, "radioactive handling");
+		expect(totalParts(), 92, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'Q', "master is the tank's core (chemical engineering, 01/11)");

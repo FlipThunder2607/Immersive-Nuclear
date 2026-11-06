@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "immersivenuclear:paper_tape_unit"
+  },
+  "facing=east": {
+   "model": "immersivenuclear:paper_tape_unit",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "immersivenuclear:paper_tape_unit",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "immersivenuclear:paper_tape_unit",
+   "y": 270
+  }
+ }
+}

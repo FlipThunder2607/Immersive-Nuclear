@@ -58,6 +58,7 @@ public class HazardTooltips
 		for(net.minecraftforge.fluids.Fluid f : new net.minecraftforge.fluids.Fluid[]{INContent.fluidUF6, INContent.fluidUF6Low, INContent.fluidUF6Medium, INContent.fluidUF6High})
 			fluids.put(f.getName(), new String[]{RAD, CORR, TOXIC});
 		fluids.put(INContent.fluidUF6Depleted.getName(), new String[]{TRACE, CORR, TOXIC});
+		fluids.put(INContent.fluidFluorinatedEffluent.getName(), new String[]{CORR, TOXIC, TRACE});
 	}
 
 	@SubscribeEvent

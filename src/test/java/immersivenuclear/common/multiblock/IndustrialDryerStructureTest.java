@@ -8,7 +8,7 @@ public class IndustrialDryerStructureTest
 	public static void main(String[] args)
 	{
 		// Counts read from the dev world build (x200..204, y4..7, z449..455, 27/10, fourth layer and front fence)
-		expect(count('s'), 10, "steel scaffolding");
+		expect(count('s'), 11, "steel scaffolding");
 		expect(count('F'), 3, "furnace heaters");
 		expect(count('l'), 4, "light engineering");
 		expect(count('H'), 3, "heavy engineering");
@@ -20,9 +20,9 @@ public class IndustrialDryerStructureTest
 		expect(count('I'), 12, "iron sheetmetal");
 		expect(count('c'), 5, "conveyors");
 		expect(count('f'), 6, "steel fences");
-		expect(count('X'), 3, "radioactive handling");
+		expect(count('X'), 2, "radioactive handling");
 		expect(count('a'), 11, "iron sheetmetal slabs");
-		expect(count('b'), 3, "steel sheetmetal slabs");
+		expect(count('b'), 2, "steel sheetmetal slabs");
 		expect(count('T'), 1, "steel blocks");
 		expect(totalParts(), 86, "total parts");
 

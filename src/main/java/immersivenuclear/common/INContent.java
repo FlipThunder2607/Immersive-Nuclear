@@ -78,8 +78,33 @@ public class INContent
 	public static BlockSulfuricAcidUnit blockSulfuricAcidUnit;
 	public static BlockHFKiln blockHFKiln;
 	public static immersivenuclear.common.block.BlockElectrolyzer blockElectrolyzer;
+	public static immersivenuclear.common.block.BlockConversionUnit blockConversionUnit;
 	public static BlockConcentrateDrum blockConcentrateDrum;
 	public static BlockLeadedGlass blockLeadedGlass;
+
+	/** The single-block devices of the computers: only models for now, placeable on the ground, no function (the user, 04/11/2026). Registry names. */
+	public static final String[] COMPUTER_DEVICES = {"card_reader", "card_punch", "paper_tape_unit", "crt_terminal", "chart_recorder", "wall_panel"};
+	public static Block[] blockComputerDevices;
+	public static Item[] itemComputerDevices;
+	/** The Conduit: the computers' cable tray, which adapts to its surroundings and connects by itself (BlockConduit). */
+	public static immersivenuclear.common.block.BlockConduit blockConduit;
+	/** The data cable coil block, a building block of the computers. */
+	public static immersivenuclear.common.block.BlockDataCoil blockDataCoil;
+	public static Item itemDataCoil;
+	/** The computers' multiblocks (only their models for now), in the order of ComputerStructure.ALL. The items are icons, like the machines'. */
+	public static immersivenuclear.common.block.BlockComputerMachine[] blockComputerMachines;
+	public static Item[] itemComputerMachines;
+	public static Item itemConduit;
+
+	/** The modules of the computers' panels (console and wall panel): {id, kind (0 command, 1 indicator, 2 universal), cells wide, cells high}. Only items for now.
+	 * Kept in step with ferramentas/icones_modulos_painel.py. */
+	public static final Object[][] PANEL_MODULES = {
+			{"button", 0, 3, 3}, {"lit_button", 0, 3, 3}, {"latching_button", 0, 3, 3}, {"lever", 0, 3, 5}, {"selector_switch", 0, 4, 4}, {"key_switch", 0, 4, 4},
+			{"knob", 0, 4, 4}, {"slider", 0, 3, 10}, {"emergency_stop", 0, 6, 6}, {"scram_switch", 0, 5, 5}, {"numeric_keypad", 0, 6, 8}, {"redstone_input", 0, 3, 3},
+			{"lamp", 1, 2, 2}, {"alarm_lamp", 1, 3, 3}, {"siren", 1, 4, 4}, {"bell", 1, 3, 3}, {"pointer_gauge", 1, 6, 6}, {"column_level", 1, 3, 10}, {"led_bar", 1, 10, 2},
+			{"screen", 1, 8, 6}, {"digits", 1, 6, 3}, {"rod_position", 1, 6, 6}, {"neutron_flux", 1, 6, 6}, {"synchroscope", 1, 6, 6}, {"redstone_output", 1, 3, 3},
+			{"lit_window", 2, 6, 3}, {"label", 2, 8, 2}, {"color_plate", 2, 4, 4}};
+	public static Item[] itemPanelModules;
 
 	/** The mod's creative tab; JEI also lists what is in it. Laid out in groups, one after the other (the user,
 	 * 01/11): structure, minerals, line 1, the extractor's plates, line 2, building blocks, engineering parts, computer
@@ -114,6 +139,14 @@ public class INContent
 			java.util.List<Item> computer = new java.util.ArrayList<>(java.util.Arrays.asList(itemComputerParts));
 			computer.add(itemLinkConnector);
 			computer.add(itemLinkRelay);
+			if(itemConduit != null)
+				computer.add(itemConduit);
+		if(itemDataCoil != null)
+			computer.add(itemDataCoil);
+			if(itemComputerDevices != null)
+				computer.addAll(java.util.Arrays.asList(itemComputerDevices));
+			if(itemPanelModules != null)
+				computer.addAll(java.util.Arrays.asList(itemPanelModules));
 			group(list, computer.toArray(new Item[0]), done);
 			// The buckets of our fluids
 			int start = list.size();
@@ -165,6 +198,8 @@ public class INContent
 
 	/** The same for the Electrolyzer. */
 	public static Item itemElectrolyzer;
+	/** The same for the Conversion Unit. */
+	public static Item itemConversionUnit;
 	public static Item itemConcentrateDrum;
 
 	/** Processing Reagent: consumed one per cycle by the Chemical Processing Unit. */
@@ -235,6 +270,8 @@ public class INContent
 	public static Fluid fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid, fluidHydrogen, fluidOxygen;
 	/** The uranium hexafluorides of line 2: natural (from the conversion), enriched in three grades and depleted. */
 	public static Fluid fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6Depleted;
+	/** What the Conversion Unit's fluorination leaves: spent hydrofluoric acid with the fluorides of the impurities. */
+	public static Fluid fluidFluorinatedEffluent;
 
 	/** Every fluid of the mod, for texture stitching and the hazard notes. */
 	public static Fluid[] fluids;
@@ -390,10 +427,11 @@ public class INContent
 		fluidUF6Medium = fluid("uranium_hexafluoride_medium", 3000, 600);
 		fluidUF6High = fluid("uranium_hexafluoride_high", 3000, 600);
 		fluidUF6Depleted = fluid("depleted_uranium_hexafluoride", 3000, 600);
+		fluidFluorinatedEffluent = fluid("fluorinated_effluent", 1200, 1100);
 		if(fluidSteam == null)
 			constructFluids();
 		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate, fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid, fluidHydrogen, fluidOxygen,
-			fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6Depleted};
+			fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6Depleted, fluidFluorinatedEffluent};
 	}
 
 	/** A building block of the finished agglomerate: heavy like the raw one and IE's concrete (provisional values). */
@@ -464,6 +502,8 @@ public class INContent
 		event.getRegistry().register(itemHFKiln);
 		itemElectrolyzer = new Item().setRegistryName(ImmersiveNuclear.MODID, "electrolyzer").setTranslationKey(ImmersiveNuclear.MODID + ".electrolyzer");
 		event.getRegistry().register(itemElectrolyzer);
+		itemConversionUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "conversion_unit").setTranslationKey(ImmersiveNuclear.MODID + ".conversion_unit");
+		event.getRegistry().register(itemConversionUnit);
 		// The order of registration is the order of JEI's list and of the creative tab: the machines (above), then each
 		// line's materials in the order the process meets them, then building blocks, engineering and computer parts
 		// Line 1: supplies, the main path, residues and their treatment, the Metal Extractor's
@@ -534,6 +574,29 @@ public class INContent
 		event.getRegistry().register(itemLinkConnector);
 		itemLinkRelay = new ItemBlock(blockLinkRelay).setRegistryName(blockLinkRelay.getRegistryName());
 		event.getRegistry().register(itemLinkRelay);
+		itemDataCoil = new ItemBlock(blockDataCoil).setRegistryName(blockDataCoil.getRegistryName());
+		event.getRegistry().register(itemDataCoil);
+		itemConduit = new ItemBlock(blockConduit).setRegistryName(blockConduit.getRegistryName());
+		event.getRegistry().register(itemConduit);
+		itemComputerDevices = new Item[COMPUTER_DEVICES.length];
+		for(int i = 0; i < COMPUTER_DEVICES.length; i++)
+		{
+			itemComputerDevices[i] = new ItemBlock(blockComputerDevices[i]).setRegistryName(blockComputerDevices[i].getRegistryName());
+			event.getRegistry().register(itemComputerDevices[i]);
+		}
+		itemComputerMachines = new Item[immersivenuclear.common.multiblock.ComputerStructure.ALL.length];
+		for(immersivenuclear.common.multiblock.ComputerStructure s : immersivenuclear.common.multiblock.ComputerStructure.ALL)
+		{
+			itemComputerMachines[s.index] = new Item().setRegistryName(ImmersiveNuclear.MODID, s.name).setTranslationKey(ImmersiveNuclear.MODID + "." + s.name);
+			event.getRegistry().register(itemComputerMachines[s.index]);
+		}
+		itemPanelModules = new Item[PANEL_MODULES.length];
+		for(int i = 0; i < PANEL_MODULES.length; i++)
+		{
+			Object[] m = PANEL_MODULES[i];
+			itemPanelModules[i] = new immersivenuclear.common.item.ItemPanelModule((String)m[0], (Integer)m[1], (Integer)m[2], (Integer)m[3]);
+			event.getRegistry().register(itemPanelModules[i]);
+		}
 	}
 
 	@SubscribeEvent
@@ -566,8 +629,35 @@ public class INContent
 		blockElectrolyzer = new immersivenuclear.common.block.BlockElectrolyzer();
 		event.getRegistry().register(blockElectrolyzer);
 		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileElectrolyzer.class, new ResourceLocation(ImmersiveNuclear.MODID, "electrolyzer"));
+		blockConversionUnit = new immersivenuclear.common.block.BlockConversionUnit();
+		event.getRegistry().register(blockConversionUnit);
+		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileConversionUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "conversion_unit"));
 		blockLeadedGlass = new BlockLeadedGlass();
 		event.getRegistry().register(blockLeadedGlass);
+		// The computers' single-block devices (selection boxes in blocks, for a device facing north; the two with a glass window are translucent)
+		double[][] boxes = {{0.05, 0, 0.1, 0.95, 0.98, 1}, {0.05, 0, 0.1, 0.95, 0.98, 1}, {0.05, 0, 0.1, 0.95, 1, 1}, {0.035, 0, 0.045, 0.965, 1, 1}, {0.05, 0, 0.08, 0.95, 0.85, 1}, {0, 0, 0, 1, 1, 1}};
+		boolean[] glass = {false, true, false, false, true, false};
+		blockComputerDevices = new Block[COMPUTER_DEVICES.length];
+		for(int i = 0; i < COMPUTER_DEVICES.length; i++)
+		{
+			double[] b = boxes[i];
+			blockComputerDevices[i] = new immersivenuclear.common.block.BlockComputerDevice(COMPUTER_DEVICES[i], new net.minecraft.util.math.AxisAlignedBB(b[0], b[1], b[2], b[3], b[4], b[5]), glass[i]);
+			if(COMPUTER_DEVICES[i].equals("wall_panel"))
+				((immersivenuclear.common.block.BlockComputerDevice)blockComputerDevices[i]).noConduitEntry();
+			event.getRegistry().register(blockComputerDevices[i]);
+		}
+		blockDataCoil = new immersivenuclear.common.block.BlockDataCoil();
+		event.getRegistry().register(blockDataCoil);
+		blockConduit = new immersivenuclear.common.block.BlockConduit();
+		event.getRegistry().register(blockConduit);
+		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileConduit.class, new ResourceLocation(ImmersiveNuclear.MODID, "conduit"));
+		blockComputerMachines = new immersivenuclear.common.block.BlockComputerMachine[immersivenuclear.common.multiblock.ComputerStructure.ALL.length];
+		for(immersivenuclear.common.multiblock.ComputerStructure s : immersivenuclear.common.multiblock.ComputerStructure.ALL)
+		{
+			blockComputerMachines[s.index] = new immersivenuclear.common.block.BlockComputerMachine(s);
+			event.getRegistry().register(blockComputerMachines[s.index]);
+		}
+		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileComputerMachine.class, new ResourceLocation(ImmersiveNuclear.MODID, "mainframe"));
 		blockConcentrateDrum = new BlockConcentrateDrum();
 		event.getRegistry().register(blockConcentrateDrum);
 		GameRegistry.registerTileEntity(TileConcentrateDrum.class, new ResourceLocation(ImmersiveNuclear.MODID, "concentrate_drum"));
@@ -624,6 +714,9 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockSulfuricAcidUnit.instance);
 		MultiblockHandler.registerMultiblock(MultiblockHFKiln.instance);
 		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockElectrolyzer.instance);
+		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockConversionUnit.instance);
+		for(immersivenuclear.common.multiblock.MultiblockComputer m : immersivenuclear.common.multiblock.MultiblockComputer.ALL)
+			MultiblockHandler.registerMultiblock(m);
 		fluorite();
 		mixerRecipes();
 		cokeOvenRecipes();

@@ -246,6 +246,7 @@ public class MultiblockChemicalProcessor implements IMultiblock
 			Map<Character, Integer> counts = new LinkedHashMap<>();
 			for(char c : "BFlHDsPbAGR".toCharArray())
 				counts.put(c, count(c));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

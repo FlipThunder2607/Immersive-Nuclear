@@ -32,7 +32,7 @@ public final class HFKilnStructure
 	 * p fluid pipe, Q chemical engineering (the acid-proof casing: the pre-mixer, the feed and discharge heads' feet, the
  * distillation column's base), . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..204, y4..6, z467..473 (01/11/2026: chemical engineering blocks, a heavy engineering under the pre-mixer's motor). Updated from the user\'s new build (01/11/2026).
+	 * Read from the dev world build, x200..204, y4..6, z467..473 (01/11/2026: chemical engineering blocks, a heavy engineering under the pre-mixer's motor). Updated from the user\'s new build (01/11/2026). Updated from the user\'s new build (01/11/2026).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
@@ -44,21 +44,21 @@ public final class HFKilnStructure
 					"sSSSs",
 					"slsls"},
 			{ // y 5
-					"RTTQH",
+					"RSSQH",
 					"fCC.H",
 					"fLLG.",
 					"fCCT.",
-					"fCC..",
-					"fCCrp",
-					".TTQQ"},
+					"fCCrB",
+					"fCCQQ",
+					".SSQQ"},
 			{ // y 6
 					".lSp.",
 					".CCp.",
 					".LLp.",
 					".CCp.",
-					".CCp.",
-					".CCr.",
-					".bbbb"},
+					".CCrB",
+					".CC..",
+					".bb.."},
 	};
 
 	public static final char TRIGGER = 'R';

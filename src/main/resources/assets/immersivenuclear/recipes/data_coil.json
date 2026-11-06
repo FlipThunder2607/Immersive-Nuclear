@@ -1,0 +1,20 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "CCC",
+        "CIC",
+        "CCC"
+    ],
+    "key": {
+        "C": {
+            "item": "immersivenuclear:link_cable"
+        },
+        "I": {
+            "type": "forge:ore_dict",
+            "ore": "ingotSteel"
+        }
+    },
+    "result": {
+        "item": "immersivenuclear:data_coil"
+    }
+}

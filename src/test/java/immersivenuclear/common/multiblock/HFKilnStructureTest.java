@@ -9,20 +9,20 @@ public class HFKilnStructureTest
 	{
 		// Counts read from the dev world build (x200..204, y4..6, z467..473, 31/10)
 		expect(count('s'), 15, "steel scaffolding");
-		expect(count('S'), 12, "steel sheetmetal");
+		expect(count('S'), 16, "steel sheetmetal");
 		expect(count('C'), 16, "copper sheetmetal");
-		expect(count('b'), 4, "steel sheetmetal slabs");
+		expect(count('b'), 2, "steel sheetmetal slabs");
 		expect(count('L'), 4, "LV coils");
 		expect(count('h'), 4, "furnace heaters");
 		expect(count('f'), 5, "steel fences");
-		expect(count('B'), 0, "metal barrels");
-		expect(count('p'), 6, "fluid pipes");
+		expect(count('B'), 2, "metal barrels");
+		expect(count('p'), 4, "fluid pipes");
 		expect(count('l'), 4, "light engineering");
 		expect(count('H'), 4, "heavy engineering");
-		expect(count('Q'), 3, "chemical engineering");
+		expect(count('Q'), 5, "chemical engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 1, "generators");
-		expect(count('T'), 5, "steel blocks");
+		expect(count('T'), 1, "steel blocks");
 		expect(count('r'), 2, "radiators");
 		expect(totalParts(), 86, "total parts");
 

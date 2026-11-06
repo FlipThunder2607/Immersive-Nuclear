@@ -31,7 +31,7 @@ public final class SulfuricAcidUnitStructure
 	 * l light engineering, R redstone engineering (trigger), G generator, r radiator, K blast brick, B metal barrel,
 	 * p fluid pipe, Q chemical engineering (the acid-proof casing, under the sulfur melter), T steel block, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..204, y4..12, z458..464 (01/11/2026, fourth build: chemical engineering under the sulfur melter, the base re-laid in steel sheetmetal, the radiators down a layer). Updated from the user\'s new build (01/11/2026).
+	 * Read from the dev world build, x200..204, y4..12, z458..464 (01/11/2026, fourth build: chemical engineering under the sulfur melter, the base re-laid in steel sheetmetal, the radiators down a layer). Updated from the user\'s new build (01/11/2026). Updated from the user\'s new build (01/11/2026).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
@@ -68,7 +68,7 @@ public final class SulfuricAcidUnitStructure
 					"....."},
 			{ // y 8
 					".....",
-					"..IIp",
+					"..SSp",
 					".pBB.",
 					".pBB.",
 					"BB...",

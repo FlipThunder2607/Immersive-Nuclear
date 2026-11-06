@@ -62,6 +62,9 @@ public class ClientEvents
 		ModelLoader.setCustomModelResourceLocation(INContent.itemSulfuricAcidUnit, 0, new ModelResourceLocation(INContent.itemSulfuricAcidUnit.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemHFKiln, 0, new ModelResourceLocation(INContent.itemHFKiln.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemElectrolyzer, 0, new ModelResourceLocation(INContent.itemElectrolyzer.getRegistryName(), "inventory"));
+		for(Item item : INContent.itemComputerMachines)
+			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemConversionUnit, 0, new ModelResourceLocation(INContent.itemConversionUnit.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
@@ -73,6 +76,13 @@ public class ClientEvents
 		for(Item item : INContent.itemEngineering)
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 		for(Item item : INContent.itemComputerParts)
+			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+		// The computers' single-block devices and the panel modules (items only)
+		ModelLoader.setCustomModelResourceLocation(INContent.itemConduit, 0, new ModelResourceLocation(INContent.itemConduit.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemDataCoil, 0, new ModelResourceLocation(INContent.itemDataCoil.getRegistryName(), "inventory"));
+		for(Item item : INContent.itemComputerDevices)
+			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+		for(Item item : INContent.itemPanelModules)
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 		// The item shows the connector's 3D model, like IE's connectors
 		for(Item item : new Item[]{INContent.itemLinkConnector, INContent.itemLinkRelay})
@@ -122,8 +132,10 @@ public class ClientEvents
 		RenderSulfuricAcidUnit.GLOW.bake();
 		RenderIndustrialDryer.bake();
 		// Every part of a formed machine draws its own slice of the machine's model
-		for(Block b : new Block[]{INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
-				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit, INContent.blockHFKiln, INContent.blockElectrolyzer})
+		java.util.List<Block> sliced = new java.util.ArrayList<>(java.util.Arrays.asList(INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
+				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit, INContent.blockHFKiln, INContent.blockElectrolyzer, INContent.blockConversionUnit));
+		sliced.addAll(java.util.Arrays.asList(INContent.blockComputerMachines));
+		for(Block b : sliced)
 			for(Map.Entry<IBlockState, ModelResourceLocation> e : event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(b).entrySet())
 			{
 				IBakedModel whole = event.getModelRegistry().getObject(e.getValue());

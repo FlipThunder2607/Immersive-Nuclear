@@ -27,19 +27,19 @@ public final class FilterPressStructure
 	/**
 	 * l light engineering, s steel scaffolding, a steel scaffolding slab (lower half), H heavy engineering,
 	 * S steel sheetmetal, b steel sheetmetal slab (lower half), C conveyor belt (any direction), B metal barrel, P fluid pump (both halves),
-	 * G generator, F steel fence, R redstone engineering (trigger), Q chemical engineering, . air (not checked).
+	 * G generator, F steel fence, R redstone engineering (trigger), Q chemical engineering, X radioactive handling, p fluid pipe, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the pump end (north).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
-					"lQQ",
-					"SQS",
+					"lSS",
+					"SXS",
 					"aCa",
 					"aCl",
 					"aCa",
 					"aCl",
 					"aCa",
-					"SQS",
+					"SXS",
 					"llH"},
 			{ // y 5
 					"BPB",
@@ -50,7 +50,7 @@ public final class FilterPressStructure
 					".Fb",
 					".Fb",
 					"SGS",
-					"RbH"},
+					"RpH"},
 			{ // y 6
 					".P.",
 					"bbb",

@@ -26,9 +26,9 @@ public final class ElectrolyzerStructure
 	/**
 	 * s steel scaffolding, S steel sheetmetal, b steel sheetmetal slab (lower), H heavy engineering, l light
 	 * engineering, R redstone engineering (trigger), G generator (the rectifier), r radiator, c HV capacitor (the cell
-	 * stacks), B metal barrel, p fluid pipe, f steel fence, v HV relay, . air (not checked).
+	 * stacks), B metal barrel, p fluid pipe, f steel fence, v HV relay, Q chemical engineering, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..204, y4..8, z476..482 (01/11/2026).
+	 * Read from the dev world build, x200..204, y4..8, z476..482 (01/11/2026). Updated from the user\'s new build (01/11/2026).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
@@ -41,10 +41,10 @@ public final class ElectrolyzerStructure
 					"HSSSl"},
 			{ // y 5
 					"RBrBB",
-					"fcccB",
-					"fcccB",
-					"fcccp",
-					"fcccB",
+					"fcQcB",
+					"fcQcB",
+					"fcQcp",
+					"fcQcB",
 					"HGGSB",
 					"HGGBB"},
 			{ // y 6

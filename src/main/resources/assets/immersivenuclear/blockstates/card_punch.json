@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "immersivenuclear:card_punch"
+  },
+  "facing=east": {
+   "model": "immersivenuclear:card_punch",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "immersivenuclear:card_punch",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "immersivenuclear:card_punch",
+   "y": 270
+  }
+ }
+}

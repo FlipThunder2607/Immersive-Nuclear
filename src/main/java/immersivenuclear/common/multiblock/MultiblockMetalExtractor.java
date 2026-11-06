@@ -55,6 +55,7 @@ public class MultiblockMetalExtractor implements IMultiblock
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
 			case 'T': return new ItemStack(IEContent.blockStorage, 1, blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE.STEEL.getMeta());
+			case 'X': return new ItemStack(INContent.blockEngineering[3]);
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -272,8 +273,9 @@ public class MultiblockMetalExtractor implements IMultiblock
 		if(materials == null)
 		{
 			Map<Character, Integer> counts = new LinkedHashMap<>();
-			for(char c : "SbHlsRpPGCQT".toCharArray())
+			for(char c : "SbHlsRpPGCQTX".toCharArray())
 				counts.put(c, c == 'P' ? count(c) / 2 : count(c));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "immersivenuclear:wall_panel"
+  },
+  "facing=east": {
+   "model": "immersivenuclear:wall_panel",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "immersivenuclear:wall_panel",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "immersivenuclear:wall_panel",
+   "y": 270
+  }
+ }
+}

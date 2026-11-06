@@ -55,7 +55,8 @@ public class MultiblockPrecipitationUnit implements IMultiblock
 			case 'a':
 			case 'A':
 			case 'D': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.IRON.getMeta());
-			case 'b': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
+			case 'b':
+			case 'U': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
 			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
 			case 'X': return new ItemStack(INContent.blockEngineering[3]);
 			default: return ItemStack.EMPTY;
@@ -69,7 +70,8 @@ public class MultiblockPrecipitationUnit implements IMultiblock
 		{
 			case 'a':
 			case 'b': return 0;
-			case 'A': return 1;
+			case 'A':
+			case 'U': return 1;
 			case 'D': return 2;
 			default: return -1;
 		}
@@ -265,13 +267,14 @@ public class MultiblockPrecipitationUnit implements IMultiblock
 			counts.put('S', count('S'));
 			counts.put('I', count('I'));
 			counts.put('a', count('a') + count('A') + 2 * count('D'));
-			counts.put('b', count('b'));
+			counts.put('b', count('b') + count('U'));
 			counts.put('G', count('G'));
 			counts.put('r', count('r'));
 			counts.put('p', count('p'));
 			counts.put('R', count('R'));
 			counts.put('Q', count('Q'));
 			counts.put('X', count('X'));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

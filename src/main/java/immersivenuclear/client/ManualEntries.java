@@ -65,6 +65,8 @@ public class ManualEntries
 		ManualHelper.addEntry("in_electrolyzer", CATEGORY,
 				new ManualPageMultiblock(manual, "in_electrolyzer0", MultiblockElectrolyzer.instance),
 				text("in_electrolyzer1"), text("in_electrolyzer2"));
+		for(immersivenuclear.common.multiblock.MultiblockComputer m : immersivenuclear.common.multiblock.MultiblockComputer.ALL)
+			ManualHelper.addEntry("in_" + m.structure.name, CATEGORY, new ManualPageMultiblock(manual, "in_" + m.structure.name + "0", m));
 		ManualHelper.addEntry("in_supplies", CATEGORY,
 				text("in_supplies0"), text("in_supplies1"),
 				new ManualPages.Crafting(manual, "in_supplies2", new ItemStack(INContent.itemPrecipitatingAgent)));

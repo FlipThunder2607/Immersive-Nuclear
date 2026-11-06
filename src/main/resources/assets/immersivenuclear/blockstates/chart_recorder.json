@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "immersivenuclear:chart_recorder"
+  },
+  "facing=east": {
+   "model": "immersivenuclear:chart_recorder",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "immersivenuclear:chart_recorder",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "immersivenuclear:chart_recorder",
+   "y": 270
+  }
+ }
+}

@@ -27,7 +27,7 @@ public final class PrecipitationUnitStructure
 	/**
 	 * s steel scaffolding, f steel fence, l light engineering, H heavy engineering, R redstone engineering (trigger),
 	 * G generator, r radiator, B metal barrel, p fluid pipe, S steel sheetmetal, I iron sheetmetal,
-	 * a / A / D iron sheetmetal slab (lower / upper / double), b steel sheetmetal slab (lower), Q chemical engineering, X radioactive handling, . air (not checked).
+	 * a / A / D iron sheetmetal slab (lower / upper / double), b / U steel sheetmetal slab (lower / upper, read from the save 02/11), Q chemical engineering, X radioactive handling, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
 	 */
 	static final String[][] LAYERS = {
@@ -36,25 +36,25 @@ public final class PrecipitationUnitStructure
 					"sSSSl",
 					"sSSSs",
 					"sSSSs",
-					"lXXSs",
+					"lQQSs",
 					"sSSSH",
 					"sslsH"},
 			{ // y 5
 					".fGf.",
-					".fIff",
-					".fIf.",
-					"..IG.",
-					"ppI..",
-					"..A.H",
-					"RQQQH"},
+					".fSff",
+					".fSf.",
+					"..SG.",
+					"ppU..",
+					"....H",
+					"RXXXH"},
 			{ // y 6
 					".BBB.",
 					".BQBf",
 					".BBB.",
 					".....",
-					"..a..",
-					"..I..",
-					".QQQ."},
+					"..b..",
+					"..S..",
+					".XXX."},
 			{ // y 7
 					".BBB.",
 					".BQBf",

@@ -8,7 +8,6 @@
     "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
     "#burner_flame": "immersivenuclear:blocks/burner_flame",
     "#burner_glow": "immersivenuclear:blocks/burner_glow",
-    "#glass": "minecraft:blocks/glass",
     "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
     "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
     "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
@@ -17,6 +16,7 @@
     "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
     "#stone_decoration_blastbrick": "immersiveengineering:blocks/stone_decoration_blastbrick",
     "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "#window_glass": "immersivenuclear:blocks/window_glass",
     "particle": "immersiveengineering:blocks/storage_steel"
   },
   "parts": {

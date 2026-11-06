@@ -25,14 +25,14 @@ public final class MetalExtractorStructure
 	/**
 	 * s steel scaffolding, l light engineering, H heavy engineering, R redstone engineering (trigger), G generator,
 	 * S steel sheetmetal, b steel sheetmetal slab (lower half), P fluid pump (either half), p fluid pipe,
-	 * C HV connector, Q chemical engineering, T steel block, . air (not checked).
+	 * C HV connector, Q chemical engineering, T steel block, X radioactive handling, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the left end (north).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
 					"QlQs",
-					"QQQl",
-					"QQQs",
+					"QXQl",
+					"QXQs",
 					"slPH"},
 			{ // y 5
 					"bHbl",

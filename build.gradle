@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.1.9"
+version = "0.2.0-dev.50"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -116,3 +116,15 @@ task electrolyzerStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn electrolyzerStructureTest
+
+task computerStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.ComputerStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn computerStructureTest
+
+task conversionUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.ConversionUnitStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn conversionUnitStructureTest

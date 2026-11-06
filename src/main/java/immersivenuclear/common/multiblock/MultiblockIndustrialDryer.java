@@ -267,6 +267,7 @@ public class MultiblockIndustrialDryer implements IMultiblock
 			counts.put('G', count('G'));
 			counts.put('R', count('R'));
 			counts.put('T', count('T'));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

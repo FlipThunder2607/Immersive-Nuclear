@@ -73,7 +73,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
 	/** Machine slots, in the order the interface shows them. */
 	public static final int SLOT_URANIUM = 0, SLOT_REAGENT = 1, SLOT_WATER_IN = 2, SLOT_WATER_OUT = 3, SLOT_SLURRY_IN = 4, SLOT_SLURRY_OUT = 5,
-			/** The recycled liquor's own container pair (0.1.9; added at the end, so older machines keep their slots). */
+			/** The recycled liquor's own container pair (added at the end, so older machines keep their slots). */
 			SLOT_RECYCLED_IN = 6, SLOT_RECYCLED_OUT = 7, SLOTS = 8;
 
 	int dx, dy, dz;

@@ -40,15 +40,15 @@ public final class IndustrialDryerStructure
 			{ // y 4
 					"sTrrH",
 					"sSSSl",
-					"sFSSH",
+					"sFSSs",
 					"sFSSs",
 					"sFSSs",
 					"sSSSl",
-					"sXXls"},
+					"sXSls"},
 			{ // y 5
 					"RG..H",
 					"fIIcb",
-					"fIIcb",
+					"fIIcH",
 					"fIIcB",
 					"fIIcB",
 					"fIIcB",

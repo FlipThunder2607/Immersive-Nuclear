@@ -54,6 +54,7 @@ public class MultiblockElectrolyzer implements IMultiblock
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 			case 'f': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
 			case 'v': return new ItemStack(IEContent.blockConnectors, 1, blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_Connector.RELAY_HV.getMeta());
+			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -248,8 +249,9 @@ public class MultiblockElectrolyzer implements IMultiblock
 		if(materials == null)
 		{
 			Map<Character, Integer> counts = new LinkedHashMap<>();
-			for(char c : "sSbHlRGrcBpfv".toCharArray())
+			for(char c : "sSbHlRGrcBpfvQ".toCharArray())
 				counts.put(c, count(c));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

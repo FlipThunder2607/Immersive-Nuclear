@@ -8,17 +8,18 @@ public class ChemicalSeparatorStructureTest
 	public static void main(String[] args)
 	{
 		// Counts read from the dev world build (x200..204, y4..7, z425..431)
-		expect(count('s'), 15, "steel scaffolding");
+		expect(count('s'), 11, "steel scaffolding");
 		expect(count('l'), 5, "light engineering");
 		expect(count('H'), 2, "heavy engineering");
 		expect(count('R'), 1, "redstone engineering");
 		expect(count('G'), 2, "generators");
-		expect(count('S'), 14, "steel sheetmetal");
+		expect(count('S'), 18, "steel sheetmetal");
 		expect(count('b'), 10, "steel sheetmetal slabs");
-		expect(count('B'), 34, "metal barrels");
+		expect(count('B'), 30, "metal barrels");
 		expect(count('P'), 6, "fluid pump halves");
 		expect(count('p'), 21, "fluid pipes");
-		expect(count('Q'), 8, "chemical engineering");
+		expect(count('Q'), 4, "chemical engineering");
+		expect(count('X'), 8, "radioactive handling");
 		expect(totalParts(), 118, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");

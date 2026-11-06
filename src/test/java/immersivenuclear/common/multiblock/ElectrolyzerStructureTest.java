@@ -10,7 +10,7 @@ public class ElectrolyzerStructureTest
 		// Counts read from the dev world build (x200..204, y4..8, z476..482, 01/11)
 		expect(count('S'), 25, "steel sheetmetal");
 		expect(count('B'), 20, "metal barrels");
-		expect(count('c'), 12, "HV capacitors");
+		expect(count('c'), 8, "HV capacitors");
 		expect(count('b'), 11, "steel sheetmetal slabs");
 		expect(count('s'), 10, "steel scaffolding");
 		expect(count('G'), 8, "generators");
@@ -21,10 +21,11 @@ public class ElectrolyzerStructureTest
 		expect(count('r'), 2, "radiators");
 		expect(count('v'), 2, "HV relays");
 		expect(count('R'), 1, "redstone engineering");
+		expect(count('Q'), 4, "chemical engineering");
 		expect(totalParts(), 106, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
-		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'c', "master is a cell stack");
+		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'Q', "master is the stacks' middle (chemical engineering, 02/11)");
 		expect(portAt(2, -1, 0), PORT_WATER, "water port");
 		expect(get(2, -1, 0), 'l', "water on light engineering");
 		expect(portFace(2, -1, 0)[1], -1, "water on the north face");

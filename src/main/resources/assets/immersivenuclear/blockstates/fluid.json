@@ -114,6 +114,12 @@
             "custom": {
                 "fluid": "depleted_uranium_hexafluoride"
             }
+        },
+        "fluorinated_effluent": {
+            "model": "forge:fluid",
+            "custom": {
+                "fluid": "fluorinated_effluent"
+            }
         }
     }
 }

@@ -53,6 +53,7 @@ public class MultiblockChemicalSeparator implements IMultiblock
 			case 'P': return new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.FLUID_PUMP.getMeta());
 			case 'p': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta());
 			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
+			case 'X': return new ItemStack(INContent.blockEngineering[3]);
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -270,8 +271,9 @@ public class MultiblockChemicalSeparator implements IMultiblock
 		if(materials == null)
 		{
 			Map<Character, Integer> counts = new LinkedHashMap<>();
-			for(char c : "sBplbSHGPRQ".toCharArray())
+			for(char c : "sBplbSHGPRQX".toCharArray())
 				counts.put(c, c == 'P' ? count(c) / 2 : count(c));
+			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];
 			int i = 0;
 			for(Map.Entry<Character, Integer> e : counts.entrySet())

@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "immersivenuclear:blocks/data_coil_top",
+    "side": "immersivenuclear:blocks/data_coil_side"
+  }
+}

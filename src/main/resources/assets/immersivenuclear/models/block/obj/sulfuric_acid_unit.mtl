@@ -22,9 +22,6 @@ map_Kd #burner_flame
 newmtl burner_glow
 map_Kd #burner_glow
 
-newmtl glass
-map_Kd #glass
-
 newmtl metal_decoration0_radiator_ctm
 map_Kd #metal_decoration0_radiator_ctm
 
@@ -48,4 +45,7 @@ map_Kd #stone_decoration_blastbrick
 
 newmtl storage_steel
 map_Kd #storage_steel
+
+newmtl window_glass
+map_Kd #window_glass
 

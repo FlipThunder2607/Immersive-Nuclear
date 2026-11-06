@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "immersivenuclear:card_reader"
+  },
+  "facing=east": {
+   "model": "immersivenuclear:card_reader",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "immersivenuclear:card_reader",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "immersivenuclear:card_reader",
+   "y": 270
+  }
+ }
+}
