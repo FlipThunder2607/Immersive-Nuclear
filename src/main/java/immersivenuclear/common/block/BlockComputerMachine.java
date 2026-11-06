@@ -90,6 +90,7 @@ public class BlockComputerMachine extends Block implements MachinePartBlock
 		if(!disassembling && !world.isRemote && te instanceof TileComputerMachine)
 		{
 			TileComputerMachine part = (TileComputerMachine)te;
+			immersivenuclear.common.wire.ConduitLinks.get(world).removeAt(world, part.getMasterPos(), pos);
 			disassembling = true;
 			try
 			{

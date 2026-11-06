@@ -60,6 +60,15 @@ public class BlockComputerDevice extends Block
 	}
 
 	/** Whether the back of this device has a conduit entry (the conduit connects to it there). */
+	/** The wires ending here go too. */
+	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state)
+	{
+		if(!world.isRemote && hasConduitEntry())
+			immersivenuclear.common.wire.ConduitLinks.get(world).removeAt(world, pos, pos);
+		super.breakBlock(world, pos, state);
+	}
+
 	public boolean hasConduitEntry()
 	{
 		return conduitEntry;

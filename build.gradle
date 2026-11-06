@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.2.0-dev.50"
+version = "0.2.0-dev.59"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -122,6 +122,12 @@ task computerStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn computerStructureTest
+
+task conduitRulesTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.wire.ConduitRulesTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn conduitRulesTest
 
 task conversionUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
     main = 'immersivenuclear.common.multiblock.ConversionUnitStructureTest'

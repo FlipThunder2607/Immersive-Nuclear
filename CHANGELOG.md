@@ -11,7 +11,7 @@ the release title always carry the same version.
 ## [Unreleased]
 
 ### Added
-- **Computers, first appearance (models only, no function yet):** six single-block devices you can place on the ground and that face you (Card Reader, Card Punch, Paper Tape Reader/Punch, CRT Terminal, Chart Recorder, Wall Panel), four multiblocks formed with the Engineer's Hammer (Mainframe, I/O Processor, Memory Cabinet, Disk Unit), the Data Cable Coil Block and 28 panel modules (commands, indicators and the universal text/colour ones) in the creative tab and JEI.
+- **Computers, first appearance (models only, no function yet):** six single-block devices you can place on the ground and that face you (Card Reader, Card Punch, Paper Tape Reader/Punch, CRT Terminal, Chart Recorder, Wall Panel), ten multiblocks formed with the Engineer's Hammer (Mainframe, I/O Processor, Memory Cabinet, Disk Unit, Tape Unit, Operator Console, Printer, Teletype, Power Cabinet, Data Cabinet), the Data Cable Coil Block, the Power Wire (laid with the Link Cable through the conduits, from one computer port to another; connections only for now) and 28 panel modules (commands, indicators and the universal text/colour ones) in the creative tab and JEI.
 - **Conduit:** the computers' cable tray. It connects by itself to the conduits on all six sides and to the back of the devices, runs vertically as a closed duct, takes a support on the face it was placed on, and the Engineer's Hammer cuts and rejoins each connection. No wires yet.
 
 ### Planned (not started)

@@ -89,6 +89,28 @@ public class TileComputerMachine extends TileEntity implements MachinePartTile
 		return 0;
 	}
 
+	/** Whether this part has a conduit entry on the given side: the back of the machine, which faces east in the reference orientation (NORTH). */
+	public boolean hasConduitEntry(EnumFacing side)
+	{
+		return side == facing.rotateY() && structure.hasConduitEntry(dx, dy, dz);
+	}
+
+	/** The side the machine's back looks to. */
+	public EnumFacing getBack()
+	{
+		return facing.rotateY();
+	}
+
+	/** World positions of the parts with a conduit entry. */
+	public java.util.List<BlockPos> conduitEntries()
+	{
+		java.util.List<BlockPos> entries = new java.util.ArrayList<>();
+		for(int z = 0; z <= structure.maxDz; z++)
+			if(structure.hasConduitEntry(structure.maxDx, 0, z))
+				entries.add(MultiblockComputer.toWorld(getOrigin(), facing, structure.maxDx, 0, z));
+		return entries;
+	}
+
 	/** World position of the structure's offset 0,0,0. */
 	public BlockPos getOrigin()
 	{

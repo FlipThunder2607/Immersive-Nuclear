@@ -1,0 +1,197 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true,
+      "ambient": false
+    },
+    "textures": {
+      "#cabo_energia": "immersivenuclear:blocks/computers/cabo_energia",
+      "#common_lamp_green": "immersivenuclear:blocks/common_lamp_green",
+      "#common_lamp_orange": "immersivenuclear:blocks/common_lamp_orange",
+      "#common_lamp_red": "immersivenuclear:blocks/common_lamp_red",
+      "#moldura_grafite": "immersivenuclear:blocks/computers/moldura_grafite",
+      "#painel_cinza": "immersivenuclear:blocks/computers/painel_cinza",
+      "#sheetmetal_aluminum": "immersiveengineering:blocks/sheetmetal_aluminum",
+      "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "#tomada_lv": "immersivenuclear:blocks/computers/tomada_lv",
+      "#topo_aco": "immersivenuclear:blocks/computers/topo_aco",
+      "#traseira_aco": "immersivenuclear:blocks/computers/traseira_aco",
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 90
+    },
+    "facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 90
+    },
+    "facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 90
+    },
+    "facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 90
+    },
+    "facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 0
+    },
+    "facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 0
+    },
+    "facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 0
+    },
+    "facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 0
+    },
+    "facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 180
+    },
+    "facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 180
+    },
+    "facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 180
+    },
+    "facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 180
+    },
+    "facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 270
+    },
+    "facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 270
+    },
+    "facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/power_cabinet.obj",
+      "y": 270
+    },
+    "facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/power_cabinet_mirrored.obj",
+      "y": 270
+    },
+    "inventory": [
+      {
+        "model": "immersivenuclear:obj/power_cabinet_inventory.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.2936,
+              0.1961,
+              0.0807
+            ],
+            "scale": 0.3754,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.165,
+              0.1525,
+              -0.1361
+            ],
+            "scale": 0.2723
+          },
+          "fixed": {
+            "translation": [
+              0.2687,
+              0.2483,
+              0.2217
+            ],
+            "scale": 0.4434,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.1868,
+              0.0173,
+              0.1338
+            ],
+            "scale": 0.2388,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.1868,
+              0.0173,
+              0.1338
+            ],
+            "scale": 0.2388,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.213,
+              0.1525,
+              0.0204
+            ],
+            "scale": 0.2723,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.213,
+              0.1525,
+              -0.0204
+            ],
+            "scale": 0.2723,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

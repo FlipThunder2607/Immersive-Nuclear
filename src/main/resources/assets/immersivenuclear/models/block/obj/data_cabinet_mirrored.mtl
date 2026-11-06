@@ -1,0 +1,36 @@
+newmtl cabo_dados
+map_Kd #cabo_dados
+
+newmtl cabo_energia
+map_Kd #cabo_energia
+
+newmtl common_lamp_green
+map_Kd #common_lamp_green
+
+newmtl common_lamp_orange
+map_Kd #common_lamp_orange
+
+newmtl moldura_grafite
+map_Kd #moldura_grafite
+
+newmtl painel_cinza
+map_Kd #painel_cinza
+
+newmtl placa_in
+map_Kd #placa_in
+
+newmtl sheetmetal_aluminum
+map_Kd #sheetmetal_aluminum
+
+newmtl storage_steel
+map_Kd #storage_steel
+
+newmtl tomada_dados
+map_Kd #tomada_dados
+
+newmtl topo_aco
+map_Kd #topo_aco
+
+newmtl traseira_aco
+map_Kd #traseira_aco
+

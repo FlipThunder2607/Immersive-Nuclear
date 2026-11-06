@@ -1,0 +1,144 @@
+{
+ "ambientocclusion": false,
+ "textures": {
+  "bar": "immersivenuclear:blocks/computers/painel_cinza",
+  "particle": "immersivenuclear:blocks/computers/painel_cinza"
+ },
+ "elements": [
+  {
+   "from": [
+    3.2,
+    6.0,
+    12.0
+   ],
+   "to": [
+    4.0,
+    9.6,
+    12.8
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      3.2,
+      6.4,
+      4.0,
+      10.0
+     ],
+     "texture": "#bar"
+    },
+    "east": {
+     "uv": [
+      12.0,
+      6.4,
+      12.8,
+      10.0
+     ],
+     "texture": "#bar"
+    },
+    "south": {
+     "uv": [
+      3.2,
+      6.4,
+      4.0,
+      10.0
+     ],
+     "texture": "#bar"
+    },
+    "west": {
+     "uv": [
+      12.0,
+      6.4,
+      12.8,
+      10.0
+     ],
+     "texture": "#bar"
+    },
+    "up": {
+     "uv": [
+      3.2,
+      12.0,
+      4.0,
+      12.8
+     ],
+     "texture": "#bar"
+    },
+    "down": {
+     "uv": [
+      3.2,
+      12.0,
+      4.0,
+      12.8
+     ],
+     "texture": "#bar"
+    }
+   }
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "scale": [
+    0.7,
+    0.7,
+    0.7
+   ]
+  },
+  "ground": {
+   "translation": [
+    0,
+    3,
+    0
+   ],
+   "scale": [
+    0.4,
+    0.4,
+    0.4
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    180,
+    0
+   ],
+   "scale": [
+    0.7,
+    0.7,
+    0.7
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    75,
+    45,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    0
+   ],
+   "scale": [
+    0.5,
+    0.5,
+    0.5
+   ]
+  },
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    45,
+    0
+   ],
+   "scale": [
+    0.4,
+    0.4,
+    0.4
+   ]
+  }
+ }
+}

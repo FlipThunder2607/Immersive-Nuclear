@@ -1,8 +1,10 @@
 package immersivenuclear.common.block;
 
+import java.util.List;
 import blusunrize.immersiveengineering.api.Lib;
 import immersivenuclear.ImmersiveNuclear;
 import immersivenuclear.common.INContent;
+import immersivenuclear.common.wire.ConduitLinks;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -21,6 +23,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -29,7 +32,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * The Conduit: the slatted cable tray that carries the computers' wires (1 power wire and 4 data cables, or 8 data cables; the wires are not in yet). It works like the tray of Industrial Renewal
+ * The Conduit: the slatted cable tray that carries the computers' wires (1 power wire and 4 data cables, or 8 data cables: ConduitRules, laid by ConduitWiring). It works like the tray of Industrial Renewal
  * (the user, 05/11/2026): one centre in the middle of the block, a connection to each of the six sides that has another conduit or a device's conduit entry, the other sides closed.
  * The Engineer's Hammer cuts and rejoins each connection, like IE's fluid pipes (kept in TileConduit).
  * Its only stored choice is the side of its support: the solid face the player pointed at when placing it (nothing when pointing at another conduit or at something not solid). The support shows
@@ -39,6 +42,8 @@ public class BlockConduit extends Block
 {
 	public static final PropertyBool NORTH = PropertyBool.create("north"), EAST = PropertyBool.create("east"), SOUTH = PropertyBool.create("south"),
 			WEST = PropertyBool.create("west"), UP = PropertyBool.create("up"), DOWN = PropertyBool.create("down");
+	/** The corners of the block taken by a wide tray: conduits side by side join into one (the user, 06/11/2026). */
+	public static final PropertyBool NW = PropertyBool.create("nw"), NE = PropertyBool.create("ne"), SW = PropertyBool.create("sw"), SE = PropertyBool.create("se");
 	public static final PropertyEnum<Base> BASE = PropertyEnum.create("base", Base.class);
 
 	/** The side the support is on. The order is the metadata, and it matches the worlds made with the earlier tray (floor, ceiling, then the four walls). */
@@ -80,13 +85,13 @@ public class BlockConduit extends Block
 		setTranslationKey(ImmersiveNuclear.MODID + ".conduit");
 		setCreativeTab(INContent.TAB);
 		setDefaultState(blockState.getBaseState().withProperty(NORTH, false).withProperty(EAST, false).withProperty(SOUTH, false).withProperty(WEST, false)
-				.withProperty(UP, false).withProperty(DOWN, false).withProperty(BASE, Base.NONE));
+				.withProperty(UP, false).withProperty(DOWN, false).withProperty(NW, false).withProperty(NE, false).withProperty(SW, false).withProperty(SE, false).withProperty(BASE, Base.NONE));
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this, NORTH, EAST, SOUTH, WEST, UP, DOWN, BASE);
+		return new BlockStateContainer(this, NORTH, EAST, SOUTH, WEST, UP, DOWN, NW, NE, SW, SE, BASE);
 	}
 
 	@Override
@@ -130,11 +135,31 @@ public class BlockConduit extends Block
 		return new TileConduit();
 	}
 
+	/** The wires running through it go too, and give their items back. */
+	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state)
+	{
+		if(!world.isRemote)
+			ConduitLinks.get(world).removeThrough(world, pos);
+		super.breakBlock(world, pos, state);
+	}
+
 	/** The hammer cuts or joins the connection it hits, like IE's fluid pipes: an arm or duct is hit anywhere along it, a closed side on its face. Both conduits of a link change together. */
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		ItemStack held = player.getHeldItem(hand);
+		if(!held.isEmpty() && held.getItem().getToolClasses(held).contains(Lib.TOOL_WIRECUTTER))
+		{
+			// The wire cutter takes out the last wire laid here, along its whole length
+			TileEntity tile = world.getTileEntity(pos);
+			if(!world.isRemote && tile instanceof TileConduit && !((TileConduit)tile).getWires().isEmpty())
+			{
+				List<TileConduit.Wire> wires = ((TileConduit)tile).getWires();
+				ConduitLinks.get(world).remove(world, wires.get(wires.size() - 1).id, pos);
+			}
+			return true;
+		}
 		if(held.isEmpty() || !held.getItem().getToolClasses(held).contains(Lib.TOOL_HAMMER))
 			return false;
 		EnumFacing target = hitX < 0.19 ? EnumFacing.WEST : hitX > 0.81 ? EnumFacing.EAST : hitZ < 0.19 ? EnumFacing.NORTH : hitZ > 0.81 ? EnumFacing.SOUTH
@@ -144,6 +169,11 @@ public class BlockConduit extends Block
 			return true;
 		TileConduit conduit = (TileConduit)tile;
 		boolean cut = !conduit.isCut(target);
+		if(cut && conduit.hasWireOn(target))
+		{
+			player.sendStatusMessage(new TextComponentTranslation("chat.immersivenuclear.conduit.has_wires"), true);
+			return true;
+		}
 		conduit.setCut(target, cut);
 		TileEntity other = world.getTileEntity(pos.offset(target));
 		if(other instanceof TileConduit)
@@ -154,8 +184,13 @@ public class BlockConduit extends Block
 	/** Whether the side d of the conduit at pos was cut with the hammer. Called while rendering too, where a tile must not be created. */
 	private static boolean isCut(IBlockAccess world, BlockPos pos, EnumFacing d)
 	{
-		TileEntity tile = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
+		TileEntity tile = tileAt(world, pos);
 		return tile instanceof TileConduit && ((TileConduit)tile).isCut(d);
+	}
+
+	private static TileEntity tileAt(IBlockAccess world, BlockPos pos)
+	{
+		return world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
 	}
 
 	/** Whether the conduit at pos joins what is on its side d: something it reaches, unless one of the two ends was cut with the hammer. */
@@ -164,7 +199,7 @@ public class BlockConduit extends Block
 		return reaches(world, pos, d) && !isCut(world, pos, d) && !isCut(world, pos.offset(d), d.getOpposite());
 	}
 
-	/** Whether there is something to join on side d: another conduit, or a computer device whose back (the side of its conduit entry) faces it. */
+	/** Whether there is something to join on side d: another conduit, a computer device whose back (the side of its conduit entry) faces it, or a conduit entry of a computer multiblock. */
 	private static boolean reaches(IBlockAccess world, BlockPos pos, EnumFacing d)
 	{
 		IBlockState other = world.getBlockState(pos.offset(d));
@@ -174,6 +209,11 @@ public class BlockConduit extends Block
 		{
 			BlockComputerDevice device = (BlockComputerDevice)other.getBlock();
 			return device.hasConduitEntry() && other.getValue(BlockComputerDevice.FACING) == d;
+		}
+		if(d.getAxis().isHorizontal() && other.getBlock() instanceof BlockComputerMachine)
+		{
+			TileEntity tile = tileAt(world, pos.offset(d));
+			return tile instanceof TileComputerMachine && ((TileComputerMachine)tile).hasConduitEntry(d.getOpposite());
 		}
 		return false;
 	}
@@ -186,7 +226,18 @@ public class BlockConduit extends Block
 			base = Base.NONE;
 		return state.withProperty(NORTH, connects(world, pos, EnumFacing.NORTH)).withProperty(EAST, connects(world, pos, EnumFacing.EAST)).withProperty(SOUTH, connects(world, pos, EnumFacing.SOUTH))
 				.withProperty(WEST, connects(world, pos, EnumFacing.WEST)).withProperty(UP, connects(world, pos, EnumFacing.UP)).withProperty(DOWN, connects(world, pos, EnumFacing.DOWN))
+				.withProperty(NW, wide(world, pos, EnumFacing.NORTH, EnumFacing.WEST)).withProperty(NE, wide(world, pos, EnumFacing.NORTH, EnumFacing.EAST))
+				.withProperty(SW, wide(world, pos, EnumFacing.SOUTH, EnumFacing.WEST)).withProperty(SE, wide(world, pos, EnumFacing.SOUTH, EnumFacing.EAST))
 				.withProperty(BASE, base);
+	}
+
+	/** Whether the four conduits round that corner of the block are all joined, so the tray runs across it. A vertical duct stays closed. */
+	private static boolean wide(IBlockAccess world, BlockPos pos, EnumFacing a, EnumFacing b)
+	{
+		BlockPos atA = pos.offset(a), atB = pos.offset(b), across = atA.offset(b);
+		return world.getBlockState(atA).getBlock() instanceof BlockConduit && world.getBlockState(atB).getBlock() instanceof BlockConduit && world.getBlockState(across).getBlock() instanceof BlockConduit
+				&& connects(world, pos, a) && connects(world, pos, b) && connects(world, atA, b) && connects(world, atB, a)
+				&& !connects(world, pos, EnumFacing.UP) && !connects(world, pos, EnumFacing.DOWN);
 	}
 
 	/** The box of the centre, grown to the edge on every side with a connection or a support. */

@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsAll;
 import blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration0;
+import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0;
 import immersivenuclear.common.INContent;
 import immersivenuclear.common.block.TileComputerMachine;
 import net.minecraft.block.Block;
@@ -53,12 +54,14 @@ public class MultiblockComputer implements IMultiblock
 		switch(c)
 		{
 			case 'S': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.STEEL.getMeta());
+			case 's': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
 			case 'T': return new ItemStack(IEContent.blockStorage, 1, BlockTypes_MetalsIE.STEEL.getMeta());
 			case 'C': return new ItemStack(INContent.blockEngineering[2]);
 			case 'r': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RADIATOR.getMeta());
 			case 'R': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
 			case 'L': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
 			case 'D': return new ItemStack(INContent.blockDataCoil);
+			case 'P': return new ItemStack(IEContent.blockMetalDevice0, 1, BlockTypes_MetalDevice0.CAPACITOR_HV.getMeta());
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -94,25 +97,31 @@ public class MultiblockComputer implements IMultiblock
 	@Override
 	public boolean isBlockTrigger(IBlockState state)
 	{
-		return state.getBlock() == INContent.blockEngineering[2];
+		IBlockState trigger = stateFor(structure.trigger);
+		return state.getBlock() == trigger.getBlock() && state.getBlock().getMetaFromState(state) == trigger.getBlock().getMetaFromState(trigger);
 	}
 
-	/** Any control engineering block of the structure takes the hammer: every place and way round it could stand in is tried. */
+	/** Any trigger block of the structure takes the hammer: every place and way round it could stand in is tried, starting with its front on the side hit (it decides for a build that looks the same from every side). */
 	@Override
 	public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player)
 	{
-		for(EnumFacing facing : EnumFacing.HORIZONTALS)
+		EnumFacing front = side.getAxis().isHorizontal() ? side : player.getHorizontalFacing().getOpposite();
+		int first = front.rotateY().getHorizontalIndex();    // the reference orientation (NORTH) has its front to the west
+		for(int i = 0; i < 4; i++)
+		{
+			EnumFacing facing = EnumFacing.HORIZONTALS[(first + i) & 3];
 			for(int dy = 0; dy <= structure.maxDy; dy++)
 				for(int dz = 0; dz <= structure.maxDz; dz++)
 					for(int dx = 0; dx <= structure.maxDx; dx++)
 					{
-						if(structure.get(dx, dy, dz) != ComputerStructure.TRIGGER)
+						if(structure.get(dx, dy, dz) != structure.trigger)
 							continue;
 						int[] w = ComputerStructure.rotate(dx, dz, turns(facing));
 						BlockPos origin = pos.add(-w[0], -dy, -w[1]);
 						if(structureCheck(world, origin, facing))
 							return form(world, origin, facing, pos, player);
 					}
+		}
 		return false;
 	}
 

@@ -257,7 +257,7 @@ public class INContent
 
 	/** Parts of the computers (in development): only the items for now, no recipe and no use yet. */
 	public static final String[] COMPUTER_PARTS = {"electronic_module", "relay_module", "core_memory", "punched_card", "punched_paper_tape",
-			"disk_pack", "link_cable", "magnetic_tape", "continuous_form_paper"};
+			"disk_pack", "link_cable", "power_wire", "magnetic_tape", "continuous_form_paper"};
 	public static Item[] itemComputerParts;
 	/** Link connector and link relay of the computers' data network (blocks with IE's connector model). */
 	public static Block blockLinkConnector, blockLinkRelay;
@@ -567,9 +567,11 @@ public class INContent
 		// Computer parts
 		itemComputerParts = new Item[COMPUTER_PARTS.length];
 		for(int i = 0; i < COMPUTER_PARTS.length; i++)
-			itemComputerParts[i] = i == 6 ? null : item(event, COMPUTER_PARTS[i]);
+			itemComputerParts[i] = i == 6 || i == 7 ? null : item(event, COMPUTER_PARTS[i]);
 		itemComputerParts[6] = new ItemLinkCable();
 		event.getRegistry().register(itemComputerParts[6]);
+		itemComputerParts[7] = new immersivenuclear.common.item.ItemPowerWire();
+		event.getRegistry().register(itemComputerParts[7]);
 		itemLinkConnector = new ItemBlock(blockLinkConnector).setRegistryName(blockLinkConnector.getRegistryName());
 		event.getRegistry().register(itemLinkConnector);
 		itemLinkRelay = new ItemBlock(blockLinkRelay).setRegistryName(blockLinkRelay.getRegistryName());

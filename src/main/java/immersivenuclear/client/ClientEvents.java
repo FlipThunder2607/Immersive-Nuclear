@@ -101,6 +101,8 @@ public class ClientEvents
 		// New, used and spent looks come from the "wear" property (models/item/filter.json)
 		INContent.itemFilter.addWearProperty();
 		ModelLoader.setCustomModelResourceLocation(INContent.itemFilter, 0, new ModelResourceLocation(INContent.itemFilter.getRegistryName(), "inventory"));
+		// The wires in the conduits
+		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileConduit.class, new RenderConduit());
 		// Liquid behind the tank windows
 		ClientRegistry.bindTileEntitySpecialRenderer(TileChemicalProcessor.class, new RenderChemicalProcessor());
 		// Moving plates and actuators of the filter press
@@ -155,7 +157,7 @@ public class ClientEvents
 		if(event.getMap() != Minecraft.getMinecraft().getTextureMapBlocks())
 			return;
 		// Textures only the machines' renderers use (the lit and emissive layers of the glowing parts)
-		for(String t : new String[]{"furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
+		for(String t : new String[]{"computers/cabo_energia", "computers/cabo_dados", "furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
 			event.getMap().registerSprite(new net.minecraft.util.ResourceLocation(ImmersiveNuclear.MODID, "blocks/" + t));
 		for(Fluid f : INContent.fluids)
 			for(Fluid g : new Fluid[]{f, FluidRegistry.getFluid(f.getName())})

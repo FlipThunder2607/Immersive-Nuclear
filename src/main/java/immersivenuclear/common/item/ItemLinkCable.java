@@ -40,6 +40,8 @@ public class ItemLinkCable extends Item implements IWireCoil
 	@Override
 	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
 	{
-		return ApiUtils.doCoilUse(this, player, world, pos, hand, side, hitX, hitY, hitZ);
+		// On a computer it is laid in the conduits; anywhere else it hangs like IE's wires
+		EnumActionResult laid = immersivenuclear.common.wire.ConduitWiring.use(player, world, pos, hand, immersivenuclear.common.wire.ConduitRules.DATA);
+		return laid != EnumActionResult.PASS ? laid : ApiUtils.doCoilUse(this, player, world, pos, hand, side, hitX, hitY, hitZ);
 	}
 }
