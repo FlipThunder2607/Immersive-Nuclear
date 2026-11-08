@@ -1,179 +1,189 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Conversion Unit, block by block: 7 wide x 11 long x 11 high (363 blocks), the first machine of line 2's chain that turns
- * yellowcake into uranium hexafluoride. A one-block deck, a front row of three blocks with the reduction reactor (north),
- * a lead hot cell (middle) and the hydrofluorinator (south), a two-block service aisle (only deck), and a back row with the
- * hydrogen tank (barrels), the fluorine cells (chemical engineering with copper slabs on top), the flame tower (steel column
- * with its covered ladder on the aisle side), the cold traps (radiators with copper plates) and the scrubber (chemical
- * engineering column) with its stack (steel fences); the UF6 autoclave (barrels) is at the south end of the front row.
+ * Conversion Unit, block by block: 7 wide x 11 long x 12 high (436 blocks), the first machine of line 2's chain that turns
+ * yellowcake into uranium hexafluoride. A one-block deck; along the front, a reactor tower (radioactive handling core
+ * in steel, copper, lead and iron sheetmetal, north end) and barrels at the south end; along the back,
+ * barrels (hydrogen, north end), chemical engineering under copper slabs, two columns of scaffolding, steel blocks and
+ * chemical engineering up to the top layer, and radiators. Fluid pipes join the parts.
  *
- * Offsets are relative to the trigger (the redstone engineering block on the deck's east edge, 8th row from the north),
+ * Offsets are relative to the trigger (the redstone engineering block on the deck's east edge, 9th row from the north),
  * in the reference orientation (facing NORTH): the front is WEST, so the player stands west of the structure looking
  * east; right = south, back = east, left = north. dx grows east, dz grows south (the structure is west of the trigger,
  * so dx is -6..0).
- * Ports, where the user's model draws them: HF (-5,0,-7) and hydrogen (-1,0,-7) in, on the north (feed) face; UF6 (-5,0,3)
- * and the fluorinated effluent (-1,0,3) out, on the south face; yellowcake in (and the fluorination ash out) on the roof
- * hatch (-5,9,-6); energy on the heavy engineering of the east wall (0,0,-5..-3); redstone on the trigger.
- * Read from the user's build in the dev world (x200..206, y4..14, z485..495, saved 03/11/2026 21:44). No Minecraft classes.
+ * Ports, where the user's model draws them: HF (-5,0,-8) and hydrogen (-1,0,-8) in, on the north (feed) face; UF6 (-5,0,2)
+ * and the fluorinated effluent (-1,0,2) out, on the south face (all four on chemical engineering); yellowcake in on the hatch on
+ * top of the reactor tower (-5,10,-7); the fluorination ash out on the radioactive handling block of the east wall, at the back (0,0,-7); energy on the heavy
+ * engineering of the east wall (0,0,-4..-2); redstone on the trigger.
+ * Read from the user's build in the dev world (x200..206, y4..15, z485..495, saved 08/11/2026 11:31). No Minecraft classes.
  */
 public final class ConversionUnitStructure
 {
 	public static final int MIN_DX = -6, MAX_DX = 0;
-	public static final int MIN_DY = 0, MAX_DY = 10;
-	public static final int MIN_DZ = -7, MAX_DZ = 3;
+	public static final int MIN_DY = 0, MAX_DY = 11;
+	public static final int MIN_DZ = -8, MAX_DZ = 2;
 
-	/** Master part (steel in the middle of the deck's first level); holds the machine. */
-	public static final int MASTER_DX = -5, MASTER_DY = 2, MASTER_DZ = -6;
+	/** Master part (radioactive handling core of the reactor tower, first level above the deck); holds the machine. */
+	public static final int MASTER_DX = -5, MASTER_DY = 2, MASTER_DZ = -7;
 
 	/**
-	 * s steel scaffolding, S steel sheetmetal, P lead sheetmetal, C copper sheetmetal, b steel sheetmetal slab,
-	 * c copper sheetmetal slab, M covered steel ladder, H heavy engineering, l light engineering,
-	 * R redstone engineering (trigger), G generator (fluorine cells), r radiator (cold traps), B metal barrel
-	 * (autoclave), p fluid pipe, f steel fence, L metal ladder, T steel block, Q chemical engineering, X radioactive
-	 * handling, . air (not checked).
+	 * L metal ladder (the column at x204, z491), s steel scaffolding, S steel sheetmetal, P lead sheetmetal, C copper sheetmetal, I iron sheetmetal,
+	 * b steel sheetmetal slab, c copper sheetmetal slab, H heavy engineering, R redstone engineering (trigger),
+	 * r radiator (cold traps), B metal barrel, p fluid pipe, f steel fence, T steel block, Q chemical engineering,
+	 * X radioactive handling, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Written for the 7 x 10 build: x200..206, y4..13, z485..494 (03/11/2026, from the 5 x 10 build plus the aisle).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
-					"slSSSls",
+					"sQSSSQs",
+					"sSSSSSX",
+					"sSSSSSs",
 					"sSSSSSs",
 					"sSSSSSH",
 					"sSSSSSH",
 					"sSSSSSH",
-					"sSSSSSs",
 					"sSSSSSs",
 					"sSSSSSR",
 					"sSSSSSs",
-					"sSSSSSs",
-					"slSSSls"},
+					"sQSSSQs"},
 			{ // y 5
-					"fpf..BB",
-					"pppppBB",
+					"fff..BB",
+					"fXfppBB",
 					"fff..QQ",
-					"pPX..QQ",
-					"f.f..QQ",
-					"pp...p.",
-					"f.f..SS",
-					"BB..MTS",
-					"BB...rr",
-					"BB...rr",
-					"BB...QS"},
-			{ // y 6
-					"sbs..BB",
-					"bSbp.BB",
-					"sbs..QQ",
-					".PX..QQ",
-					"sbs..QQ",
-					"bSb....",
-					"sbs..SS",
-					"BB..MTS",
-					"BB...rr",
-					"BB...rr",
-					"BB...QS"},
-			{ // y 7
-					"sSs....",
-					"SXSS...",
-					"sSs..CC",
-					".PX..CC",
-					"sSs..CC",
-					"SXSfff.",
-					"sSs..SS",
-					"....MTS",
-					".p...rr",
+					"PPP..QQ",
+					"fff..QQ",
+					"fXf..sT",
+					"fff.LsQ",
 					".....rr",
-					".....QS"},
+					"BBB..rr",
+					"BBB..QS",
+					"BBB..TS"},
+			{ // y 6
+					"TTT..BB",
+					"TXTp.BB",
+					"TTT..QQ",
+					"PPP..QQ",
+					"TTT..QQ",
+					"TXT..sT",
+					"TTT.LsQ",
+					".....rr",
+					"BBB..rr",
+					"BBB..QS",
+					"BBB..TS"},
+			{ // y 7
+					"CSC....",
+					"SXSp...",
+					"CSC..QQ",
+					"PPP..QQ",
+					"SSS..QQ",
+					"SXS..sT",
+					"SSS.LsQ",
+					".....rr",
+					".p...rr",
+					".....QS",
+					".....TS"},
 			{ // y 8
-					"sCs....",
-					"CXCS...",
-					"sCs....",
-					".bb....",
-					"sSs....",
-					"SXS....",
-					"sSs..SS",
-					"....MTS",
-					".ppppCC",
+					"CSC....",
+					"SXSQ...",
+					"CSC..cc",
+					"PPP..cc",
+					"III..cc",
+					"IXI..sT",
+					"III.LsQ",
 					".....CC",
-					".....QS"},
+					".ppppCC",
+					".....QS",
+					".....TS"},
 			{ // y 9
-					"sCs....",
-					"CXCS...",
-					"sCs....",
-					".......",
-					"sSs....",
-					"SXS....",
-					"sSs..SS",
-					"....MTS",
-					".......",
-					".......",
-					".....QS"},
-			{ // y 10
+					"CSC....",
+					"SXSQ...",
+					"CSC....",
+					"bbb....",
 					"SSS....",
-					"SXpp...",
-					"SSSp...",
-					"...p...",
-					".b.p...",
-					"bSbp...",
-					".b.p.SS",
-					"...pMTS",
-					"...p...",
-					"...p...",
-					"...ppff"},
+					"SXS..sT",
+					"SSS.LsQ",
+					".......",
+					".......",
+					".....QS",
+					".....TS"},
+			{ // y 10
+					"CSC....",
+					"SXSQ...",
+					"CSC....",
+					".......",
+					"SSS....",
+					"SXS..sT",
+					"SSS.LsQ",
+					".......",
+					".......",
+					".....QS",
+					".....TS"},
 			{ // y 11
 					"TTT....",
 					"TXTp...",
+					"TTTp...",
+					"...p...",
+					"TTTp...",
+					"TTTp.sT",
+					"TTTpLsQ",
+					"...p...",
+					"...p...",
+					"...ppQS",
+					".....TS"},
+			{ // y 12
+					"SSS....",
+					"SXSp...",
+					"SSS....",
+					".......",
+					"bpb....",
+					"bSb..sT",
+					"bbb.LsQ",
+					".......",
+					".......",
+					".....QS",
+					".....TS"},
+			{ // y 13
+					"TTT....",
+					"TXT....",
 					"TTT....",
 					".......",
+					".pppppp",
+					".....sT",
+					"....LsQ",
 					".......",
-					".ppppp.",
-					".....SS",
-					"....MTS",
 					".......",
-					".......",
-					".....f."},
-			{ // y 12
+					".....QS",
+					".....TS"},
+			{ // y 14
 					"fff....",
 					"fXf....",
-					"fff....",
+					"f.f....",
 					".......",
 					".......",
-					".......",
-					".....SS",
-					"....MTS",
-					".......",
-					".......",
-					".....f."},
-			{ // y 13
-					"bbb....",
-					"blb....",
-					"bbb....",
+					".....sT",
+					"....LsQ",
 					".......",
 					".......",
-					".......",
-					".....bb",
-					"......b",
-					".......",
-					".......",
-					".....f."},
-			{ // y 14
+					".....QS",
+					".....TS"},
+			{ // y 15
 					".......",
 					".......",
 					".......",
 					".......",
 					".......",
+					".....sT",
+					"....LsQ",
 					".......",
 					".......",
-					".......",
-					".......",
-					".......",
-					".....f."},
+					".....QS",
+					".....TS"},
 	};
 
 	public static final char TRIGGER = 'R';
 
 	/** What a part does besides being structure. */
-	public static final int PORT_NONE = 0, PORT_HYDROGEN = 1, PORT_HF = 2, PORT_UF6 = 3, PORT_EFFLUENT = 4, PORT_ITEM = 5, PORT_ENERGY = 6, PORT_REDSTONE = 7;
+	public static final int PORT_NONE = 0, PORT_HYDROGEN = 1, PORT_HF = 2, PORT_UF6 = 3, PORT_EFFLUENT = 4, PORT_ITEM = 5, PORT_ENERGY = 6, PORT_REDSTONE = 7, PORT_ASH = 8;
 
 	/**
 	 * Port parts and the face they work on, as a reference-orientation {dx, dz} step out of the part
@@ -181,14 +191,15 @@ public final class ConversionUnitStructure
 	 */
 	static final int[][] PORTS = {
 			// dx, dy, dz, port, face dx, face dz
-			{-1, 0, -7, PORT_HYDROGEN, 0, -1},
-			{-5, 0, -7, PORT_HF, 0, -1},
-			{-5, 0, 3, PORT_UF6, 0, 1},
-			{-1, 0, 3, PORT_EFFLUENT, 0, 1},
-			{-5, 9, -6, PORT_ITEM, 0, 0},
-			{0, 0, -5, PORT_ENERGY, 0, 0},
+			{-1, 0, -8, PORT_HYDROGEN, 0, -1},
+			{-5, 0, -8, PORT_HF, 0, -1},
+			{-5, 0, 2, PORT_UF6, 0, 1},
+			{-1, 0, 2, PORT_EFFLUENT, 0, 1},
+			{-5, 10, -7, PORT_ITEM, 0, 0},
+			{0, 0, -7, PORT_ASH, 1, 0},
 			{0, 0, -4, PORT_ENERGY, 0, 0},
 			{0, 0, -3, PORT_ENERGY, 0, 0},
+			{0, 0, -2, PORT_ENERGY, 0, 0},
 			{0, 0, 0, PORT_REDSTONE, 0, 0},
 	};
 
@@ -228,6 +239,32 @@ public final class ConversionUnitStructure
 	{
 		return get(dx, dy, dz) != '.';
 	}
+
+	/** Empty in the structure, but the model draws there: an invisible part gives it the model's collision. */
+	public static boolean isCollisionOnly(int dx, int dy, int dz)
+	{
+		for(int[] c : COLLISION_ONLY)
+			if(c[0] == dx && c[1] == dy && c[2] == dz)
+				return true;
+		return false;
+	}
+
+	// COLLISION-ONLY START (ferramentas/conversao_colisao.py)
+	static final int[][] COLLISION_ONLY = {
+		{-2, 1, -8}, {-2, 1, -6}, {-3, 1, -5}, {-2, 1, -5}, {-2, 1, -4}, {-2, 1, -3}, {-6, 1, -1}, {-5, 1, -1},
+		{-4, 1, -1}, {-2, 1, -1}, {-2, 1, 0}, {-2, 1, 1}, {-2, 2, -8}, {-2, 2, -7}, {-2, 2, -6}, {-3, 2, -5},
+		{-2, 2, -5}, {-2, 2, -4}, {-2, 2, -3}, {-6, 2, -1}, {-5, 2, -1}, {-4, 2, -1}, {-2, 2, -1}, {-2, 2, 0},
+		{-2, 2, 1}, {-1, 3, -8}, {0, 3, -8}, {-1, 3, -7}, {0, 3, -7}, {-2, 3, -6}, {-3, 3, -5}, {-2, 3, -5},
+		{-2, 3, -4}, {-2, 3, -3}, {-6, 3, -1}, {-5, 3, -1}, {-4, 3, -1}, {-2, 3, -1}, {-6, 3, 0}, {-4, 3, 0},
+		{-2, 3, 0}, {-6, 3, 1}, {-5, 3, 1}, {-4, 3, 1}, {-2, 3, 1}, {-6, 3, 2}, {-5, 3, 2}, {-4, 3, 2},
+		{-3, 4, -6}, {-3, 4, -5}, {-3, 4, -4}, {-2, 4, -4}, {-3, 4, -3}, {-2, 4, -3}, {-2, 4, -1}, {-2, 4, 1},
+		{-2, 5, -3}, {-2, 5, -1}, {-1, 5, -1}, {0, 5, -1}, {-2, 6, -3}, {-2, 6, -1}, {-1, 6, -1}, {0, 6, -1},
+		{-4, 7, -5}, {-2, 7, -3}, {-4, 7, -1}, {-2, 7, -1}, {-1, 7, -1}, {0, 7, -1}, {-4, 7, 0}, {-4, 7, 1},
+		{-4, 7, 2}, {-3, 7, 2}, {-2, 7, 2}, {-4, 8, -5}, {-3, 8, -5}, {-3, 8, -4}, {-2, 8, -4}, {-1, 8, -4},
+		{-2, 8, -3}, {-2, 8, -1}, {0, 8, -1}, {-2, 9, -3}, {-2, 9, -1}, {-1, 9, -1}, {0, 9, -1}, {-5, 10, -6},
+		{-2, 10, -3}, {-2, 10, -1}, {0, 10, -1}, {-5, 11, -7}, {-2, 11, -3}, {-2, 11, -1}, {-1, 11, -1}, {0, 11, -1},
+	};
+	// COLLISION-ONLY END
 
 	public static int count(char c)
 	{

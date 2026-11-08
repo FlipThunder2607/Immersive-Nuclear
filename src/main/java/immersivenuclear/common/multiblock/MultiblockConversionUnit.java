@@ -60,6 +60,7 @@ public class MultiblockConversionUnit implements IMultiblock
 			case 'M': return new ItemStack(IEContent.blockMetalLadder, 1, blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalLadder.COVERED_STEEL.getMeta());
 			case 'P': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.LEAD.getMeta());
 			case 'C': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.COPPER.getMeta());
+			case 'I': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.IRON.getMeta());
 			case 'c': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.COPPER.getMeta());
 			default: return ItemStack.EMPTY;
 		}
@@ -188,13 +189,33 @@ public class MultiblockConversionUnit implements IMultiblock
 	 * Puts the original blocks back, except at {@code broken} (the part being removed).
 	 * Only parts still formed are restored, so a partly broken structure does not duplicate blocks.
 	 */
+	public static void placeCollisionParts(World world, BlockPos trigger, EnumFacing facing, boolean mirror)
+	{
+		for(int[] c : COLLISION_ONLY)
+		{
+			BlockPos partPos = toWorld(trigger, facing, mirror, c[0], c[1], c[2]);
+			if(!world.getBlockState(partPos).getBlock().isReplaceable(world, partPos))
+				continue;
+			IBlockState formed = INContent.blockConversionUnit.getDefaultState();
+			world.setBlockState(partPos, formed);
+			TileEntity te = world.getTileEntity(partPos);
+			if(te instanceof TileConversionUnit)
+			{
+				TileConversionUnit part = (TileConversionUnit)te;
+				part.setPart(c[0], c[1], c[2], facing, mirror);
+				part.setOriginal(net.minecraft.init.Blocks.AIR.getDefaultState(), null);
+				world.notifyBlockUpdate(partPos, formed, formed, 3);
+			}
+		}
+	}
+
 	public static void disassemble(World world, BlockPos trigger, EnumFacing facing, boolean mirror, BlockPos broken)
 	{
 		for(int dy = MIN_DY; dy <= MAX_DY; dy++)
 			for(int dz = MIN_DZ; dz <= MAX_DZ; dz++)
 				for(int dx = MIN_DX; dx <= MAX_DX; dx++)
 				{
-					if(!isPart(dx, dy, dz))
+					if(!isPart(dx, dy, dz) && !isCollisionOnly(dx, dy, dz))
 						continue;
 					BlockPos partPos = toWorld(trigger, facing, mirror, dx, dy, dz);
 					if(partPos.equals(broken) || world.getBlockState(partPos).getBlock() != INContent.blockConversionUnit)
@@ -203,7 +224,7 @@ public class MultiblockConversionUnit implements IMultiblock
 					IBlockState original = te instanceof TileConversionUnit ? ((TileConversionUnit)te).getOriginalState() : null;
 					NBTTagCompound originalNbt = te instanceof TileConversionUnit ? ((TileConversionUnit)te).getOriginalNbt() : null;
 					if(original == null)
-						original = stateFor(get(dx, dy, dz));
+						original = isPart(dx, dy, dz) ? stateFor(get(dx, dy, dz)) : net.minecraft.init.Blocks.AIR.getDefaultState();
 					world.setBlockState(partPos, original);
 					if(originalNbt != null)
 					{
@@ -255,7 +276,7 @@ public class MultiblockConversionUnit implements IMultiblock
 		if(materials == null)
 		{
 			Map<Character, Integer> counts = new LinkedHashMap<>();
-			for(char c : "sSPCbcHlRGrBpfLMTQX".toCharArray())
+			for(char c : "sSPCIbcHlRGrBpfLMTQX".toCharArray())
 				counts.put(c, count(c));
 			counts.values().removeIf(v -> v <= 0);  // codes the build no longer uses
 			materials = new IngredientStack[counts.size()];

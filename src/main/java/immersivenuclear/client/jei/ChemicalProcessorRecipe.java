@@ -45,6 +45,7 @@ public class ChemicalProcessorRecipe implements IRecipeWrapper
 			c.setCount(TileChemicalProcessor.BATCH_SOLIDS);
 			uranium.add(c);
 		}
+		uranium.add(new ItemStack(INContent.itemFluorinationAsh, TileChemicalProcessor.BATCH_SOLIDS));
 		ingredients.setInputLists(VanillaTypes.ITEM, Arrays.asList(uranium,
 				Collections.singletonList(new ItemStack(INContent.itemReagent, TileChemicalProcessor.reagentFor(condensate ? 0 : share)))));
 		if(recycled)

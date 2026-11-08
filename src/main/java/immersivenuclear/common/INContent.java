@@ -12,6 +12,7 @@ import java.util.Map;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.ArcFurnaceRecipe;
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
+import blusunrize.immersiveengineering.api.crafting.BottlingMachineRecipe;
 import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.api.crafting.MixerRecipe;
 import blusunrize.immersiveengineering.api.energy.wires.WireApi;
@@ -272,6 +273,8 @@ public class INContent
 	public static Fluid fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6Depleted;
 	/** What the Conversion Unit's fluorination leaves: spent hydrofluoric acid with the fluorides of the impurities. */
 	public static Fluid fluidFluorinatedEffluent;
+	/** mB of fluorinated effluent that, with one quicklime, give one fluorite dust. */
+	public static final int FLUORINATED_EFFLUENT_PER_DUST = 500;
 
 	/** Every fluid of the mod, for texture stitching and the hazard notes. */
 	public static Fluid[] fluids;
@@ -303,7 +306,11 @@ public class INContent
 			soundKilnHeaterStart, soundKilnHeaterLoop, soundKilnHeaterStop, soundKilnDrumStart, soundKilnDrumLoop, soundKilnDrumStop,
 			soundElectrolyzerCellsStart, soundElectrolyzerCellsLoop, soundElectrolyzerCellsStop, soundElectrolyzerRectifierStart,
 			soundElectrolyzerRectifierLoop, soundElectrolyzerRectifierStop, soundElectrolyzerPumpStart, soundElectrolyzerPumpLoop,
-			soundElectrolyzerPumpStop, soundElectrolyzerFeedStart, soundElectrolyzerFeedLoop, soundElectrolyzerFeedStop, soundElectrolyzerVent;
+			soundElectrolyzerPumpStop, soundElectrolyzerFeedStart, soundElectrolyzerFeedLoop, soundElectrolyzerFeedStop, soundElectrolyzerVent,
+			soundConversionReactorStart, soundConversionReactorLoop, soundConversionReactorStop, soundConversionFluorinatorStart,
+			soundConversionFluorinatorLoop, soundConversionFluorinatorStop, soundConversionCellsStart, soundConversionCellsLoop,
+			soundConversionCellsStop, soundConversionColdTrapStart, soundConversionColdTrapLoop, soundConversionColdTrapStop, soundConversionColdTrapDrain,
+			soundConversionScrubberStart, soundConversionScrubberLoop, soundConversionScrubberStop;
 	public static SoundEvent soundDryerLoad, soundDryerHeatStart, soundDryerHeatLoop, soundDryerHeatStop, soundDryerDryStart, soundDryerDryLoop,
 			soundDryerDryStop, soundDryerDischarge, soundDryerFillStart, soundDryerFillLoop, soundDryerFillStop;
 
@@ -377,6 +384,22 @@ public class INContent
 		soundElectrolyzerFeedLoop = sound(event, "electrolyzer_feed_loop");
 		soundElectrolyzerFeedStop = sound(event, "electrolyzer_feed_stop");
 		soundElectrolyzerVent = sound(event, "electrolyzer_vent");
+		soundConversionReactorStart = sound(event, "conversion_reactor_start");
+		soundConversionReactorLoop = sound(event, "conversion_reactor_loop");
+		soundConversionReactorStop = sound(event, "conversion_reactor_stop");
+		soundConversionFluorinatorStart = sound(event, "conversion_fluorinator_start");
+		soundConversionFluorinatorLoop = sound(event, "conversion_fluorinator_loop");
+		soundConversionFluorinatorStop = sound(event, "conversion_fluorinator_stop");
+		soundConversionCellsStart = sound(event, "conversion_cells_start");
+		soundConversionCellsLoop = sound(event, "conversion_cells_loop");
+		soundConversionCellsStop = sound(event, "conversion_cells_stop");
+		soundConversionColdTrapStart = sound(event, "conversion_coldtrap_start");
+		soundConversionColdTrapLoop = sound(event, "conversion_coldtrap_loop");
+		soundConversionColdTrapStop = sound(event, "conversion_coldtrap_stop");
+		soundConversionColdTrapDrain = sound(event, "conversion_coldtrap_drain");
+		soundConversionScrubberStart = sound(event, "conversion_scrubber_start");
+		soundConversionScrubberLoop = sound(event, "conversion_scrubber_loop");
+		soundConversionScrubberStop = sound(event, "conversion_scrubber_stop");
 	}
 
 	static SoundEvent sound(RegistryEvent.Register<SoundEvent> event, String name)
@@ -821,6 +844,8 @@ public class INContent
 		// Neutralizing the effluent (or what is left of it after the Metal Extractor) with quicklime
 		for(Fluid effluent : new Fluid[]{fluidEffluent, fluidDepletedEffluent})
 			MixerRecipe.addRecipe(new FluidStack(fluidSludge, SLUDGE_PER_MIX), new FluidStack(effluent, SLUDGE_PER_MIX), new Object[]{new ItemStack(itemQuicklime)}, SLUDGE_MIX_ENERGY);
+		// The Conversion Unit's effluent: lime takes the fluoride out as calcium fluoride, the fluorite dust that goes back to the HF Kiln. IE's Bottling Machine, as the Mixer only makes fluids
+		BottlingMachineRecipe.addRecipe(new ItemStack(itemFluoriteDust), new ItemStack(itemQuicklime), new FluidStack(fluidFluorinatedEffluent, FLUORINATED_EFFLUENT_PER_DUST));
 		// IE's concrete with the neutralization cake in place of the clay (IE: 500 mB water, 2 sand, clay, gravel, 3200 IF)
 		MixerRecipe.addRecipe(new FluidStack(blusunrize.immersiveengineering.common.IEContent.fluidConcrete, CONCRETE_PER_MIX), new FluidStack(FluidRegistry.WATER, CONCRETE_PER_MIX),
 				new Object[]{"sand", "sand", new ItemStack(itemCake), "gravel"}, CONCRETE_MIX_ENERGY);

@@ -42,9 +42,10 @@ public class ContainerConversionUnit extends Container
 	public final FluidTank hf = new FluidTank(TileConversionUnit.HF_CAPACITY);
 	public final FluidTank uf6 = new FluidTank(TileConversionUnit.UF6_CAPACITY);
 	public final FluidTank effluent = new FluidTank(TileConversionUnit.EFFLUENT_CAPACITY);
-	public int energy, progress, state;
+	public int energy, progress, state, trapped;
+	public boolean draining;
 	public boolean redstoneInverted;
-	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1};
+	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 	public ContainerConversionUnit(InventoryPlayer playerInv, TileConversionUnit tile)
 	{
@@ -95,6 +96,8 @@ public class ContainerConversionUnit extends Container
 			case 5: progress = data; break;
 			case 6: state = data; break;
 			case 7: redstoneInverted = data != 0; break;
+			case 8: trapped = data; break;
+			case 9: draining = data != 0; break;
 		}
 	}
 

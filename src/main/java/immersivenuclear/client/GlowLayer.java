@@ -39,12 +39,20 @@ public class GlowLayer
 	/** Texture key -> its emissive layer; a key mapped to null keeps its own texture (it glows whole, as a flame). */
 	final Map<String, String> emissive;
 	IBakedModel[] normal, mirrored;
+	boolean pullForward = true;
 
 	public GlowLayer(String machine, String[] parts, Map<String, String> emissive)
 	{
 		this.anim = "block/obj/" + machine + "_anim";
 		this.parts = parts;
 		this.emissive = emissive;
+	}
+
+	/** For parts that have their own plane: no pull towards the eye, which up close drew them over what stands in front of them. */
+	public GlowLayer ownPlane()
+	{
+		pullForward = false;
+		return this;
 	}
 
 	/** Called from ModelBakeEvent. */
@@ -90,6 +98,12 @@ public class GlowLayer
 	 */
 	public void render(IBlockState state, EnumFacing facing, boolean isMirrored, double x, double y, double z, boolean... lit)
 	{
+		renderLitBy(240 << 16 | 240, state, facing, isMirrored, x, y, z, lit);
+	}
+
+	/** The same, in the given packed light instead of full bright: for what only reflects the world's light, such as a window's glass. */
+	public void renderLitBy(int packedLight, IBlockState state, EnumFacing facing, boolean isMirrored, double x, double y, double z, boolean... lit)
+	{
 		if(normal == null)
 			return;
 		GlStateManager.pushMatrix();
@@ -100,14 +114,17 @@ public class GlowLayer
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.disableLighting();
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, packedLight & 0xFFFF, packedLight >> 16 & 0xFFFF);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 		// drawn on the static model's own faces: pulled a hair towards the eye so it wins the depth test
-		GlStateManager.enablePolygonOffset();
-		GlStateManager.doPolygonOffset(-1, -10);
+		if(pullForward)
+		{
+			GlStateManager.enablePolygonOffset();
+			GlStateManager.doPolygonOffset(-1, -10);
+		}
 		for(int i = 0; i < parts.length; i++)
 		{
 			IBakedModel model = isMirrored ? mirrored[i] : normal[i];

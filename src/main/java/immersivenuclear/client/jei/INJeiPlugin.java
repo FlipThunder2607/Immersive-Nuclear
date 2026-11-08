@@ -35,6 +35,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HFKilnCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new ConversionUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ElectrolyzerCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
@@ -43,7 +44,8 @@ public class INJeiPlugin implements IModPlugin
 	{
 		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent
 				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate
-				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam || f == INContent.fluidHydrofluoricAcid;
+				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam || f == INContent.fluidHydrofluoricAcid
+				|| f == INContent.fluidHydrogen || f == INContent.fluidOxygen || f == INContent.fluidUF6 || f == INContent.fluidFluorinatedEffluent;
 	}
 
 	@Override
@@ -103,6 +105,12 @@ public class INJeiPlugin implements IModPlugin
 				GuiSulfuricAcidUnit.CONV_H, SulfuricAcidUnitCategory.UID);
 		registry.addIngredientInfo(acidUnit, VanillaTypes.ITEM, "jei.immersivenuclear.sulfuric_acid_unit.info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidSteam, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.steam.info");
+		registry.addRecipes(Collections.singletonList(new ConversionUnitCategory.Recipe()), ConversionUnitCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(INContent.itemConversionUnit), ConversionUnitCategory.UID);
+		registry.addRecipeClickArea(immersivenuclear.client.GuiConversionUnit.class, immersivenuclear.client.GuiConversionUnit.AREA_X, immersivenuclear.client.GuiConversionUnit.AREA_Y,
+				immersivenuclear.client.GuiConversionUnit.AREA_W, immersivenuclear.client.GuiConversionUnit.AREA_H, ConversionUnitCategory.UID);
+		registry.addIngredientInfo(new FluidStack(INContent.fluidFluorinatedEffluent, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.fluorinated_effluent.info");
+		registry.addIngredientInfo(new ItemStack(INContent.itemConversionUnit), VanillaTypes.ITEM, "jei.immersivenuclear.conversion_unit.info");
 		registry.addRecipes(Collections.singletonList(new HFKilnCategory.Recipe()), HFKilnCategory.UID);
 		ItemStack kiln = new ItemStack(INContent.itemHFKiln);
 		registry.addRecipeCatalyst(kiln, HFKilnCategory.UID);

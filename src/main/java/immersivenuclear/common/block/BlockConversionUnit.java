@@ -120,7 +120,7 @@ public class BlockConversionUnit extends Block implements MachinePartBlock
 	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack)
 	{
 		player.addExhaustion(0.005F);
-		if(te instanceof TileConversionUnit)
+		if(te instanceof TileConversionUnit && ((TileConversionUnit)te).getOriginalStack() != null)
 			spawnAsEntity(world, pos, ((TileConversionUnit)te).getOriginalStack());
 	}
 
@@ -235,7 +235,7 @@ public class BlockConversionUnit extends Block implements MachinePartBlock
 	public boolean isPartAt(EnumFacing facing, boolean mirrored, BlockPos offset)
 	{
 		int[] t = ConversionUnitStructure.unrotate(offset.getX(), offset.getZ(), MultiblockConversionUnit.turns(facing), mirrored);
-		return ConversionUnitStructure.isPart(ConversionUnitStructure.MASTER_DX + t[0], ConversionUnitStructure.MASTER_DY + offset.getY(), ConversionUnitStructure.MASTER_DZ + t[1]);
+		return ConversionUnitStructure.isPart(ConversionUnitStructure.MASTER_DX + t[0], ConversionUnitStructure.MASTER_DY + offset.getY(), ConversionUnitStructure.MASTER_DZ + t[1]) || ConversionUnitStructure.isCollisionOnly(ConversionUnitStructure.MASTER_DX + t[0], ConversionUnitStructure.MASTER_DY + offset.getY(), ConversionUnitStructure.MASTER_DZ + t[1]);
 	}
 
 	/** The model's light: the brightest of the spot and its neighbours, so a solid block beside the master does not darken it. */

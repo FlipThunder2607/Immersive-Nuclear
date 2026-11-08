@@ -421,5 +421,101 @@
     "sounds": [
       "immersivenuclear:electrolyzer_vent"
     ]
+  },
+  "conversion_reactor_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_reactor_start"
+    ]
+  },
+  "conversion_reactor_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_reactor_loop"
+    ]
+  },
+  "conversion_reactor_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_reactor_stop"
+    ]
+  },
+  "conversion_fluorinator_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_fluorinator_start"
+    ]
+  },
+  "conversion_fluorinator_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_fluorinator_loop"
+    ]
+  },
+  "conversion_fluorinator_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_fluorinator_stop"
+    ]
+  },
+  "conversion_cells_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_cells_start"
+    ]
+  },
+  "conversion_cells_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_cells_loop"
+    ]
+  },
+  "conversion_cells_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_cells_stop"
+    ]
+  },
+  "conversion_coldtrap_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_coldtrap_start"
+    ]
+  },
+  "conversion_coldtrap_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_coldtrap_loop"
+    ]
+  },
+  "conversion_coldtrap_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_coldtrap_stop"
+    ]
+  },
+  "conversion_scrubber_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_scrubber_start"
+    ]
+  },
+  "conversion_scrubber_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_scrubber_loop"
+    ]
+  },
+  "conversion_scrubber_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_scrubber_stop"
+    ]
+  },
+  "conversion_coldtrap_drain": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:conversion_coldtrap_drain"
+    ]
   }
 }

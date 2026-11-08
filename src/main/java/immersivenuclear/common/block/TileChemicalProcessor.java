@@ -297,6 +297,8 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	{
 		if(stack.isEmpty())
 			return false;
+		if(stack.getItem() == INContent.itemFluorinationAsh)     // the Conversion Unit's ash: its leftover uranium is leached out like the ore's
+			return true;
 		int id = OreDictionary.getOreID("dustUranium");
 		for(int i : OreDictionary.getOreIDs(stack))
 			if(i == id)

@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.2.0-dev.60"
+version = "0.2.0-dev.89"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 

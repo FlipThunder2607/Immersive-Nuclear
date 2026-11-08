@@ -7,44 +7,59 @@ map_Kd #base_handrail
 newmtl base_handwheel
 map_Kd #base_handwheel
 
-newmtl common_lamp_blue
-map_Kd #common_lamp_blue
+newmtl common_hazard
+map_Kd #common_hazard
 
-newmtl common_lamp_green
-map_Kd #common_lamp_green
+newmtl conversion_led_green_off
+map_Kd #conversion_led_green_off
 
-newmtl common_lamp_orange
-map_Kd #common_lamp_orange
+newmtl conversion_led_orange_off
+map_Kd #conversion_led_orange_off
 
-newmtl common_lamp_red
-map_Kd #common_lamp_red
+newmtl conversion_led_red_off
+map_Kd #conversion_led_red_off
 
-newmtl common_plaque
-map_Kd #common_plaque
+newmtl conversion_window_cell_off
+map_Kd #conversion_window_cell_off
 
-newmtl common_radiation
-map_Kd #common_radiation
+newmtl conversion_window_fire_off
+map_Kd #conversion_window_fire_off
 
-newmtl common_rough_steel_ctm
-map_Kd #common_rough_steel_ctm
+newmtl conversion_window_hidro_off
+map_Kd #conversion_window_hidro_off
 
-newmtl common_toxic
-map_Kd #common_toxic
+newmtl conversion_window_hotcell_off
+map_Kd #conversion_window_hotcell_off
 
-newmtl kiln_coil_glow
-map_Kd #kiln_coil_glow
+newmtl conversion_window_reactor_off
+map_Kd #conversion_window_reactor_off
+
+newmtl lead_tank_wall
+map_Kd #lead_tank_wall
+
+newmtl metal_decoration0_coil_hv_side
+map_Kd #metal_decoration0_coil_hv_side
+
+newmtl metal_decoration0_coil_hv_top
+map_Kd #metal_decoration0_coil_hv_top
+
+newmtl metal_decoration0_generator
+map_Kd #metal_decoration0_generator
 
 newmtl metal_decoration0_radiator_ctm
 map_Kd #metal_decoration0_radiator_ctm
 
-newmtl metal_decoration1_steel_scaffolding_noctm
-map_Kd #metal_decoration1_steel_scaffolding_noctm
-
 newmtl metal_decoration2_steel_post
 map_Kd #metal_decoration2_steel_post
 
+newmtl metal_device0_barrel_side
+map_Kd #metal_device0_barrel_side
+
 newmtl metal_device1_fluid_pipe
 map_Kd #metal_device1_fluid_pipe
+
+newmtl metal_multiblock_arc_furnace
+map_Kd #metal_multiblock_arc_furnace
 
 newmtl metal_multiblock_mixer
 map_Kd #metal_multiblock_mixer
@@ -55,30 +70,27 @@ map_Kd #metal_multiblock_refinery
 newmtl pipe_band_h2
 map_Kd #pipe_band_h2
 
+newmtl precipitation_tank_wall
+map_Kd #precipitation_tank_wall
+
+newmtl precipitation_tank_wall_dark
+map_Kd #precipitation_tank_wall_dark
+
 newmtl redstone_conector
 map_Kd #redstone_conector
-
-newmtl sheetmetal_aluminum
-map_Kd #sheetmetal_aluminum
 
 newmtl sheetmetal_copper
 map_Kd #sheetmetal_copper
 
-newmtl sheetmetal_lead
-map_Kd #sheetmetal_lead
-
 newmtl sheetmetal_steel
 map_Kd #sheetmetal_steel
 
-newmtl stone_decoration_concrete
-map_Kd #stone_decoration_concrete
+newmtl steel_flor
+map_Kd #steel_flor
 
-newmtl stone_decoration_insulating_glass
-map_Kd #stone_decoration_insulating_glass
+newmtl steel_fluid_pipe
+map_Kd #steel_fluid_pipe
 
 newmtl storage_steel
 map_Kd #storage_steel
-
-newmtl tanque_visor_hazard_ampliada
-map_Kd #tanque_visor_hazard_ampliada
 

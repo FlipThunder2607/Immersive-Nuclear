@@ -1,6 +1,7 @@
 package immersivenuclear.common.block;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
 import immersivenuclear.common.multiblock.ConversionUnitStructure;
 import immersivenuclear.common.multiblock.MultiblockConversionUnit;
@@ -13,7 +14,9 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -40,9 +43,11 @@ import net.minecraftforge.items.ItemStackHandler;
  * hexafluoride and effluent; the yellowcake is reduced with the hydrogen, fluorinated with the acid (part of it split
  * into fluorine in the cells) and the hexafluoride gas is condensed in the cold traps into the autoclave. While it
  * runs it draws power (cells, reactor heating and cold traps). Now and then a little fluorination ash settles in the
- * reactor. Without power the cycle waits; a redstone signal stops it (the hammer inverts that).
+ * reactor. Without power the cycle waits; a redstone signal stops it (the hammer inverts that). While it runs each
+ * step sounds from its own part: the reduction reactor, the fluorinator, the fluorine cells, the cold traps and the
+ * scrubber.
  */
-public class TileConversionUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction
+public class TileConversionUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
 {
 	// Provisional values (the user's proposal, 31/10, and Arc Furnace level energy, 02/11): 1 yellowcake + 250 mB hydrogen
 	// + 1500 mB hydrofluoric acid (about 6 parts) -> 1000 mB hexafluoride + 1000 mB effluent in 10 s, and 1 ash in 4 cycles
@@ -101,45 +106,100 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	final Energy energy = new Energy();
 	/** Ticks into the current cycle; 0 = no cycle running. */
 	int progress;
+	/** The hexafluoride frozen in the cold traps (mB), not yet in the tank; while draining it thaws into the tank. As in the real plant, the traps work by batches while the rest runs on. */
+	int trapped;
+	boolean draining;
+	int idleWithTrapped;
+	public static final int TRAP_CAPACITY = 4000, DRAIN_PER_TICK = 100, IDLE_BEFORE_DRAIN = 100;
 	/** Cycles finished since the last ash. */
 	int ashCount;
 	int state = STATE_IDLE;
 	boolean redstoneInverted;
 
 	/** Running, as last sent to the clients (server), or as received (client). */
-	boolean sentRunning, clientRunning;
+	boolean clientRunning;
+	/** The state as last sent to the clients (server), or as received (client). */
+	int sentState = -1, clientState;
+	boolean sentDraining, clientDraining;
+	/** The invisible collision parts are in place (machines formed before they existed get them on their first tick). */
+	boolean collisionPlaced;
 
-	/** What the item port shows: slot 0 takes yellowcake (insert only), slot 1 gives the ash (extract only). */
+	/** Where each sound plays (template offsets, blocks of the user's model): the reduction reactor (the master, in the
+	 * reactor tower), the fluorinator (the second reactor's core), the fluorine cells, the cold traps' radiators and the
+	 * scrubber's column. */
+	static final int[] FLUORINATOR_PART = {-5, 1, -3}, CELLS_PART = {-1, 1, -5}, COLD_TRAP_PART = {-1, 1, -1}, SCRUBBER_PART = {-1, 1, 1};
+	static final int[] CHIMNEY = {4125, 10700, 8750};
+	final LoopSound reactor = new LoopSound(() -> INContent.soundConversionReactorStart, () -> INContent.soundConversionReactorLoop, () -> INContent.soundConversionReactorStop, 26);
+	final LoopSound fluorinator = new LoopSound(() -> INContent.soundConversionFluorinatorStart, () -> INContent.soundConversionFluorinatorLoop, () -> INContent.soundConversionFluorinatorStop, 16);
+	final LoopSound cells = new LoopSound(() -> INContent.soundConversionCellsStart, () -> INContent.soundConversionCellsLoop, () -> INContent.soundConversionCellsStop, 16);
+	final LoopSound coldTrap = new LoopSound(() -> INContent.soundConversionColdTrapStart, () -> INContent.soundConversionColdTrapLoop, () -> INContent.soundConversionColdTrapStop, 20);
+	final LoopSound scrubber = new LoopSound(() -> INContent.soundConversionScrubberStart, () -> INContent.soundConversionScrubberLoop, () -> INContent.soundConversionScrubberStop, 20);
+
+	/** The hatch on top of the reactor tower: yellowcake in, nothing out. */
 	final IItemHandler itemPort = new IItemHandler()
 	{
 		@Override
 		public int getSlots()
 		{
-			return 2;
+			return 1;
 		}
 
 		@Override
 		public ItemStack getStackInSlot(int slot)
 		{
-			return inventory.getStackInSlot(slot);
+			return inventory.getStackInSlot(SLOT_CAKE);
 		}
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
 		{
-			return slot == 0 ? inventory.insertItem(SLOT_CAKE, stack, simulate) : stack;
+			return inventory.insertItem(SLOT_CAKE, stack, simulate);
 		}
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate)
 		{
-			return slot == 1 ? inventory.extractItem(SLOT_ASH, amount, simulate) : ItemStack.EMPTY;
+			return ItemStack.EMPTY;
 		}
 
 		@Override
 		public int getSlotLimit(int slot)
 		{
-			return inventory.getSlotLimit(slot);
+			return inventory.getSlotLimit(SLOT_CAKE);
+		}
+	};
+
+	/** The ash port at the back: the fluorination ash out, nothing in. */
+	final IItemHandler ashPort = new IItemHandler()
+	{
+		@Override
+		public int getSlots()
+		{
+			return 1;
+		}
+
+		@Override
+		public ItemStack getStackInSlot(int slot)
+		{
+			return inventory.getStackInSlot(SLOT_ASH);
+		}
+
+		@Override
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+		{
+			return stack;
+		}
+
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate)
+		{
+			return inventory.extractItem(SLOT_ASH, amount, simulate);
+		}
+
+		@Override
+		public int getSlotLimit(int slot)
+		{
+			return inventory.getSlotLimit(SLOT_ASH);
 		}
 	};
 
@@ -326,7 +386,7 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 		else if(cap == CapabilityEnergy.ENERGY)
 			right = port == ConversionUnitStructure.PORT_ENERGY;
 		else if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			right = port == ConversionUnitStructure.PORT_ITEM;
+			right = port == ConversionUnitStructure.PORT_ITEM || port == ConversionUnitStructure.PORT_ASH;
 		else
 			return false;
 		if(!right)
@@ -365,7 +425,7 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 				if(cap == CapabilityEnergy.ENERGY)
 					return CapabilityEnergy.ENERGY.cast(m.energy);
 				if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(m.itemPort);
+					return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getPort() == ConversionUnitStructure.PORT_ASH ? m.ashPort : m.itemPort);
 				return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(m.portTank(getPort()));
 			}
 		}
@@ -376,11 +436,36 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	public void update()
 	{
 		if(world.isRemote)
+		{
+			boolean on = running();
+			if(isMaster() && on)
+				smoke();
+			if(isMaster() && draining())
+				thawVapour();
+			if(isMaster())
+				reactor.update(this, on);
+			else if(isPart(FLUORINATOR_PART))
+				fluorinator.update(this, on);
+			else if(isPart(CELLS_PART))
+				cells.update(this, on);
+			else if(isPart(COLD_TRAP_PART))
+				coldTrap.update(this, on);
+			else if(isPart(SCRUBBER_PART))
+				scrubber.update(this, on);
 			return;
+		}
 		if(getPort() == ConversionUnitStructure.PORT_UF6 || getPort() == ConversionUnitStructure.PORT_EFFLUENT)
 			push();
+		else if(getPort() == ConversionUnitStructure.PORT_ASH && world.getTotalWorldTime() % 8 == 0)
+			pushAsh();
 		if(isMaster())
 		{
+			if(!collisionPlaced)
+			{
+				collisionPlaced = true;
+				MultiblockConversionUnit.placeCollisionParts(world, getTriggerPos(), facing, mirrored);
+				markDirty();
+			}
 			handleContainers();
 			process();
 			sync();
@@ -404,7 +489,9 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 			state = STATE_RUNNING;
 			if(++progress >= CYCLE_TICKS)
 			{
-				uf6.fillInternal(new FluidStack(INContent.fluidUF6, UF6_PER_CYCLE), true);
+				trapped += UF6_PER_CYCLE;
+				if(trapped >= TRAP_CAPACITY)
+					beginDrain();
 				effluent.fillInternal(new FluidStack(INContent.fluidFluorinatedEffluent, EFFLUENT_PER_CYCLE), true);
 				if(++ashCount >= CYCLES_PER_ASH)
 				{
@@ -414,8 +501,38 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 				progress = 0;
 			}
 		}
+		drainTraps();
 		if(state != before)
 			markDirty();
+	}
+
+	void beginDrain()
+	{
+		if(draining)
+			return;
+		draining = true;
+		idleWithTrapped = 0;
+		world.playSound(null, pos, INContent.soundConversionColdTrapDrain, SoundCategory.BLOCKS, 1F, 1F);
+	}
+
+	/** The batch thaws into the tank while production goes on; a stopped machine lets out what is left, so no hexafluoride stays stuck in the traps. */
+	void drainTraps()
+	{
+		if(!draining && trapped > 0 && state != STATE_RUNNING && ++idleWithTrapped >= IDLE_BEFORE_DRAIN)
+			beginDrain();
+		else if(state == STATE_RUNNING)
+			idleWithTrapped = 0;
+		if(!draining)
+			return;
+		int amount = Math.min(Math.min(DRAIN_PER_TICK, trapped), uf6.getCapacity() - uf6.getFluidAmount());
+		if(amount > 0)
+		{
+			uf6.fillInternal(new FluidStack(INContent.fluidUF6, amount), true);
+			trapped -= amount;
+			markDirty();
+		}
+		if(trapped == 0)
+			draining = false;
 	}
 
 	/** A cycle starts with its yellowcake, hydrogen and acid, and room for the products; the feed is used up as it starts. */
@@ -426,7 +543,7 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 			state = STATE_NO_INPUT;
 			return false;
 		}
-		if(uf6.getCapacity() - uf6.getFluidAmount() < UF6_PER_CYCLE || effluent.getCapacity() - effluent.getFluidAmount() < EFFLUENT_PER_CYCLE
+		if(trapped > TRAP_CAPACITY || effluent.getCapacity() - effluent.getFluidAmount() < EFFLUENT_PER_CYCLE
 				|| ashCount == CYCLES_PER_ASH - 1 && !canOutput(SLOT_ASH, new ItemStack(INContent.itemFluorinationAsh)))
 		{
 			state = STATE_OUTPUT_FULL;
@@ -446,13 +563,27 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	/** Tells the clients when it starts or stops. */
 	void sync()
 	{
-		boolean on = state == STATE_RUNNING;
-		if(on != sentRunning)
+		if(state != sentState || draining != sentDraining)
 		{
-			sentRunning = on;
+			sentState = state;
+			sentDraining = draining;
 			IBlockState st = world.getBlockState(pos);
 			world.notifyBlockUpdate(pos, st, st, 2);
 		}
+	}
+
+	/** Whether the cold traps are thawing into the tank, as the client knows it. */
+	public boolean draining()
+	{
+		TileConversionUnit m = getMaster();
+		return m != null && m.clientDraining;
+	}
+
+	/** The machine's state, as the client knows it. */
+	public int stateForClient()
+	{
+		TileConversionUnit m = getMaster();
+		return m == null ? STATE_IDLE : m.clientState;
 	}
 
 	/** Whether it runs, as the client knows it. */
@@ -519,6 +650,56 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	{
 		ItemStack out = inventory.getStackInSlot(slot);
 		return stack.isEmpty() || out.isEmpty() || ItemHandlerHelper.canItemStacksStack(out, stack) && out.getCount() + stack.getCount() <= out.getMaxStackSize();
+	}
+
+	/** The washed exhaust leaving the top of the chimney, while the machine runs. CHIMNEY is its top from the middle of the master, in thousandths of a block (template dx, dy, dz). */
+	/** The three radiator columns, in thousandths of a block from the middle of the master like CHIMNEY: the gaps and outer sides along the long axis (dz), the span across (dx), the height from the master's floor. */
+	static final int[] RADIATOR_SIDES_DZ = {7900, 7250, 6600, 5850};
+	static final int RADIATOR_DX_MIN = 3100, RADIATOR_DX_MAX = 5200, RADIATOR_Y_MIN = -900, RADIATOR_Y_MAX = 2300;
+
+	/** Cold vapour out of the radiators while they thaw: every gap and outer side of the three columns, over their whole height and width. */
+	void thawVapour()
+	{
+		int turns = MultiblockConversionUnit.turns(facing);
+		for(int side : RADIATOR_SIDES_DZ)
+			for(int i = 0; i < 3; i++)
+			{
+				int across = RADIATOR_DX_MIN + world.rand.nextInt(RADIATOR_DX_MAX - RADIATOR_DX_MIN + 1);
+				int[] w = ConversionUnitStructure.rotate(across, side, turns, mirrored);
+				double y = RADIATOR_Y_MIN + world.rand.nextInt(RADIATOR_Y_MAX - RADIATOR_Y_MIN + 1);
+				world.spawnParticle(EnumParticleTypes.CLOUD, pos.getX() + 0.5 + w[0] / 1000D, pos.getY() + y / 1000D, pos.getZ() + 0.5 + w[1] / 1000D,
+						(world.rand.nextDouble() - 0.5) * 0.02, 0.025, (world.rand.nextDouble() - 0.5) * 0.02);
+			}
+	}
+
+	void smoke()
+	{
+		int[] w = ConversionUnitStructure.rotate(CHIMNEY[0], CHIMNEY[2], MultiblockConversionUnit.turns(facing), mirrored);
+		for(int i = 0; i < 3; i++)
+		{
+			double x = pos.getX() + 0.5 + w[0] / 1000D + (world.rand.nextDouble() - 0.5) * 0.8, y = pos.getY() + CHIMNEY[1] / 1000D, z = pos.getZ() + 0.5 + w[1] / 1000D + (world.rand.nextDouble() - 0.5) * 0.8;
+			world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, x, y, z, 0, 0.14 + world.rand.nextDouble() * 0.08, 0);
+			if(i == 0)
+				world.spawnParticle(EnumParticleTypes.CLOUD, x, y + 0.3, z, 0, 0.1, 0);
+		}
+	}
+
+	/** The ash port hands the ash, one at a time, to the inventory or conveyor behind the machine. */
+	void pushAsh()
+	{
+		TileConversionUnit m = getMaster();
+		EnumFacing face = portWorldFace();
+		if(m == null || face == null)
+			return;
+		TileEntity out = world.getTileEntity(pos.offset(face));
+		if(out == null || !out.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face.getOpposite()))
+			return;
+		IItemHandler target = out.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face.getOpposite());
+		if(target == null)
+			return;
+		ItemStack one = m.ashPort.extractItem(0, 1, true);
+		if(!one.isEmpty() && ItemHandlerHelper.insertItem(target, one, true).isEmpty())
+			ItemHandlerHelper.insertItem(target, m.ashPort.extractItem(0, 1, false), false);
 	}
 
 	/** The output ports push into what stands in front of them. */
@@ -588,7 +769,7 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	public int[] guiValues()
 	{
 		return new int[]{h2.getFluidAmount(), hf.getFluidAmount(), uf6.getFluidAmount(), effluent.getFluidAmount(),
-				Math.min(32767, energy.getEnergyStored()), progress, state, redstoneInverted ? 1 : 0};
+				Math.min(32767, energy.getEnergyStored()), progress, state, redstoneInverted ? 1 : 0, trapped, draining ? 1 : 0};
 	}
 
 	// ---------- saving and syncing ----------
@@ -611,6 +792,9 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 			effluent.readFromNBT(m.getCompoundTag("effluent"));
 			energy.set(m.getInteger("energy"));
 			progress = m.getInteger("progress");
+			trapped = m.getInteger("trapped");
+			collisionPlaced = m.getBoolean("collisionPlaced");
+			draining = m.getBoolean("draining");
 			ashCount = m.getInteger("ashCount");
 			state = m.getInteger("state");
 			redstoneInverted = m.getBoolean("redstoneInverted");
@@ -636,6 +820,9 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 			m.setTag("effluent", effluent.writeToNBT(new NBTTagCompound()));
 			m.setInteger("energy", energy.getEnergyStored());
 			m.setInteger("progress", progress);
+			m.setInteger("trapped", trapped);
+			m.setBoolean("collisionPlaced", collisionPlaced);
+			m.setBoolean("draining", draining);
 			m.setInteger("ashCount", ashCount);
 			m.setInteger("state", state);
 			m.setBoolean("redstoneInverted", redstoneInverted);
@@ -690,13 +877,19 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	{
 		writePart(nbt);
 		if(isMaster())
+		{
 			nbt.setBoolean("running", state == STATE_RUNNING);
+			nbt.setInteger("state", state);
+			nbt.setBoolean("draining", draining);
+		}
 	}
 
 	void readClient(NBTTagCompound nbt)
 	{
 		readPart(nbt);
 		clientRunning = nbt.getBoolean("running");
+		clientState = nbt.getInteger("state");
+		clientDraining = nbt.getBoolean("draining");
 	}
 
 	@Override
@@ -710,10 +903,61 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 			world.markBlockRangeForRenderUpdate(pos, pos);
 	}
 
-	/** The master's box covers the whole machine (any turn): 10 blocks each way, 2 down, 10 up. */
+	boolean isPart(int[] part)
+	{
+		return dx == part[0] && dy == part[1] && dz == part[2];
+	}
+
+	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */
+	@Override
+	public boolean shoudlPlaySound(String sound)
+	{
+		if(isMaster())
+			return reactor.shouldPlay(this, sound);
+		if(isPart(FLUORINATOR_PART))
+			return fluorinator.shouldPlay(this, sound);
+		if(isPart(CELLS_PART))
+			return cells.shouldPlay(this, sound);
+		if(isPart(COLD_TRAP_PART))
+			return coldTrap.shouldPlay(this, sound);
+		return isPart(SCRUBBER_PART) && scrubber.shouldPlay(this, sound);
+	}
+
+	void stopSound()
+	{
+		if(world == null || !world.isRemote)
+			return;
+		if(isMaster())
+			reactor.stop(this);
+		else if(isPart(FLUORINATOR_PART))
+			fluorinator.stop(this);
+		else if(isPart(CELLS_PART))
+			cells.stop(this);
+		else if(isPart(COLD_TRAP_PART))
+			coldTrap.stop(this);
+		else if(isPart(SCRUBBER_PART))
+			scrubber.stop(this);
+	}
+
+	/** Stop the loops when the structure comes apart or the chunk unloads. */
+	@Override
+	public void invalidate()
+	{
+		super.invalidate();
+		stopSound();
+	}
+
+	@Override
+	public void onChunkUnload()
+	{
+		super.onChunkUnload();
+		stopSound();
+	}
+
+	/** The master's box covers the whole machine (any turn): 10 blocks each way, 2 down, 11 up. */
 	@Override
 	public AxisAlignedBB getRenderBoundingBox()
 	{
-		return isMaster() ? new AxisAlignedBB(pos.add(-10, -2, -10), pos.add(11, 10, 11)) : super.getRenderBoundingBox();
+		return isMaster() ? new AxisAlignedBB(pos.add(-10, -2, -10), pos.add(11, 11, 11)) : super.getRenderBoundingBox();
 	}
 }

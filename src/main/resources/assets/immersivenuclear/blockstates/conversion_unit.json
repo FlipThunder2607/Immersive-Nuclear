@@ -9,31 +9,41 @@
       "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
       "#base_handrail": "immersivenuclear:blocks/base_handrail",
       "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
-      "#common_lamp_blue": "immersivenuclear:blocks/common_lamp_blue",
-      "#common_lamp_green": "immersivenuclear:blocks/common_lamp_green",
-      "#common_lamp_orange": "immersivenuclear:blocks/common_lamp_orange",
-      "#common_lamp_red": "immersivenuclear:blocks/common_lamp_red",
-      "#common_plaque": "immersivenuclear:blocks/common_plaque",
-      "#common_radiation": "immersivenuclear:blocks/common_radiation",
-      "#common_rough_steel_ctm": "immersivenuclear:blocks/common_rough_steel_ctm",
-      "#common_toxic": "immersivenuclear:blocks/common_toxic",
-      "#kiln_coil_glow": "immersivenuclear:blocks/kiln_coil_glow",
+      "#common_hazard": "immersivenuclear:blocks/common_hazard",
+      "#conversion_glass": "immersivenuclear:blocks/conversion_glass",
+      "#conversion_led_green_off": "immersivenuclear:blocks/conversion_led_green_off",
+      "#conversion_led_orange_off": "immersivenuclear:blocks/conversion_led_orange_off",
+      "#conversion_led_red_off": "immersivenuclear:blocks/conversion_led_red_off",
+      "#conversion_window_cell": "immersivenuclear:blocks/conversion_window_cell",
+      "#conversion_window_cell_off": "immersivenuclear:blocks/conversion_window_cell_off",
+      "#conversion_window_fire": "immersivenuclear:blocks/conversion_window_fire",
+      "#conversion_window_fire_off": "immersivenuclear:blocks/conversion_window_fire_off",
+      "#conversion_window_hidro": "immersivenuclear:blocks/conversion_window_hidro",
+      "#conversion_window_hidro_off": "immersivenuclear:blocks/conversion_window_hidro_off",
+      "#conversion_window_hotcell": "immersivenuclear:blocks/conversion_window_hotcell",
+      "#conversion_window_hotcell_off": "immersivenuclear:blocks/conversion_window_hotcell_off",
+      "#conversion_window_reactor": "immersivenuclear:blocks/conversion_window_reactor",
+      "#conversion_window_reactor_off": "immersivenuclear:blocks/conversion_window_reactor_off",
+      "#lead_tank_wall": "immersivenuclear:blocks/lead_tank_wall",
+      "#metal_decoration0_coil_hv_side": "immersiveengineering:blocks/metal_decoration0_coil_hv_side",
+      "#metal_decoration0_coil_hv_top": "immersiveengineering:blocks/metal_decoration0_coil_hv_top",
+      "#metal_decoration0_generator": "immersiveengineering:blocks/metal_decoration0_generator",
       "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
-      "#metal_decoration1_steel_scaffolding_noctm": "immersiveengineering:blocks/metal_decoration1_steel_scaffolding_noctm",
       "#metal_decoration2_steel_post": "immersiveengineering:blocks/metal_decoration2_steel_post",
+      "#metal_device0_barrel_side": "immersiveengineering:blocks/metal_device0_barrel_side",
       "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
       "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
       "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
       "#pipe_band_h2": "immersivenuclear:blocks/pipe_band_h2",
+      "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#precipitation_tank_wall_dark": "immersivenuclear:blocks/precipitation_tank_wall_dark",
       "#redstone_conector": "immersivenuclear:blocks/redstone_conector",
-      "#sheetmetal_aluminum": "immersiveengineering:blocks/sheetmetal_aluminum",
       "#sheetmetal_copper": "immersiveengineering:blocks/sheetmetal_copper",
-      "#sheetmetal_lead": "immersiveengineering:blocks/sheetmetal_lead",
       "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
-      "#stone_decoration_concrete": "immersiveengineering:blocks/stone_decoration_concrete",
-      "#stone_decoration_insulating_glass": "immersiveengineering:blocks/stone_decoration_insulating_glass",
+      "#steel_flor": "immersivenuclear:blocks/steel_flor",
+      "#steel_fluid_pipe": "immersivenuclear:blocks/steel_fluid_pipe",
       "#storage_steel": "immersiveengineering:blocks/storage_steel",
-      "#tanque_visor_hazard_ampliada": "immersivenuclear:blocks/tanque_visor_hazard_ampliada",
       "particle": "immersiveengineering:blocks/storage_steel"
     }
   },
@@ -172,9 +182,9 @@
         "transform": {
           "gui": {
             "translation": [
-              0.2726,
-              -0.1853,
-              -0.009
+              0.2706,
+              -0.257,
+              -0.0428
             ],
             "scale": 0.064,
             "rotation": [
@@ -190,17 +200,17 @@
           },
           "ground": {
             "translation": [
-              -0.0963,
-              -0.1196,
-              -0.1832
+              -0.0919,
+              -0.1769,
+              -0.1856
             ],
             "scale": 0.0464
           },
           "fixed": {
             "translation": [
-              0.1569,
-              -0.1949,
-              0.2985
+              0.1497,
+              -0.2882,
+              0.3024
             ],
             "scale": 0.0756,
             "post-rotation": [
@@ -211,9 +221,9 @@
           },
           "thirdperson_righthand": {
             "translation": [
-              -0.1738,
-              0.025,
-              -0.1156
+              -0.1725,
+              0.016,
+              -0.1653
             ],
             "scale": 0.0408,
             "rotation": [
@@ -229,9 +239,9 @@
           },
           "thirdperson_lefthand": {
             "translation": [
-              -0.1738,
-              0.025,
-              -0.1156
+              -0.1725,
+              0.016,
+              -0.1653
             ],
             "scale": 0.0408,
             "rotation": [
@@ -247,9 +257,9 @@
           },
           "firstperson_righthand": {
             "translation": [
-              -0.1976,
-              -0.1196,
-              -0.0615
+              -0.1962,
+              -0.1769,
+              -0.0663
             ],
             "scale": 0.0464,
             "post-rotation": [
@@ -260,9 +270,9 @@
           },
           "firstperson_lefthand": {
             "translation": [
-              0.1976,
-              -0.1196,
-              0.0615
+              0.1962,
+              -0.1769,
+              0.0663
             ],
             "scale": 0.0464,
             "post-rotation": [
