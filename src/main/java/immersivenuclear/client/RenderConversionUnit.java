@@ -50,6 +50,6 @@ public class RenderConversionUnit extends TileEntitySpecialRenderer<TileConversi
 	@Override
 	public boolean isGlobalRenderer(TileConversionUnit te)
 	{
-		return te.isMaster();
+		return te.isMaster();                           // the master's chunk may be out of view; off screen, the render box culls it anyway
 	}
 }

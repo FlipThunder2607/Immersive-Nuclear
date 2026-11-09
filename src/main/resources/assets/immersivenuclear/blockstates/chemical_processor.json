@@ -91,11 +91,119 @@
         "transform": {
           "gui": {
             "translation": [
-              0.003,
-              -0.0671,
-              -0.041
+              0.0027,
+              -0.0619,
+              -0.0378
             ],
-            "scale": 0.1398,
+            "scale": 0.1289,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.002,
+              -0.0449,
+              -0.0004
+            ],
+            "scale": 0.0799
+          },
+          "fixed": {
+            "translation": [
+              0.0032,
+              -0.073,
+              0.0006
+            ],
+            "scale": 0.1298,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0015,
+              -0.0111,
+              -0.0377
+            ],
+            "scale": 0.0699,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0015,
+              -0.0111,
+              -0.0377
+            ],
+            "scale": 0.0699,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0017,
+              -0.0449,
+              0.0011
+            ],
+            "scale": 0.0799,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0017,
+              -0.0449,
+              -0.0011
+            ],
+            "scale": 0.0799,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "preview": [
+      {
+        "model": "immersivenuclear:obj/chemical_processor_preview.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0027,
+              -0.0619,
+              -0.0378
+            ],
+            "scale": 0.1289,
             "rotation": [
               {
                 "x": 30

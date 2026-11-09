@@ -38,6 +38,8 @@ public class SlicedMachineModel implements IBakedModel
 	final EnumFacing facing;
 	final boolean mirrored;
 	final Map<Long, List<BakedQuad>> slices = new ConcurrentHashMap<>();
+	/** Per side: the model's quads by the block they belong to, worked out once (a big machine has thousands of quads and a thousand blocks). */
+	final Map<Integer, Map<BlockPos, List<BakedQuad>>> byCell = new ConcurrentHashMap<>();
 
 	public SlicedMachineModel(IBakedModel whole, MachinePartBlock block, EnumFacing facing, boolean mirrored)
 	{
@@ -63,13 +65,30 @@ public class SlicedMachineModel implements IBakedModel
 	{
 		boolean master = offset.equals(BlockPos.ORIGIN);
 		List<BakedQuad> out = new ArrayList<>();
-		for(BakedQuad q : whole.getQuads(null, side, 0))
-		{
-			BlockPos cell = cell(q);
-			if(cell.equals(offset) || master && !block.isPartAt(facing, mirrored, cell))
-				out.add(master ? q : moved(q, -offset.getX(), -offset.getY(), -offset.getZ()));
-		}
+		Map<BlockPos, List<BakedQuad>> cells = byCell.computeIfAbsent(side == null ? 6 : side.ordinal(), k -> group(side));
+		for(BakedQuad q : cells.getOrDefault(offset, Collections.emptyList()))
+			out.add(master ? q : moved(q, -offset.getX(), -offset.getY(), -offset.getZ()));
+		if(master)
+			for(Map.Entry<BlockPos, List<BakedQuad>> e : cells.entrySet())
+				if(!e.getKey().equals(offset) && !block.isPartAt(facing, mirrored, e.getKey()))
+					out.addAll(e.getValue());
 		return out;
+	}
+
+	Map<BlockPos, List<BakedQuad>> group(@Nullable EnumFacing side)
+	{
+		// Forge's baked OBJ builds its quads on the first request, through instance fields (the sprite of the face at hand), and
+		// the chunk builders ask from several threads: unguarded, faces came out with another's sprite or the whole atlas.
+		// One lock for all: the variants of a machine (master or not, running or not) share the same parsed faces and vertices
+		List<BakedQuad> quads;
+		synchronized(SlicedMachineModel.class)
+		{
+			quads = whole.getQuads(null, side, 0);
+		}
+		Map<BlockPos, List<BakedQuad>> cells = new java.util.HashMap<>();
+		for(BakedQuad q : quads)
+			cells.computeIfAbsent(cell(q), k -> new ArrayList<>()).add(q);
+		return cells;
 	}
 
 	static int positionOffset(VertexFormat format)

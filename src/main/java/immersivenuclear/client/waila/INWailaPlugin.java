@@ -33,6 +33,9 @@ public class INWailaPlugin implements IWailaPlugin
 		machine(registrar, BlockHFKiln.class, () -> INContent.itemHFKiln);
 		machine(registrar, BlockElectrolyzer.class, () -> INContent.itemElectrolyzer);
 		machine(registrar, immersivenuclear.common.block.BlockConversionUnit.class, () -> INContent.itemConversionUnit);
+		machine(registrar, immersivenuclear.common.block.BlockEnrichmentUnit.class, () -> INContent.itemEnrichmentUnit);
+		machine(registrar, immersivenuclear.common.block.BlockEnrichmentUnit4.class, () -> INContent.itemEnrichmentUnit4);
+		machine(registrar, immersivenuclear.common.block.BlockEnrichmentUnit6.class, () -> INContent.itemEnrichmentUnit6);
 		registrar.registerStackProvider(new IWailaDataProvider()
 		{
 			@Override

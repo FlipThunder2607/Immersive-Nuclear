@@ -517,5 +517,95 @@
     "sounds": [
       "immersivenuclear:conversion_coldtrap_drain"
     ]
+  },
+  "enrichment_cascade_2_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_2_start"
+    ]
+  },
+  "enrichment_cascade_2_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_2_loop"
+    ]
+  },
+  "enrichment_cascade_2_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_2_stop"
+    ]
+  },
+  "enrichment_cascade_4_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_4_start"
+    ]
+  },
+  "enrichment_cascade_4_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_4_loop"
+    ]
+  },
+  "enrichment_cascade_4_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_4_stop"
+    ]
+  },
+  "enrichment_cascade_6_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_6_start"
+    ]
+  },
+  "enrichment_cascade_6_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_6_loop"
+    ]
+  },
+  "enrichment_cascade_6_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_cascade_6_stop"
+    ]
+  },
+  "enrichment_converter_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_converter_start"
+    ]
+  },
+  "enrichment_converter_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_converter_loop"
+    ]
+  },
+  "enrichment_converter_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_converter_stop"
+    ]
+  },
+  "enrichment_compressor_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_compressor_start"
+    ]
+  },
+  "enrichment_compressor_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_compressor_loop"
+    ]
+  },
+  "enrichment_compressor_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:enrichment_compressor_stop"
+    ]
   }
 }

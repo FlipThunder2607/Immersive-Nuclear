@@ -22,7 +22,8 @@ public class FormedPreview
 	public static void render(ItemStack item, int masterX, int masterY, int masterZ, int width)
 	{
 		Minecraft mc = Minecraft.getMinecraft();
-		IBakedModel model = mc.getRenderItem().getItemModelMesher().getItemModel(item);
+		// The whole model: these screens turn it, and the icon's model only keeps the faces its one angle shows
+		IBakedModel model = mc.getRenderItem().getItemModelMesher().getModelManager().getModel(new net.minecraft.client.renderer.block.model.ModelResourceLocation(item.getItem().getRegistryName(), "preview"));
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, 0, width);
 		GlStateManager.rotate(90, 0, 1, 0);

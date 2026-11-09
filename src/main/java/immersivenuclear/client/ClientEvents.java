@@ -65,6 +65,15 @@ public class ClientEvents
 		for(Item item : INContent.itemComputerMachines)
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemConversionUnit, 0, new ModelResourceLocation(INContent.itemConversionUnit.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemEnrichmentUnit, 0, new ModelResourceLocation(INContent.itemEnrichmentUnit.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemEnrichmentUnit4, 0, new ModelResourceLocation(INContent.itemEnrichmentUnit4.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(INContent.itemEnrichmentUnit6, 0, new ModelResourceLocation(INContent.itemEnrichmentUnit6.getRegistryName(), "inventory"));
+		// The formed machines' whole models, for FormedPreview
+		java.util.List<Item> previews = new java.util.ArrayList<>(java.util.Arrays.asList(INContent.itemChemicalProcessor, INContent.itemFilterPress, INContent.itemChemicalSeparator, INContent.itemMetalExtractor, INContent.itemPrecipitationUnit,
+				INContent.itemIndustrialDryer, INContent.itemSulfuricAcidUnit, INContent.itemHFKiln, INContent.itemElectrolyzer, INContent.itemConversionUnit, INContent.itemEnrichmentUnit, INContent.itemEnrichmentUnit4, INContent.itemEnrichmentUnit6));
+		previews.addAll(java.util.Arrays.asList(INContent.itemComputerMachines));
+		for(Item item : previews)
+			net.minecraft.client.renderer.block.model.ModelBakery.registerItemVariants(item, new ModelResourceLocation(item.getRegistryName(), "preview"));
 		ModelLoader.setCustomModelResourceLocation(INContent.itemReagent, 0, new ModelResourceLocation(INContent.itemReagent.getRegistryName(), "inventory"));
 		for(Item item : new Item[]{INContent.itemResidue, INContent.itemNeutralizedResidue, INContent.itemMixedDeposit, INContent.itemElectrodeSteel,
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
@@ -117,6 +126,9 @@ public class ClientEvents
 		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileElectrolyzer.class, new RenderElectrolyzer());
 		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileSulfuricAcidUnit.class, new RenderSulfuricAcidUnit());
 		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileConversionUnit.class, new RenderConversionUnit());
+		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileEnrichmentUnit.class, new RenderEnrichmentUnit());
+		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileEnrichmentUnit4.class, new RenderEnrichmentUnit());
+		ClientRegistry.bindTileEntitySpecialRenderer(immersivenuclear.common.block.TileEnrichmentUnit6.class, new RenderEnrichmentUnit());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileIndustrialDryer.class, new RenderIndustrialDryer());
 	}
 
@@ -137,10 +149,11 @@ public class ClientEvents
 		RenderConversionUnit.GLASS.bake();
 		RenderConversionUnit.LEDS.bake();
 		RenderConversionUnit.COILS.bake();
+		RenderEnrichmentUnit.bake();
 		RenderIndustrialDryer.bake();
 		// Every part of a formed machine draws its own slice of the machine's model
 		java.util.List<Block> sliced = new java.util.ArrayList<>(java.util.Arrays.asList(INContent.blockChemicalProcessor, INContent.blockFilterPress, INContent.blockChemicalSeparator,
-				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit, INContent.blockHFKiln, INContent.blockElectrolyzer, INContent.blockConversionUnit));
+				INContent.blockMetalExtractor, INContent.blockPrecipitationUnit, INContent.blockIndustrialDryer, INContent.blockSulfuricAcidUnit, INContent.blockHFKiln, INContent.blockElectrolyzer, INContent.blockConversionUnit, INContent.blockEnrichmentUnit, INContent.blockEnrichmentUnit4, INContent.blockEnrichmentUnit6));
 		sliced.addAll(java.util.Arrays.asList(INContent.blockComputerMachines));
 		for(Block b : sliced)
 			for(Map.Entry<IBlockState, ModelResourceLocation> e : event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(b).entrySet())
@@ -162,7 +175,7 @@ public class ClientEvents
 		if(event.getMap() != Minecraft.getMinecraft().getTextureMapBlocks())
 			return;
 		// Textures only the machines' renderers use (the lit and emissive layers of the glowing parts)
-		for(String t : new String[]{"conversion_coil_heat", "common_lamp_red", "common_lamp_orange", "common_lamp_green", "conversion_glass", "conversion_window_reactor", "conversion_window_hotcell", "conversion_window_hidro", "conversion_window_cell", "conversion_window_fire", "computers/cabo_energia", "computers/cabo_dados", "furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
+		for(String t : new String[]{"red_led_emissive", "enrichment_led_green_emissive", "conversion_coil_heat", "common_lamp_red", "common_lamp_orange", "common_lamp_green", "conversion_glass", "conversion_window_reactor", "conversion_window_hotcell", "conversion_window_hidro", "conversion_window_cell", "conversion_window_fire", "computers/cabo_energia", "computers/cabo_dados", "furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
 			event.getMap().registerSprite(new net.minecraft.util.ResourceLocation(ImmersiveNuclear.MODID, "blocks/" + t));
 		for(Fluid f : INContent.fluids)
 			for(Fluid g : new Fluid[]{f, FluidRegistry.getFluid(f.getName())})

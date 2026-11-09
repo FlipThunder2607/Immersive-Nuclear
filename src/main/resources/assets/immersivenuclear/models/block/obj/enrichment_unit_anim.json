@@ -1,0 +1,34 @@
+{
+  "textures": {
+    "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
+    "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
+    "#common_hazard": "immersivenuclear:blocks/common_hazard",
+    "#conversion_led_green_off": "immersivenuclear:blocks/conversion_led_green_off",
+    "#conversion_led_red_off": "immersivenuclear:blocks/conversion_led_red_off",
+    "#crusher": "immersiveengineering:models/crusher",
+    "#metal_decoration0_coil_hv_side": "immersiveengineering:blocks/metal_decoration0_coil_hv_side",
+    "#metal_decoration0_coil_hv_top": "immersiveengineering:blocks/metal_decoration0_coil_hv_top",
+    "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+    "#metal_decoration2_steel_post": "immersiveengineering:blocks/metal_decoration2_steel_post",
+    "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+    "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+    "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+    "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+    "#precipitation_tank_wall_dark": "immersivenuclear:blocks/precipitation_tank_wall_dark",
+    "#red_led": "immersivenuclear:blocks/red_led",
+    "#redstone_conector": "immersivenuclear:blocks/redstone_conector",
+    "#sheetmetal_aluminum": "immersiveengineering:blocks/sheetmetal_aluminum",
+    "#sheetmetal_copper": "immersiveengineering:blocks/sheetmetal_copper",
+    "#sheetmetal_lead": "immersiveengineering:blocks/sheetmetal_lead",
+    "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+    "#steel_flor": "immersivenuclear:blocks/steel_flor",
+    "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "particle": "immersiveengineering:blocks/storage_steel"
+  },
+  "parts": {
+    "lamp_green": 0.0,
+    "lamp_red": 0.0,
+    "led_green": 0.0,
+    "led_red": 0.0
+  }
+}

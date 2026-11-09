@@ -437,6 +437,8 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	{
 		if(world.isRemote)
 		{
+			if(!isMaster() && !isPart(FLUORINATOR_PART) && !isPart(CELLS_PART) && !isPart(COLD_TRAP_PART) && !isPart(SCRUBBER_PART))
+				return;                                  // the plain parts have nothing to do on the client
 			boolean on = running();
 			if(isMaster() && on)
 				smoke();

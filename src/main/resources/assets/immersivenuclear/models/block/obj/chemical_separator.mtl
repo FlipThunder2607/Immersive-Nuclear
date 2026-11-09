@@ -4,9 +4,6 @@ map_Kd #arc_furnace_inactive
 newmtl base_handrail
 map_Kd #base_handrail
 
-newmtl base_plate_in
-map_Kd #base_plate_in
-
 newmtl metal_device0_barrel_side
 map_Kd #metal_device0_barrel_side
 
@@ -36,7 +33,4 @@ map_Kd #precipitation_tank_window
 
 newmtl storage_steel
 map_Kd #storage_steel
-
-newmtl storage_uranium_top
-map_Kd #storage_uranium_top
 

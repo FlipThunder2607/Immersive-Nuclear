@@ -1,0 +1,12 @@
+newmtl conversion_led_green_off
+map_Kd #conversion_led_green_off
+
+newmtl conversion_led_red_off
+map_Kd #conversion_led_red_off
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl red_led
+map_Kd #red_led
+

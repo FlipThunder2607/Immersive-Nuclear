@@ -315,6 +315,114 @@
           }
         }
       }
+    ],
+    "preview": [
+      {
+        "model": "immersivenuclear:obj/industrial_dryer_preview.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0749,
+              0.071,
+              -0.043
+            ],
+            "scale": 0.1019,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.0756,
+              0.029,
+              -0.0011
+            ],
+            "scale": 0.0738
+          },
+          "fixed": {
+            "translation": [
+              0.1233,
+              0.0472,
+              0.0018
+            ],
+            "scale": 0.1203,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0477,
+              -0.0382,
+              0.0366
+            ],
+            "scale": 0.0649,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0477,
+              -0.0382,
+              0.0366
+            ],
+            "scale": 0.0649,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0543,
+              0.029,
+              0.0527
+            ],
+            "scale": 0.0738,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0543,
+              0.029,
+              -0.0527
+            ],
+            "scale": 0.0738,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
     ]
   }
 }

@@ -36,6 +36,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HFKilnCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ConversionUnitCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new EnrichmentUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ElectrolyzerCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
@@ -45,7 +46,8 @@ public class INJeiPlugin implements IModPlugin
 		return f == INContent.fluidSolvent || f == INContent.fluidStrippingSolution || f == INContent.fluidPurifiedSolution || f == INContent.fluidEffluent
 				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate
 				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam || f == INContent.fluidHydrofluoricAcid
-				|| f == INContent.fluidHydrogen || f == INContent.fluidOxygen || f == INContent.fluidUF6 || f == INContent.fluidFluorinatedEffluent;
+				|| f == INContent.fluidHydrogen || f == INContent.fluidOxygen || f == INContent.fluidUF6 || f == INContent.fluidFluorinatedEffluent
+				|| f == INContent.fluidUF6Low || f == INContent.fluidUF6Medium || f == INContent.fluidUF6High || f == INContent.fluidUF6Depleted;
 	}
 
 	@Override
@@ -105,6 +107,14 @@ public class INJeiPlugin implements IModPlugin
 				GuiSulfuricAcidUnit.CONV_H, SulfuricAcidUnitCategory.UID);
 		registry.addIngredientInfo(acidUnit, VanillaTypes.ITEM, "jei.immersivenuclear.sulfuric_acid_unit.info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidSteam, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.steam.info");
+		registry.addRecipes(java.util.Arrays.asList(new EnrichmentUnitCategory.Recipe(2), new EnrichmentUnitCategory.Recipe(4), new EnrichmentUnitCategory.Recipe(6)), EnrichmentUnitCategory.UID);
+		for(Item unit : new Item[]{INContent.itemEnrichmentUnit, INContent.itemEnrichmentUnit4, INContent.itemEnrichmentUnit6})
+		{
+			registry.addRecipeCatalyst(new ItemStack(unit), EnrichmentUnitCategory.UID);
+			registry.addIngredientInfo(new ItemStack(unit), VanillaTypes.ITEM, "jei.immersivenuclear.enrichment_unit.info");
+		}
+		registry.addRecipeClickArea(immersivenuclear.client.GuiEnrichmentUnit.class, immersivenuclear.client.GuiEnrichmentUnit.AREA_X, immersivenuclear.client.GuiEnrichmentUnit.AREA_Y,
+				immersivenuclear.client.GuiEnrichmentUnit.AREA_W, immersivenuclear.client.GuiEnrichmentUnit.AREA_H, EnrichmentUnitCategory.UID);
 		registry.addRecipes(Collections.singletonList(new ConversionUnitCategory.Recipe()), ConversionUnitCategory.UID);
 		registry.addRecipeCatalyst(new ItemStack(INContent.itemConversionUnit), ConversionUnitCategory.UID);
 		registry.addRecipeClickArea(immersivenuclear.client.GuiConversionUnit.class, immersivenuclear.client.GuiConversionUnit.AREA_X, immersivenuclear.client.GuiConversionUnit.AREA_Y,

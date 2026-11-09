@@ -80,6 +80,9 @@ public class INContent
 	public static BlockHFKiln blockHFKiln;
 	public static immersivenuclear.common.block.BlockElectrolyzer blockElectrolyzer;
 	public static immersivenuclear.common.block.BlockConversionUnit blockConversionUnit;
+	public static immersivenuclear.common.block.BlockEnrichmentUnit blockEnrichmentUnit;
+	public static immersivenuclear.common.block.BlockEnrichmentUnit4 blockEnrichmentUnit4;
+	public static immersivenuclear.common.block.BlockEnrichmentUnit6 blockEnrichmentUnit6;
 	public static BlockConcentrateDrum blockConcentrateDrum;
 	public static BlockLeadedGlass blockLeadedGlass;
 
@@ -201,6 +204,12 @@ public class INContent
 	public static Item itemElectrolyzer;
 	/** The same for the Conversion Unit. */
 	public static Item itemConversionUnit;
+	public static Item itemEnrichmentUnit;
+	/** The Enrichment Unit's sounds, each {start, loop, stop}; the cascade's by size (2, 4, 6 banks). */
+	public static net.minecraft.util.SoundEvent[][] soundEnrichmentCascade = new net.minecraft.util.SoundEvent[3][];
+	public static net.minecraft.util.SoundEvent[] soundEnrichmentConverter, soundEnrichmentCompressor;
+	public static Item itemEnrichmentUnit4;
+	public static Item itemEnrichmentUnit6;
 	public static Item itemConcentrateDrum;
 
 	/** Processing Reagent: consumed one per cycle by the Chemical Processing Unit. */
@@ -397,9 +406,18 @@ public class INContent
 		soundConversionColdTrapLoop = sound(event, "conversion_coldtrap_loop");
 		soundConversionColdTrapStop = sound(event, "conversion_coldtrap_stop");
 		soundConversionColdTrapDrain = sound(event, "conversion_coldtrap_drain");
+		for(int i = 0; i < 3; i++)
+			soundEnrichmentCascade[i] = soundSet(event, "enrichment_cascade_" + (i * 2 + 2));
+		soundEnrichmentConverter = soundSet(event, "enrichment_converter");
+		soundEnrichmentCompressor = soundSet(event, "enrichment_compressor");
 		soundConversionScrubberStart = sound(event, "conversion_scrubber_start");
 		soundConversionScrubberLoop = sound(event, "conversion_scrubber_loop");
 		soundConversionScrubberStop = sound(event, "conversion_scrubber_stop");
+	}
+
+	static net.minecraft.util.SoundEvent[] soundSet(RegistryEvent.Register<SoundEvent> event, String name)
+	{
+		return new net.minecraft.util.SoundEvent[]{sound(event, name + "_start"), sound(event, name + "_loop"), sound(event, name + "_stop")};
 	}
 
 	static SoundEvent sound(RegistryEvent.Register<SoundEvent> event, String name)
@@ -507,26 +525,32 @@ public class INContent
 	{
 		// The machine items are only icons (JEI's catalysts and pages, the 3D model): no creative tab, so they never reach
 		// an inventory (the user, 01/11); picking a formed machine gives the block the part replaced
-		itemChemicalProcessor = new Item().setRegistryName(ImmersiveNuclear.MODID, "chemical_processor").setTranslationKey(ImmersiveNuclear.MODID + ".chemical_processor");
+		itemChemicalProcessor = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "chemical_processor").setTranslationKey(ImmersiveNuclear.MODID + ".chemical_processor");
 		event.getRegistry().register(itemChemicalProcessor);
-		itemFilterPress = new Item().setRegistryName(ImmersiveNuclear.MODID, "filter_press").setTranslationKey(ImmersiveNuclear.MODID + ".filter_press");
+		itemFilterPress = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "filter_press").setTranslationKey(ImmersiveNuclear.MODID + ".filter_press");
 		event.getRegistry().register(itemFilterPress);
-		itemChemicalSeparator = new Item().setRegistryName(ImmersiveNuclear.MODID, "chemical_separator").setTranslationKey(ImmersiveNuclear.MODID + ".chemical_separator");
+		itemChemicalSeparator = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "chemical_separator").setTranslationKey(ImmersiveNuclear.MODID + ".chemical_separator");
 		event.getRegistry().register(itemChemicalSeparator);
-		itemMetalExtractor = new Item().setRegistryName(ImmersiveNuclear.MODID, "metal_extractor").setTranslationKey(ImmersiveNuclear.MODID + ".metal_extractor");
+		itemMetalExtractor = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "metal_extractor").setTranslationKey(ImmersiveNuclear.MODID + ".metal_extractor");
 		event.getRegistry().register(itemMetalExtractor);
-		itemPrecipitationUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "precipitation_unit").setTranslationKey(ImmersiveNuclear.MODID + ".precipitation_unit");
+		itemPrecipitationUnit = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "precipitation_unit").setTranslationKey(ImmersiveNuclear.MODID + ".precipitation_unit");
 		event.getRegistry().register(itemPrecipitationUnit);
-		itemIndustrialDryer = new Item().setRegistryName(ImmersiveNuclear.MODID, "industrial_dryer").setTranslationKey(ImmersiveNuclear.MODID + ".industrial_dryer");
+		itemIndustrialDryer = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "industrial_dryer").setTranslationKey(ImmersiveNuclear.MODID + ".industrial_dryer");
 		event.getRegistry().register(itemIndustrialDryer);
-		itemSulfuricAcidUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "sulfuric_acid_unit").setTranslationKey(ImmersiveNuclear.MODID + ".sulfuric_acid_unit");
+		itemSulfuricAcidUnit = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "sulfuric_acid_unit").setTranslationKey(ImmersiveNuclear.MODID + ".sulfuric_acid_unit");
 		event.getRegistry().register(itemSulfuricAcidUnit);
-		itemHFKiln = new Item().setRegistryName(ImmersiveNuclear.MODID, "hf_kiln").setTranslationKey(ImmersiveNuclear.MODID + ".hf_kiln");
+		itemHFKiln = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "hf_kiln").setTranslationKey(ImmersiveNuclear.MODID + ".hf_kiln");
 		event.getRegistry().register(itemHFKiln);
-		itemElectrolyzer = new Item().setRegistryName(ImmersiveNuclear.MODID, "electrolyzer").setTranslationKey(ImmersiveNuclear.MODID + ".electrolyzer");
+		itemElectrolyzer = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "electrolyzer").setTranslationKey(ImmersiveNuclear.MODID + ".electrolyzer");
 		event.getRegistry().register(itemElectrolyzer);
-		itemConversionUnit = new Item().setRegistryName(ImmersiveNuclear.MODID, "conversion_unit").setTranslationKey(ImmersiveNuclear.MODID + ".conversion_unit");
+		itemConversionUnit = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "conversion_unit").setTranslationKey(ImmersiveNuclear.MODID + ".conversion_unit");
 		event.getRegistry().register(itemConversionUnit);
+		itemEnrichmentUnit = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "enrichment_unit").setTranslationKey(ImmersiveNuclear.MODID + ".enrichment_unit");
+		event.getRegistry().register(itemEnrichmentUnit);
+		itemEnrichmentUnit4 = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "enrichment_unit_4").setTranslationKey(ImmersiveNuclear.MODID + ".enrichment_unit_4");
+		event.getRegistry().register(itemEnrichmentUnit4);
+		itemEnrichmentUnit6 = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "enrichment_unit_6").setTranslationKey(ImmersiveNuclear.MODID + ".enrichment_unit_6");
+		event.getRegistry().register(itemEnrichmentUnit6);
 		// The order of registration is the order of JEI's list and of the creative tab: the machines (above), then each
 		// line's materials in the order the process meets them, then building blocks, engineering and computer parts
 		// Line 1: supplies, the main path, residues and their treatment, the Metal Extractor's
@@ -612,7 +636,7 @@ public class INContent
 		itemComputerMachines = new Item[immersivenuclear.common.multiblock.ComputerStructure.ALL.length];
 		for(immersivenuclear.common.multiblock.ComputerStructure s : immersivenuclear.common.multiblock.ComputerStructure.ALL)
 		{
-			itemComputerMachines[s.index] = new Item().setRegistryName(ImmersiveNuclear.MODID, s.name).setTranslationKey(ImmersiveNuclear.MODID + "." + s.name);
+			itemComputerMachines[s.index] = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, s.name).setTranslationKey(ImmersiveNuclear.MODID + "." + s.name);
 			event.getRegistry().register(itemComputerMachines[s.index]);
 		}
 		itemPanelModules = new Item[PANEL_MODULES.length];
@@ -657,6 +681,15 @@ public class INContent
 		blockConversionUnit = new immersivenuclear.common.block.BlockConversionUnit();
 		event.getRegistry().register(blockConversionUnit);
 		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileConversionUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "conversion_unit"));
+		blockEnrichmentUnit = new immersivenuclear.common.block.BlockEnrichmentUnit();
+		event.getRegistry().register(blockEnrichmentUnit);
+		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileEnrichmentUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "enrichment_unit"));
+		blockEnrichmentUnit4 = new immersivenuclear.common.block.BlockEnrichmentUnit4();
+		event.getRegistry().register(blockEnrichmentUnit4);
+		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileEnrichmentUnit4.class, new ResourceLocation(ImmersiveNuclear.MODID, "enrichment_unit_4"));
+		blockEnrichmentUnit6 = new immersivenuclear.common.block.BlockEnrichmentUnit6();
+		event.getRegistry().register(blockEnrichmentUnit6);
+		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileEnrichmentUnit6.class, new ResourceLocation(ImmersiveNuclear.MODID, "enrichment_unit_6"));
 		blockLeadedGlass = new BlockLeadedGlass();
 		event.getRegistry().register(blockLeadedGlass);
 		// The computers' single-block devices (selection boxes in blocks, for a device facing north; the two with a glass window are translucent)
@@ -740,6 +773,10 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockHFKiln.instance);
 		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockElectrolyzer.instance);
 		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockConversionUnit.instance);
+		// The biggest assembly first: each fits inside the next, and the hammer forms the first structure that matches
+		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockEnrichmentUnit6.instance);
+		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockEnrichmentUnit4.instance);
+		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockEnrichmentUnit.instance);
 		for(immersivenuclear.common.multiblock.MultiblockComputer m : immersivenuclear.common.multiblock.MultiblockComputer.ALL)
 			MultiblockHandler.registerMultiblock(m);
 		fluorite();

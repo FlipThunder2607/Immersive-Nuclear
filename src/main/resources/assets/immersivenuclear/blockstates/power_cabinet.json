@@ -91,9 +91,9 @@
         "transform": {
           "gui": {
             "translation": [
-              0.2936,
-              0.1961,
-              0.0807
+              -0.0046,
+              -0.1698,
+              -0.0926
             ],
             "scale": 0.3754,
             "rotation": [
@@ -109,17 +109,17 @@
           },
           "ground": {
             "translation": [
-              -0.165,
-              0.1525,
-              -0.1361
+              0.0048,
+              -0.1402,
+              -0.0
             ],
             "scale": 0.2723
           },
           "fixed": {
             "translation": [
-              0.2687,
-              0.2483,
-              0.2217
+              -0.0078,
+              -0.2284,
+              -0.0
             ],
             "scale": 0.4434,
             "post-rotation": [
@@ -130,9 +130,9 @@
           },
           "thirdperson_righthand": {
             "translation": [
-              -0.1868,
-              0.0173,
-              0.1338
+              0.003,
+              -0.029,
+              -0.1196
             ],
             "scale": 0.2388,
             "rotation": [
@@ -148,9 +148,9 @@
           },
           "thirdperson_lefthand": {
             "translation": [
-              -0.1868,
-              0.0173,
-              0.1338
+              0.003,
+              -0.029,
+              -0.1196
             ],
             "scale": 0.2388,
             "rotation": [
@@ -166,9 +166,9 @@
           },
           "firstperson_righthand": {
             "translation": [
-              -0.213,
-              0.1525,
-              0.0204
+              0.0034,
+              -0.1402,
+              -0.0034
             ],
             "scale": 0.2723,
             "post-rotation": [
@@ -179,9 +179,117 @@
           },
           "firstperson_lefthand": {
             "translation": [
-              0.213,
-              0.1525,
-              -0.0204
+              -0.0034,
+              -0.1402,
+              0.0034
+            ],
+            "scale": 0.2723,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "preview": [
+      {
+        "model": "immersivenuclear:obj/power_cabinet_preview.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              -0.0046,
+              -0.1698,
+              -0.0926
+            ],
+            "scale": 0.3754,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              0.0048,
+              -0.1402,
+              -0.0
+            ],
+            "scale": 0.2723
+          },
+          "fixed": {
+            "translation": [
+              -0.0078,
+              -0.2284,
+              -0.0
+            ],
+            "scale": 0.4434,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              0.003,
+              -0.029,
+              -0.1196
+            ],
+            "scale": 0.2388,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              0.003,
+              -0.029,
+              -0.1196
+            ],
+            "scale": 0.2388,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              0.0034,
+              -0.1402,
+              -0.0034
+            ],
+            "scale": 0.2723,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              -0.0034,
+              -0.1402,
+              0.0034
             ],
             "scale": 0.2723,
             "post-rotation": [

@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 /** Opened with the master's position; the client class is only touched on the client. */
 public class INGuiHandler implements IGuiHandler
 {
-	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9, CONVERSION_UNIT = 10;
+	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9, CONVERSION_UNIT = 10, ENRICHMENT_UNIT = 11;
 
 	static TileChemicalProcessor master(World world, int x, int y, int z)
 	{
@@ -89,6 +89,12 @@ public class INGuiHandler implements IGuiHandler
 		return te instanceof immersivenuclear.common.block.TileConversionUnit && ((immersivenuclear.common.block.TileConversionUnit)te).isMaster() ? (immersivenuclear.common.block.TileConversionUnit)te : null;
 	}
 
+	static immersivenuclear.common.block.TileEnrichmentBase enrichmentUnit(World world, int x, int y, int z)
+	{
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+		return te instanceof immersivenuclear.common.block.TileEnrichmentBase && ((immersivenuclear.common.block.TileEnrichmentBase)te).isMaster() ? (immersivenuclear.common.block.TileEnrichmentBase)te : null;
+	}
+
 	static immersivenuclear.common.block.TileElectrolyzer electrolyzer(World world, int x, int y, int z)
 	{
 		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -123,6 +129,11 @@ public class INGuiHandler implements IGuiHandler
 		{
 			immersivenuclear.common.block.TileConversionUnit c = conversionUnit(world, x, y, z);
 			return c == null ? null : new immersivenuclear.common.gui.ContainerConversionUnit(player.inventory, c);
+		}
+		if(id == ENRICHMENT_UNIT)
+		{
+			immersivenuclear.common.block.TileEnrichmentBase e = enrichmentUnit(world, x, y, z);
+			return e == null ? null : new immersivenuclear.common.gui.ContainerEnrichmentUnit(player.inventory, e);
 		}
 		if(id == CONCENTRATE_DRUM)
 		{
@@ -180,6 +191,11 @@ public class INGuiHandler implements IGuiHandler
 		{
 			immersivenuclear.common.block.TileConversionUnit c = conversionUnit(world, x, y, z);
 			return c == null ? null : new immersivenuclear.client.GuiConversionUnit(new immersivenuclear.common.gui.ContainerConversionUnit(player.inventory, c));
+		}
+		if(id == ENRICHMENT_UNIT)
+		{
+			immersivenuclear.common.block.TileEnrichmentBase e = enrichmentUnit(world, x, y, z);
+			return e == null ? null : new immersivenuclear.client.GuiEnrichmentUnit(new immersivenuclear.common.gui.ContainerEnrichmentUnit(player.inventory, e));
 		}
 		if(id == CONCENTRATE_DRUM)
 		{

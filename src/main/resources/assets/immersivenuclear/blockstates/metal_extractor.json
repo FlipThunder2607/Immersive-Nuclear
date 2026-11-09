@@ -194,6 +194,114 @@
           }
         }
       }
+    ],
+    "preview": [
+      {
+        "model": "immersivenuclear:obj/metal_extractor_preview.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0877,
+              -0.0277,
+              -0.0519
+            ],
+            "scale": 0.16,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.0609,
+              -0.0363,
+              -0.029
+            ],
+            "scale": 0.116
+          },
+          "fixed": {
+            "translation": [
+              0.0992,
+              -0.0591,
+              0.0473
+            ],
+            "scale": 0.189,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0559,
+              -0.0274,
+              -0.0257
+            ],
+            "scale": 0.102,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0559,
+              -0.0274,
+              -0.0257
+            ],
+            "scale": 0.102,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0636,
+              -0.0363,
+              0.0226
+            ],
+            "scale": 0.116,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0636,
+              -0.0363,
+              -0.0226
+            ],
+            "scale": 0.116,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
     ]
   }
 }

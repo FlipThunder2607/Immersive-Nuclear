@@ -8,7 +8,6 @@
     "textures": {
       "#arc_furnace_inactive": "immersiveengineering:models/arc_furnace_inactive",
       "#base_handrail": "immersivenuclear:blocks/base_handrail",
-      "#base_plate_in": "immersivenuclear:blocks/base_plate_in",
       "#metal_device0_barrel_side": "immersiveengineering:blocks/metal_device0_barrel_side",
       "#metal_device0_barrel_up_none": "immersiveengineering:blocks/metal_device0_barrel_up_none",
       "#metal_device0_fluid_pump_side_none": "immersiveengineering:blocks/metal_device0_fluid_pump_side_none",
@@ -19,7 +18,6 @@
       "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
       "#precipitation_tank_window": "immersivenuclear:blocks/precipitation_tank_window",
       "#storage_steel": "immersiveengineering:blocks/storage_steel",
-      "#storage_uranium_top": "immersiveengineering:blocks/storage_uranium_top",
       "particle": "immersiveengineering:blocks/storage_steel"
     }
   },
@@ -91,6 +89,114 @@
     "inventory": [
       {
         "model": "immersivenuclear:obj/chemical_separator_inventory.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0,
+              -0.0774,
+              -0.0447
+            ],
+            "scale": 0.11,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.0,
+              -0.065,
+              -0.0
+            ],
+            "scale": 0.08
+          },
+          "fixed": {
+            "translation": [
+              -0.0,
+              -0.1056,
+              0.0
+            ],
+            "scale": 0.13,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0,
+              -0.0147,
+              -0.0549
+            ],
+            "scale": 0.07,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0,
+              -0.0147,
+              -0.0549
+            ],
+            "scale": 0.07,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0,
+              -0.065,
+              -0.0
+            ],
+            "scale": 0.08,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0,
+              -0.065,
+              -0.0
+            ],
+            "scale": 0.08,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "preview": [
+      {
+        "model": "immersivenuclear:obj/chemical_separator_preview.obj",
         "transform": {
           "gui": {
             "translation": [

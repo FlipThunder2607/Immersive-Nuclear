@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.2.0-dev.89"
+version = "0.2.0-dev.125"
 group = "immersivenuclear"
 archivesBaseName = "immersivenuclear"
 
@@ -48,6 +48,8 @@ dependencies {
 
 jar {
     archiveName = "${baseName}-1.12.2-${version}.jar"
+    // the tools' source for the icons; the game reads the _inventory and _preview models (their .mtl files stay)
+    exclude { it.path.endsWith('_item.obj') && !it.path.endsWith('precipitation_unit_item.obj') }
 }
 
 processResources {
@@ -134,3 +136,18 @@ task conversionUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
 }
 check.dependsOn conversionUnitStructureTest
+task enrichmentUnitStructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.EnrichmentUnitStructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn enrichmentUnitStructureTest
+task enrichmentUnit4StructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.EnrichmentUnit4StructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn enrichmentUnit4StructureTest
+task enrichmentUnit6StructureTest(type: JavaExec, dependsOn: testClasses) {
+    main = 'immersivenuclear.common.multiblock.EnrichmentUnit6StructureTest'
+    classpath = sourceSets.test.runtimeClasspath
+}
+check.dependsOn enrichmentUnit6StructureTest
