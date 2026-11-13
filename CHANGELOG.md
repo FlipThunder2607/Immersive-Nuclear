@@ -19,6 +19,32 @@ the release title always carry the same version.
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
 
+### Line 2: Deconversion Unit (built 2026-11-13)
+
+The tails of the enrichment turned into a stable oxide, and their fluorine back into acid for the Conversion Unit.
+
+### Added
+- **Deconversion Unit** (6×9×6, 158 blocks, with lead sheetmetal round the kiln): depleted uranium hexafluoride and
+  steam meet in the hydrolysis reactor on the feed hood; the powder goes down a rotary kiln through an electric furnace
+  and leaves as **Depleted Uranium Oxide**; the acid gas goes through the candle filters and the condenser into its
+  tank. Each 10 s cycle takes 400 mB of depleted hexafluoride and 400 mB of steam and gives 1 oxide and 250 mB of
+  hydrofluoric acid, drawing 96 IF/t (provisional numbers). The hexafluoride and the steam go in at the feed end, the
+  acid comes out at the discharge end (pushed into what stands there), the oxide at the back.
+- The kiln, its girth gear, the pinion and the support rollers turn while it runs, spinning up and down; the furnace's
+  heating slots and the reactor's heater bands are dark when cold and glow while it runs; on the panel a red LED shows
+  power without production and a green one that it runs; the tanks' manometers have a faint backlight.
+- Sounds for the kiln, the electric furnace, the hydrolysis reactor and the candle filters' cleaning pulse (the drive
+  uses the Hydrofluoric Acid Kiln's).
+- Animated interface in the interface standard, JEI page (click the kiln in the interface), Engineer's Manual page.
+- The depleted uranium oxide makes **Depleted Uranium Ingots** in IE's Arc Furnace (with coke dust).
+
+### Changed
+- The Conversion Unit's model, with the latest changes to it.
+- The steel fluid pipe texture is the steel grey of IE's steel block.
+
+### Fixed
+- Machine sounds that went quiet for good when the game ran out of sound channels (rain, many machines) start again.
+
 ### Line 2, part 3: Electrolyzer and new interfaces (built 2026-11-01)
 
 The hydrogen of line 2, and a new look for every machine's interface and JEI page.

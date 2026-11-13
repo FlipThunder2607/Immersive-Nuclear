@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 /** Opened with the master's position; the client class is only touched on the client. */
 public class INGuiHandler implements IGuiHandler
 {
-	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9, CONVERSION_UNIT = 10, ENRICHMENT_UNIT = 11;
+	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9, CONVERSION_UNIT = 10, ENRICHMENT_UNIT = 11, DECONVERSION_UNIT = 12;
 
 	static TileChemicalProcessor master(World world, int x, int y, int z)
 	{
@@ -83,6 +83,12 @@ public class INGuiHandler implements IGuiHandler
 		return te instanceof immersivenuclear.common.block.TileHFKiln && ((immersivenuclear.common.block.TileHFKiln)te).isMaster() ? (immersivenuclear.common.block.TileHFKiln)te : null;
 	}
 
+	static immersivenuclear.common.block.TileDeconversionUnit deconversionUnit(World world, int x, int y, int z)
+	{
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+		return te instanceof immersivenuclear.common.block.TileDeconversionUnit && ((immersivenuclear.common.block.TileDeconversionUnit)te).isMaster() ? (immersivenuclear.common.block.TileDeconversionUnit)te : null;
+	}
+
 	static immersivenuclear.common.block.TileConversionUnit conversionUnit(World world, int x, int y, int z)
 	{
 		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
@@ -119,6 +125,11 @@ public class INGuiHandler implements IGuiHandler
 		{
 			immersivenuclear.common.block.TileHFKiln k = kiln(world, x, y, z);
 			return k == null ? null : new immersivenuclear.common.gui.ContainerHFKiln(player.inventory, k);
+		}
+		if(id == DECONVERSION_UNIT)
+		{
+			immersivenuclear.common.block.TileDeconversionUnit d = deconversionUnit(world, x, y, z);
+			return d == null ? null : new immersivenuclear.common.gui.ContainerDeconversionUnit(player.inventory, d);
 		}
 		if(id == ELECTROLYZER)
 		{
@@ -181,6 +192,11 @@ public class INGuiHandler implements IGuiHandler
 		{
 			immersivenuclear.common.block.TileHFKiln k = kiln(world, x, y, z);
 			return k == null ? null : new immersivenuclear.client.GuiHFKiln(new immersivenuclear.common.gui.ContainerHFKiln(player.inventory, k));
+		}
+		if(id == DECONVERSION_UNIT)
+		{
+			immersivenuclear.common.block.TileDeconversionUnit d = deconversionUnit(world, x, y, z);
+			return d == null ? null : new immersivenuclear.client.GuiDeconversionUnit(new immersivenuclear.common.gui.ContainerDeconversionUnit(player.inventory, d));
 		}
 		if(id == ELECTROLYZER)
 		{

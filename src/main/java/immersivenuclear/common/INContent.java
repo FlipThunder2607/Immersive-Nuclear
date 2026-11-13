@@ -26,6 +26,7 @@ import immersivenuclear.common.block.BlockMetalExtractor;
 import immersivenuclear.common.block.BlockIndustrialDryer;
 import immersivenuclear.common.block.BlockSulfuricAcidUnit;
 import immersivenuclear.common.block.BlockHFKiln;
+import immersivenuclear.common.block.BlockDeconversionUnit;
 import immersivenuclear.common.block.BlockPrecipitationUnit;
 import immersivenuclear.common.block.TileChemicalProcessor;
 import immersivenuclear.common.block.TileChemicalSeparator;
@@ -35,6 +36,7 @@ import immersivenuclear.common.block.TileMetalExtractor;
 import immersivenuclear.common.block.TileIndustrialDryer;
 import immersivenuclear.common.block.TileSulfuricAcidUnit;
 import immersivenuclear.common.block.TileHFKiln;
+import immersivenuclear.common.block.TileDeconversionUnit;
 import immersivenuclear.common.block.TilePrecipitationUnit;
 import immersivenuclear.common.item.ItemElectrode;
 import immersivenuclear.common.item.ItemFilter;
@@ -47,6 +49,7 @@ import immersivenuclear.common.multiblock.MultiblockMetalExtractor;
 import immersivenuclear.common.multiblock.MultiblockIndustrialDryer;
 import immersivenuclear.common.multiblock.MultiblockSulfuricAcidUnit;
 import immersivenuclear.common.multiblock.MultiblockHFKiln;
+import immersivenuclear.common.multiblock.MultiblockDeconversionUnit;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
@@ -78,6 +81,7 @@ public class INContent
 	public static BlockIndustrialDryer blockIndustrialDryer;
 	public static BlockSulfuricAcidUnit blockSulfuricAcidUnit;
 	public static BlockHFKiln blockHFKiln;
+	public static BlockDeconversionUnit blockDeconversionUnit;
 	public static immersivenuclear.common.block.BlockElectrolyzer blockElectrolyzer;
 	public static immersivenuclear.common.block.BlockConversionUnit blockConversionUnit;
 	public static immersivenuclear.common.block.BlockEnrichmentUnit blockEnrichmentUnit;
@@ -199,6 +203,7 @@ public class INContent
 	public static Item itemSulfuricAcidUnit;
 	/** The same for the Hydrofluoric Acid Kiln. */
 	public static Item itemHFKiln;
+	public static Item itemDeconversionUnit;
 
 	/** The same for the Electrolyzer. */
 	public static Item itemElectrolyzer;
@@ -320,6 +325,11 @@ public class INContent
 			soundConversionFluorinatorLoop, soundConversionFluorinatorStop, soundConversionCellsStart, soundConversionCellsLoop,
 			soundConversionCellsStop, soundConversionColdTrapStart, soundConversionColdTrapLoop, soundConversionColdTrapStop, soundConversionColdTrapDrain,
 			soundConversionScrubberStart, soundConversionScrubberLoop, soundConversionScrubberStop;
+	/** The Deconversion Unit: the rotary kiln, the electric furnace, the hydrolysis reactor, the candle filters (the kiln's
+	 * motor and gears use the HF Kiln's drive). */
+	public static SoundEvent soundDeconvKilnStart, soundDeconvKilnLoop, soundDeconvKilnStop, soundDeconvFurnaceStart, soundDeconvFurnaceLoop,
+			soundDeconvFurnaceStop, soundDeconvReactorStart, soundDeconvReactorLoop, soundDeconvReactorStop, soundDeconvFiltersStart,
+			soundDeconvFiltersLoop, soundDeconvFiltersStop;
 	public static SoundEvent soundDryerLoad, soundDryerHeatStart, soundDryerHeatLoop, soundDryerHeatStop, soundDryerDryStart, soundDryerDryLoop,
 			soundDryerDryStop, soundDryerDischarge, soundDryerFillStart, soundDryerFillLoop, soundDryerFillStop;
 
@@ -393,6 +403,18 @@ public class INContent
 		soundElectrolyzerFeedLoop = sound(event, "electrolyzer_feed_loop");
 		soundElectrolyzerFeedStop = sound(event, "electrolyzer_feed_stop");
 		soundElectrolyzerVent = sound(event, "electrolyzer_vent");
+		soundDeconvKilnStart = sound(event, "deconversion_kiln_start");
+		soundDeconvKilnLoop = sound(event, "deconversion_kiln_loop");
+		soundDeconvKilnStop = sound(event, "deconversion_kiln_stop");
+		soundDeconvFurnaceStart = sound(event, "deconversion_furnace_start");
+		soundDeconvFurnaceLoop = sound(event, "deconversion_furnace_loop");
+		soundDeconvFurnaceStop = sound(event, "deconversion_furnace_stop");
+		soundDeconvReactorStart = sound(event, "deconversion_reactor_start");
+		soundDeconvReactorLoop = sound(event, "deconversion_reactor_loop");
+		soundDeconvReactorStop = sound(event, "deconversion_reactor_stop");
+		soundDeconvFiltersStart = sound(event, "deconversion_filters_start");
+		soundDeconvFiltersLoop = sound(event, "deconversion_filters_loop");
+		soundDeconvFiltersStop = sound(event, "deconversion_filters_stop");
 		soundConversionReactorStart = sound(event, "conversion_reactor_start");
 		soundConversionReactorLoop = sound(event, "conversion_reactor_loop");
 		soundConversionReactorStop = sound(event, "conversion_reactor_stop");
@@ -551,6 +573,8 @@ public class INContent
 		event.getRegistry().register(itemEnrichmentUnit4);
 		itemEnrichmentUnit6 = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "enrichment_unit_6").setTranslationKey(ImmersiveNuclear.MODID + ".enrichment_unit_6");
 		event.getRegistry().register(itemEnrichmentUnit6);
+		itemDeconversionUnit = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "deconversion_unit").setTranslationKey(ImmersiveNuclear.MODID + ".deconversion_unit");
+		event.getRegistry().register(itemDeconversionUnit);
 		// The order of registration is the order of JEI's list and of the creative tab: the machines (above), then each
 		// line's materials in the order the process meets them, then building blocks, engineering and computer parts
 		// Line 1: supplies, the main path, residues and their treatment, the Metal Extractor's
@@ -675,6 +699,9 @@ public class INContent
 		blockHFKiln = new BlockHFKiln();
 		event.getRegistry().register(blockHFKiln);
 		GameRegistry.registerTileEntity(TileHFKiln.class, new ResourceLocation(ImmersiveNuclear.MODID, "hf_kiln"));
+		blockDeconversionUnit = new BlockDeconversionUnit();
+		event.getRegistry().register(blockDeconversionUnit);
+		GameRegistry.registerTileEntity(TileDeconversionUnit.class, new ResourceLocation(ImmersiveNuclear.MODID, "deconversion_unit"));
 		blockElectrolyzer = new immersivenuclear.common.block.BlockElectrolyzer();
 		event.getRegistry().register(blockElectrolyzer);
 		GameRegistry.registerTileEntity(immersivenuclear.common.block.TileElectrolyzer.class, new ResourceLocation(ImmersiveNuclear.MODID, "electrolyzer"));
@@ -771,6 +798,7 @@ public class INContent
 		MultiblockHandler.registerMultiblock(MultiblockIndustrialDryer.instance);
 		MultiblockHandler.registerMultiblock(MultiblockSulfuricAcidUnit.instance);
 		MultiblockHandler.registerMultiblock(MultiblockHFKiln.instance);
+		MultiblockHandler.registerMultiblock(MultiblockDeconversionUnit.instance);
 		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockElectrolyzer.instance);
 		MultiblockHandler.registerMultiblock(immersivenuclear.common.multiblock.MultiblockConversionUnit.instance);
 		// The biggest assembly first: each fits inside the next, and the hammer forms the first structure that matches

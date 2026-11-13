@@ -607,5 +607,77 @@
     "sounds": [
       "immersivenuclear:enrichment_compressor_stop"
     ]
+  },
+  "deconversion_kiln_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_kiln_start"
+    ]
+  },
+  "deconversion_kiln_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_kiln_loop"
+    ]
+  },
+  "deconversion_kiln_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_kiln_stop"
+    ]
+  },
+  "deconversion_furnace_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_furnace_start"
+    ]
+  },
+  "deconversion_furnace_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_furnace_loop"
+    ]
+  },
+  "deconversion_furnace_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_furnace_stop"
+    ]
+  },
+  "deconversion_reactor_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_reactor_start"
+    ]
+  },
+  "deconversion_reactor_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_reactor_loop"
+    ]
+  },
+  "deconversion_reactor_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_reactor_stop"
+    ]
+  },
+  "deconversion_filters_start": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_filters_start"
+    ]
+  },
+  "deconversion_filters_loop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_filters_loop"
+    ]
+  },
+  "deconversion_filters_stop": {
+    "category": "block",
+    "sounds": [
+      "immersivenuclear:deconversion_filters_stop"
+    ]
   }
 }

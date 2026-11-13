@@ -70,6 +70,9 @@ public class ManualEntries
 				new ManualPageMultiblock(manual, "in_enrichment_unit1", immersivenuclear.common.multiblock.MultiblockEnrichmentUnit4.instance),
 				new ManualPageMultiblock(manual, "in_enrichment_unit2", immersivenuclear.common.multiblock.MultiblockEnrichmentUnit6.instance),
 				text("in_enrichment_unit3"), text("in_enrichment_unit4"));
+		ManualHelper.addEntry("in_deconversion_unit", CATEGORY,
+				new ManualPageMultiblock(manual, "in_deconversion_unit0", immersivenuclear.common.multiblock.MultiblockDeconversionUnit.instance),
+				text("in_deconversion_unit1"), text("in_deconversion_unit2"));
 		ManualHelper.addEntry("in_electrolyzer", CATEGORY,
 				new ManualPageMultiblock(manual, "in_electrolyzer0", MultiblockElectrolyzer.instance),
 				text("in_electrolyzer1"), text("in_electrolyzer2"));

@@ -1,24 +1,6 @@
 newmtl arc_furnace_active
 map_Kd #arc_furnace_active
 
-newmtl base_handrail
-map_Kd #base_handrail
-
-newmtl base_handwheel
-map_Kd #base_handwheel
-
-newmtl common_hazard
-map_Kd #common_hazard
-
-newmtl conversion_led_green_off
-map_Kd #conversion_led_green_off
-
-newmtl conversion_led_orange_off
-map_Kd #conversion_led_orange_off
-
-newmtl conversion_led_red_off
-map_Kd #conversion_led_red_off
-
 newmtl conversion_window_cell_off
 map_Kd #conversion_window_cell_off
 
@@ -75,6 +57,9 @@ map_Kd #precipitation_tank_wall
 
 newmtl precipitation_tank_wall_dark
 map_Kd #precipitation_tank_wall_dark
+
+newmtl red_led
+map_Kd #red_led
 
 newmtl redstone_conector
 map_Kd #redstone_conector

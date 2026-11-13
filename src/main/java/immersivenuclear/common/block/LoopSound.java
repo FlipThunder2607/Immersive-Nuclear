@@ -48,7 +48,10 @@ public class LoopSound
 		on = now;
 		if(loopDelay > 0)
 			loopDelay--;
-		ImmersiveEngineering.proxy.handleTileSound(loop.get(), te, on && loopDelay == 0 && !te.isInvalid(), VOLUME, PITCH);
+		boolean playing = on && loopDelay == 0 && !te.isInvalid();
+		if(playing)
+			immersivenuclear.client.TileSounds.revive(te);
+		ImmersiveEngineering.proxy.handleTileSound(loop.get(), te, playing, VOLUME, PITCH);
 	}
 
 	public boolean shouldPlay(TileEntity te, String sound)

@@ -35,6 +35,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HFKilnCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new DeconversionUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ConversionUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new EnrichmentUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ElectrolyzerCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -127,6 +128,13 @@ public class INJeiPlugin implements IModPlugin
 		// Clicking the drum of the interface shows the recipe
 		registry.addRecipeClickArea(immersivenuclear.client.GuiHFKiln.class, immersivenuclear.client.GuiHFKiln.DRUM_X, immersivenuclear.client.GuiHFKiln.DRUM_Y, immersivenuclear.client.GuiHFKiln.DRUM_W, immersivenuclear.client.GuiHFKiln.DRUM_H, HFKilnCategory.UID);
 		registry.addIngredientInfo(kiln, VanillaTypes.ITEM, "jei.immersivenuclear.hf_kiln.info");
+		registry.addRecipes(Collections.singletonList(new DeconversionUnitCategory.Recipe()), DeconversionUnitCategory.UID);
+		ItemStack deconversion = new ItemStack(INContent.itemDeconversionUnit);
+		registry.addRecipeCatalyst(deconversion, DeconversionUnitCategory.UID);
+		// Clicking the kiln of the interface shows the recipe
+		registry.addRecipeClickArea(immersivenuclear.client.GuiDeconversionUnit.class, immersivenuclear.client.GuiDeconversionUnit.DRUM_X, immersivenuclear.client.GuiDeconversionUnit.DRUM_Y,
+				immersivenuclear.client.GuiDeconversionUnit.DRUM_W, immersivenuclear.client.GuiDeconversionUnit.DRUM_H, DeconversionUnitCategory.UID);
+		registry.addIngredientInfo(deconversion, VanillaTypes.ITEM, "jei.immersivenuclear.deconversion_unit.info");
 		registry.addIngredientInfo(new FluidStack(INContent.fluidHydrofluoricAcid, 1000), VanillaTypes.FLUID, "jei.immersivenuclear.hydrofluoric_acid.info");
 		registry.addRecipes(ElectrolyzerCategory.recipes(), ElectrolyzerCategory.UID);
 		ItemStack electrolyzer = new ItemStack(INContent.itemElectrolyzer);

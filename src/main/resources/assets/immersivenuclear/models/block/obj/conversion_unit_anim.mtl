@@ -1,15 +1,6 @@
 newmtl conversion_glass
 map_Kd #conversion_glass
 
-newmtl conversion_led_green_off
-map_Kd #conversion_led_green_off
-
-newmtl conversion_led_orange_off
-map_Kd #conversion_led_orange_off
-
-newmtl conversion_led_red_off
-map_Kd #conversion_led_red_off
-
 newmtl conversion_window_cell
 map_Kd #conversion_window_cell
 

@@ -1,0 +1,21 @@
+newmtl kiln_coil_glow
+map_Kd #kiln_coil_glow
+
+newmtl lead_tank_wall
+map_Kd #lead_tank_wall
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl red_led
+map_Kd #red_led
+
+newmtl sheetmetal_steel
+map_Kd #sheetmetal_steel
+
+newmtl storage_steel
+map_Kd #storage_steel
+

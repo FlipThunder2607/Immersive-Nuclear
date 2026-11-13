@@ -31,6 +31,7 @@ public class INWailaPlugin implements IWailaPlugin
 		machine(registrar, BlockIndustrialDryer.class, () -> INContent.itemIndustrialDryer);
 		machine(registrar, BlockSulfuricAcidUnit.class, () -> INContent.itemSulfuricAcidUnit);
 		machine(registrar, BlockHFKiln.class, () -> INContent.itemHFKiln);
+		machine(registrar, immersivenuclear.common.block.BlockDeconversionUnit.class, () -> INContent.itemDeconversionUnit);
 		machine(registrar, BlockElectrolyzer.class, () -> INContent.itemElectrolyzer);
 		machine(registrar, immersivenuclear.common.block.BlockConversionUnit.class, () -> INContent.itemConversionUnit);
 		machine(registrar, immersivenuclear.common.block.BlockEnrichmentUnit.class, () -> INContent.itemEnrichmentUnit);

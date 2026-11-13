@@ -944,6 +944,8 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		soundOn = on;
 		if(loopDelay > 0)
 			loopDelay--;
+		if(on && loopDelay == 0 && !isInvalid())
+			immersivenuclear.client.TileSounds.revive(this);
 		ImmersiveEngineering.proxy.handleTileSound(INContent.soundLoop, this, on && loopDelay == 0 && !isInvalid(), SOUND_VOLUME, SOUND_PITCH);
 	}
 

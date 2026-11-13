@@ -916,6 +916,8 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 				playOnce(INContent.soundFpOpen);
 			playedPhase = clientPhase;
 		}
+		if(filterLoopOn())
+			immersivenuclear.client.TileSounds.revive(this);
 		ImmersiveEngineering.proxy.handleTileSound(INContent.soundFpFilterLoop, this, filterLoopOn(), 1, 1);
 	}
 

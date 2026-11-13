@@ -1,0 +1,35 @@
+{
+  "textures": {
+    "#kiln_coil_glow": "immersivenuclear:blocks/kiln_coil_glow",
+    "#lead_tank_wall": "immersivenuclear:blocks/lead_tank_wall",
+    "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+    "#metal_decoration2_steel_post": "immersiveengineering:blocks/metal_decoration2_steel_post",
+    "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+    "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
+    "#metal_multiblock_crusher": "immersiveengineering:blocks/metal_multiblock_crusher",
+    "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+    "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+    "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+    "#precipitation_tank_wall_dark": "immersivenuclear:blocks/precipitation_tank_wall_dark",
+    "#red_led": "immersivenuclear:blocks/red_led",
+    "#redstone_conector": "immersivenuclear:blocks/redstone_conector",
+    "#sheetmetal_copper": "immersiveengineering:blocks/sheetmetal_copper",
+    "#sheetmetal_iron": "immersiveengineering:blocks/sheetmetal_iron",
+    "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+    "#steel_flor": "immersivenuclear:blocks/steel_flor",
+    "#storage_steel": "immersiveengineering:blocks/storage_steel",
+    "particle": "immersiveengineering:blocks/storage_steel"
+  },
+  "parts": {
+    "drum": 0.0,
+    "gauges": 0.0,
+    "glow": 0.0,
+    "led_green": 0.0,
+    "led_red": 0.0,
+    "pinion": 0.0,
+    "roller0": 0.0,
+    "roller1": 0.0,
+    "roller2": 0.0,
+    "roller3": 0.0
+  }
+}

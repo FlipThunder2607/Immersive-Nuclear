@@ -1,0 +1,312 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true,
+      "ambient": false
+    },
+    "textures": {
+      "#kiln_coil_glow": "immersivenuclear:blocks/kiln_coil_glow",
+      "#lead_tank_wall": "immersivenuclear:blocks/lead_tank_wall",
+      "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+      "#metal_decoration2_steel_post": "immersiveengineering:blocks/metal_decoration2_steel_post",
+      "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
+      "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",
+      "#metal_multiblock_crusher": "immersiveengineering:blocks/metal_multiblock_crusher",
+      "#metal_multiblock_mixer": "immersiveengineering:blocks/metal_multiblock_mixer",
+      "#metal_multiblock_refinery": "immersiveengineering:blocks/metal_multiblock_refinery",
+      "#precipitation_tank_wall": "immersivenuclear:blocks/precipitation_tank_wall",
+      "#precipitation_tank_wall_dark": "immersivenuclear:blocks/precipitation_tank_wall_dark",
+      "#red_led": "immersivenuclear:blocks/red_led",
+      "#redstone_conector": "immersivenuclear:blocks/redstone_conector",
+      "#sheetmetal_copper": "immersiveengineering:blocks/sheetmetal_copper",
+      "#sheetmetal_iron": "immersiveengineering:blocks/sheetmetal_iron",
+      "#sheetmetal_steel": "immersiveengineering:blocks/sheetmetal_steel",
+      "#steel_flor": "immersivenuclear:blocks/steel_flor",
+      "#storage_steel": "immersiveengineering:blocks/storage_steel",
+      "particle": "immersiveengineering:blocks/storage_steel"
+    }
+  },
+  "variants": {
+    "facing=east,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 90
+    },
+    "facing=east,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 90
+    },
+    "facing=east,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 90
+    },
+    "facing=east,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 90
+    },
+    "facing=north,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 0
+    },
+    "facing=north,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 0
+    },
+    "facing=north,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 0
+    },
+    "facing=north,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 0
+    },
+    "facing=south,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 180
+    },
+    "facing=south,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 180
+    },
+    "facing=south,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 180
+    },
+    "facing=south,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 180
+    },
+    "facing=west,master=false,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 270
+    },
+    "facing=west,master=false,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 270
+    },
+    "facing=west,master=true,mirrored=false": {
+      "model": "immersivenuclear:obj/deconversion_unit.obj",
+      "y": 270
+    },
+    "facing=west,master=true,mirrored=true": {
+      "model": "immersivenuclear:obj/deconversion_unit_mirrored.obj",
+      "y": 270
+    },
+    "inventory": [
+      {
+        "model": "immersivenuclear:obj/deconversion_unit_inventory.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0389,
+              -0.1406,
+              -0.1261
+            ],
+            "scale": 0.11,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.04,
+              -0.1344,
+              -0.0
+            ],
+            "scale": 0.08
+          },
+          "fixed": {
+            "translation": [
+              0.065,
+              -0.2184,
+              0.0
+            ],
+            "scale": 0.13,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0247,
+              -0.0543,
+              -0.1072
+            ],
+            "scale": 0.07,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0247,
+              -0.0543,
+              -0.1072
+            ],
+            "scale": 0.07,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0283,
+              -0.1344,
+              0.0283
+            ],
+            "scale": 0.08,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0283,
+              -0.1344,
+              -0.0283
+            ],
+            "scale": 0.08,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "preview": [
+      {
+        "model": "immersivenuclear:obj/deconversion_unit_preview.obj",
+        "transform": {
+          "gui": {
+            "translation": [
+              0.0389,
+              -0.1406,
+              -0.1261
+            ],
+            "scale": 0.11,
+            "rotation": [
+              {
+                "x": 30
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          },
+          "ground": {
+            "translation": [
+              -0.04,
+              -0.1344,
+              -0.0
+            ],
+            "scale": 0.08
+          },
+          "fixed": {
+            "translation": [
+              0.065,
+              -0.2184,
+              0.0
+            ],
+            "scale": 0.13,
+            "post-rotation": [
+              {
+                "y": 180
+              }
+            ]
+          },
+          "thirdperson_righthand": {
+            "translation": [
+              -0.0247,
+              -0.0543,
+              -0.1072
+            ],
+            "scale": 0.07,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "thirdperson_lefthand": {
+            "translation": [
+              -0.0247,
+              -0.0543,
+              -0.1072
+            ],
+            "scale": 0.07,
+            "rotation": [
+              {
+                "x": 75
+              }
+            ],
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_righthand": {
+            "translation": [
+              -0.0283,
+              -0.1344,
+              0.0283
+            ],
+            "scale": 0.08,
+            "post-rotation": [
+              {
+                "y": 45
+              }
+            ]
+          },
+          "firstperson_lefthand": {
+            "translation": [
+              0.0283,
+              -0.1344,
+              -0.0283
+            ],
+            "scale": 0.08,
+            "post-rotation": [
+              {
+                "y": 225
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
