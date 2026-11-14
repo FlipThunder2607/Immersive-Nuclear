@@ -30,27 +30,26 @@ import net.minecraftforge.client.model.IModel;
 
 /**
  * The turning parts of the Hydrofluoric Acid Kiln (drawn by the master only), while it runs, spinning up and down
- * smoothly: the drum (its shell, riding rings and girth gear) round its axis; the pinion and the motor's gear,
- * meshed (twice the drum's speed: 16 teeth on the girth gear, 8 on each); the four support rollers under the riding
- * rings (turned by the rings, the other way round). They come from models/block/obj/hf_kiln_anim (written by bb2obj.py,
- * modelled at rest); the rest is the static blockstate model. Axes are in the master's model space (reference
- * orientation, before the blockstate turn): Blockbench (X, Y, Z) -> blocks ((Z - 7) / 2, (Y - 2) / 2, (9 - X) / 2),
- * from the axes forno_hf_detalhes.py prints. Every axis runs along the kiln (north-south), level (the drum is level,
- * as in the user's model).
+ * smoothly: the drum (its shell, riding rings and girth gear) round its axis; the pinion on the gearbox, meshed with the
+ * girth gear (three times the drum's speed, the other way: 24 teeth on the gear, 8 on the pinion); the four support
+ * rollers under the riding rings (turned by the rings, the other way round). They come from
+ * models/block/obj/hf_kiln_anim (written by bb2obj.py, modelled at rest); the rest is the static blockstate model. Axes
+ * are in the master's model space (reference orientation, before the blockstate turn): Blockbench (X, Y, Z) -> blocks
+ * ((Z - 5) / 2, (Y - 4) / 2, (9 - X) / 2) (the octagonal model, 14/11/2026: master x201 y6 z473 of the build x200..204,
+ * y4..8, z469..477). Every axis runs along the kiln (north-south), level.
  */
 public class RenderHFKiln extends TileEntitySpecialRenderer<TileHFKiln>
 {
 	static final String ANIM = "block/obj/hf_kiln_anim";
-	static final String[] PARTS = {"drum", "pinion", "motorgear", "roller0", "roller1", "roller2", "roller3"};
+	static final String[] PARTS = {"drum", "pinion", "roller0", "roller1", "roller2", "roller3"};
 	/** Per part: axis point x, y (blocks; z of the point is on the kiln's middle), direction's y per block along -z, speed (x the drum's). */
 	static final float[][] AXES = {
-			{-0.5F, 0.75F, 0, 1F},                          // drum
-			{0.6042F, 0.1125F, 0, -2F},                     // pinion: 8 teeth on the girth gear's 16
-			{1.3F, 0.45F, 0, 2F},                           // motor gear: meshed with the pinion
-			{-1.3331F, 0.2435F, 0, -1.6F / 0.35F},          // rollers: the ring's radius over the roller's
-			{0.3331F, 0.2435F, 0, -1.6F / 0.35F},
-			{-1.3331F, 0.2435F, 0, -1.6F / 0.35F},
-			{0.3331F, 0.2435F, 0, -1.6F / 0.35F},
+			{0.9625F, 0.7F, 0, 1F},                         // drum: Y 5.4, Z 6.925
+			{2.235F, -0.14F, 0, -3F},                       // pinion: Y 3.72, Z 9.47; 8 teeth on the girth gear's 24
+			{0.16F, -0.4475F, 0, -2.37F / 0.675F},          // rollers: Y 3.105, Z 5.32 / 8.53; the ring's radius over the roller's
+			{1.765F, -0.4475F, 0, -2.37F / 0.675F},
+			{0.16F, -0.4475F, 0, -2.37F / 0.675F},
+			{1.765F, -0.4475F, 0, -2.37F / 0.675F},
 	};
 	/** The axes' common point along the kiln (z of the drum's middle, Blockbench X 8). */
 	static final float AXIS_Z = 0.5F;
@@ -105,8 +104,15 @@ public class RenderHFKiln extends TileEntitySpecialRenderer<TileHFKiln>
 		}
 	}
 
-	/** The panel's signal lamp (element "Clock"). */
-	static final GlowLayer GLOW = new GlowLayer("hf_kiln", new String[]{"lamp"}, ImmutableMap.of("#arc_furnace_active", "immersivenuclear:blocks/arc_furnace_lamp_emissive"));
+
+	/**
+	 * The instruments on the hoods' panels (the user's model, 14/11/2026), as on the Deconversion Unit: a red LED for power
+	 * without production, a green one while it runs, the manometers' faint backlight (only their glass) while it has power.
+	 */
+	static final GlowLayer GLOW = new GlowLayer("hf_kiln", new String[]{"led_red", "led_green", "gauges"}, ImmutableMap.of(
+			"#red_led", "immersivenuclear:blocks/red_led_emissive",
+			"#metal_multiblock_refinery", "immersivenuclear:blocks/enrichment_led_green_emissive",
+			"#metal_multiblock_mixer", "immersivenuclear:blocks/mixer_gauge_glass_emissive"));
 
 	@Override
 	public void render(TileHFKiln te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
@@ -114,7 +120,8 @@ public class RenderHFKiln extends TileEntitySpecialRenderer<TileHFKiln>
 		if(!te.isMaster())
 			return;
 		boolean mirrored = te.isMirrored();
-		GLOW.render(te.getWorld().getBlockState(te.getPos()), te.getFacing(), mirrored, x, y, z, te.heaterLit());
+		boolean lit = te.heaterLit(), powered = te.powered();
+		GLOW.render(te.getWorld().getBlockState(te.getPos()), te.getFacing(), mirrored, x, y, z, powered && !lit, lit, powered || lit);
 		float drum = te.drumAngle + te.drumSpeed * TileHFKiln.DRUM_DEGREES_PER_TICK * partialTicks;
 		BlockPos pos = te.getPos();
 		IBlockState state = te.getWorld().getBlockState(pos).getActualState(te.getWorld(), pos);
@@ -152,7 +159,6 @@ public class RenderHFKiln extends TileEntitySpecialRenderer<TileHFKiln>
 		}
 		// The heating jacket and the heaters in the world's light (their lit textures while it runs); then, while it runs,
 		// only their glowing pixels again, full bright, so they shine in the dark and the rest of the part does not
-		boolean lit = te.heaterLit();
 		IBakedModel glow = lit ? (mirrored ? glowOnMirrored : glowOn) : (mirrored ? glowOffMirrored : glowOff);
 		GlStateManager.disableLighting();
 		if(glow != null)

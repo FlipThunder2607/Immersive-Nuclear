@@ -1,64 +1,91 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Hydrofluoric Acid Kiln, block by block: 5 wide x 7 long x 3 high, 85 blocks. On a scaffolding floor, the rotary kiln
- * runs from the north end (feed) to the south end (discharge): a drum of copper sheetmetal with the heating coil (LV
- * coils) round its middle and furnace heaters under it, the feed head at the north end (the light engineering blocks:
- * fluorite in on top, sulfuric acid in at the foot), the discharge head at the south end (gypsum out), the motor
- * (generator) and gearbox (steel block) behind the drum, the gas line (fluid pipes) along the back to the condenser
- * (radiators) and the hydrofluoric acid tank (metal barrels) at the south-east corner; a steel fence along the front.
+ * Hydrofluoric Acid Kiln, block by block: 5 wide x 9 long x 5 high, 153 blocks (the octagonal model, 14/11/2026). On a
+ * scaffolding and steel sheetmetal floor, the rotary kiln runs from the north end (feed) to the south end (discharge): a
+ * drum of copper sheetmetal with the heating coils (LV coils) round its middle and furnace heaters under it, the feed head
+ * (heavy engineering over steel blocks) at the north end with the fluorite elevator (steel fences) behind it and the
+ * motor (generator) and gearbox (steel block) beside them, the discharge head at the south end; along the back the
+ * electrical cabinet (heavy engineering, the redstone engineering at its foot), the condenser (aluminium sheetmetal) and
+ * the hydrofluoric acid tank (steel sheetmetal, slabs on top), and the gas line (fluid pipes).
  *
- * Offsets are relative to the trigger (redstone engineering block, middle layer, hit with the hammer on its front
- * face), in the reference orientation (facing NORTH): the front is WEST, so the player stands west of the structure
- * looking east; right = south, back = east, left = north. dx grows east, dz grows south.
- * Ports, where the model draws them: fluorite (1,1,0) in on top of the feed head; sulfuric acid (1,-1,0) in at the
- * feed head's foot, north face; gypsum (1,-1,6) out at the discharge head's foot, south face; hydrofluoric acid
- * (3,-1,6) out under the tank, south face; energy on the heavy engineering pair of the north-east corner (4,-1..0,0).
+ * Offsets are relative to the trigger (redstone engineering block, at the cabinet's foot on the back, one block above the
+ * floor; hit with the hammer), in the reference orientation (facing NORTH): the front is WEST, so the player stands west of
+ * the structure looking east; right = south, back = east, left = north. dx grows east, dz grows south.
+ * Ports, where the model draws them: fluorite (0,-1,-2) in at the elevator's foot, back face; sulfuric acid (-3,-1,-2) in
+ * at the feed end, north face (the chemical engineering block); gypsum (-3,-1,6) out at the discharge end, south face;
+ * hydrofluoric acid (-1,-1,6) out at the discharge end, south face (the chemical engineering block); energy on top of the
+ * electrical cabinet (0,2,1); redstone on the trigger.
  * No Minecraft classes here, so it can be tested on its own.
  */
 public final class HFKilnStructure
 {
-	public static final int MIN_DX = 0, MAX_DX = 4;
-	public static final int MIN_DY = -1, MAX_DY = 1;
-	public static final int MIN_DZ = 0, MAX_DZ = 6;
+	public static final int MIN_DX = -4, MAX_DX = 0;
+	public static final int MIN_DY = -1, MAX_DY = 3;
+	public static final int MIN_DZ = -2, MAX_DZ = 6;
 
 	/** Master part (a drum sheet, in the middle of the machine); holds the machine. */
-	public static final int MASTER_DX = 2, MASTER_DY = 0, MASTER_DZ = 3;
+	public static final int MASTER_DX = -3, MASTER_DY = 1, MASTER_DZ = 2;
 
 	/**
-	 * s steel scaffolding, S steel sheetmetal, C copper sheetmetal (the drum), b steel sheetmetal slab (lower),
-	 * H heavy engineering, l light engineering, R redstone engineering (trigger), G generator (the motor), T steel block
-	 * (the gearbox), L LV coil (the heating coil), h furnace heater, f steel fence, r radiator, B metal barrel,
-	 * p fluid pipe, Q chemical engineering (the acid-proof casing: the pre-mixer, the feed and discharge heads' feet, the
- * distillation column's base), . air (not checked).
+	 * s steel scaffolding, S steel sheetmetal, C copper sheetmetal (the drum), a aluminium sheetmetal (the condenser),
+	 * b steel sheetmetal slab (lower), A aluminium sheetmetal slab (lower), H heavy engineering, l light engineering,
+	 * R redstone engineering (trigger), G generator (the motor), T steel block, L LV coil (the heating coils), h furnace
+	 * heater, f steel fence, p fluid pipe, Q chemical engineering (the acid-proof casing), . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..204, y4..6, z467..473 (01/11/2026: chemical engineering blocks, a heavy engineering under the pre-mixer's motor). Updated from the user\'s new build (01/11/2026). Updated from the user\'s new build (01/11/2026).
+	 * Read from the dev world build, x200..204, y4..8, z469..477 (14/11/2026, the octagonal model's build).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
-					"slssH",
-					"sSSSH",
-					"shhSs",
-					"shhSs",
+					"sQSSl",
 					"sSSSs",
 					"sSSSs",
-					"slsls"},
+					"sSSSs",
+					"sSSSs",
+					"sSSSs",
+					"sSSSs",
+					"sSSSs",
+					"slSQs"},
 			{ // y 5
-					"RSSQH",
-					"fCC.H",
-					"fLLG.",
-					"fCCT.",
-					"fCCrB",
-					"fCCQQ",
-					".SSQQ"},
+					"TTTGf",
+					"...T.",
+					"lll.R",
+					"hhh.H",
+					"hhh.s",
+					"hhh.s",
+					"lll.s",
+					"....S",
+					"TTT.S"},
 			{ // y 6
-					".lSp.",
-					".CCp.",
-					".LLp.",
-					".CCp.",
-					".CCrB",
-					".CC..",
-					".bb.."},
+					"HHH.f",
+					"CCCl.",
+					"CCC.H",
+					"LCL.H",
+					"LCL.a",
+					"LCL.a",
+					"CCC.a",
+					"CCC.b",
+					"HHH.b"},
+			{ // y 7
+					"HHH.f",
+					"CCC..",
+					"CCC.H",
+					"LLL.H",
+					"LLL.A",
+					"LLLpA",
+					"CCCpA",
+					"CCCp.",
+					"HHHp."},
+			{ // y 8
+					".lfff",
+					".....",
+					".....",
+					".....",
+					".....",
+					".....",
+					".....",
+					".....",
+					"....."},
 	};
 
 	public static final char TRIGGER = 'R';
@@ -72,12 +99,11 @@ public final class HFKilnStructure
 	 */
 	static final int[][] PORTS = {
 			// dx, dy, dz, port, face dx, face dz
-			{1, 1, 0, PORT_FLUORITE, 0, 0},
-			{1, -1, 0, PORT_ACID, 0, -1},
-			{1, -1, 6, PORT_GYPSUM, 0, 1},
-			{3, -1, 6, PORT_HF, 0, 1},
-			{4, -1, 0, PORT_ENERGY, 0, 0},
-			{4, 0, 0, PORT_ENERGY, 0, 0},
+			{0, -1, -2, PORT_FLUORITE, 1, 0},
+			{-3, -1, -2, PORT_ACID, 0, -1},
+			{-3, -1, 6, PORT_GYPSUM, 0, 1},
+			{-1, -1, 6, PORT_HF, 0, 1},
+			{0, 2, 1, PORT_ENERGY, 0, 0},
 			{0, 0, 0, PORT_REDSTONE, 0, 0},
 	};
 

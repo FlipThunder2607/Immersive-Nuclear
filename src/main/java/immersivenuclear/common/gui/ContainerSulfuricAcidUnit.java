@@ -25,7 +25,7 @@ public class ContainerSulfuricAcidUnit extends Container
 	public static final int WIDTH = 290, HEIGHT = 239, INV_X = 65, INV_Y = 157;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TileSulfuricAcidUnit's slot order. */
 	public static final int[][] SLOT_XY = {
-			{55, 59},   // sulfur, over the burner's hopper
+			{64, 39},   // sulfur, over the sulfur melter, on the top slot row
 			{212, 39},  // empty container for acid, over the acid tank
 			{212, 119}, // filled with acid, under it
 			{10, 39},   // water container, over the water tank

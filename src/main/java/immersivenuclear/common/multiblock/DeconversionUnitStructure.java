@@ -1,7 +1,7 @@
 package immersivenuclear.common.multiblock;
 
 /**
- * Deconversion Unit, block by block: 6 wide x 9 long x 6 high, 134 blocks. A rotary kiln plant: the depleted uranium
+ * Deconversion Unit, block by block: 6 wide x 9 long x 7 high, 164 blocks. A rotary kiln plant: the depleted uranium
  * hexafluoride and steam come in at the north end (the feed hood and hydrolysis reactor), the kiln runs along the machine
  * through its electric furnace (the LV coils) turned by its motor (generator), the oxide leaves at the south end's discharge
  * hood into a screw to the back, and the gas goes through the filters and the condenser to the hydrofluoric acid port at
@@ -11,15 +11,16 @@ package immersivenuclear.common.multiblock;
  * Offsets are relative to the trigger (redstone engineering block, the cabinet's foot, hit with the hammer on its back
  * face), in the reference orientation (facing NORTH): the front is WEST, so the player stands west of the structure
  * looking east; back = east, left = north. dx grows east, dz grows south.
- * Ports, where the model draws them: depleted UF6 (-4,-1,-4) and steam (-1,-1,-4) in on the north face; hydrofluoric
- * acid (-4,-1,4) out on the south face; the oxide (0,-1,3) out on the east (back) face; energy on the cabinet's top
+ * Ports, where the model draws them: depleted UF6 (-4,-1,-4, radioactive handling) and steam (-1,-1,-4, light
+ * engineering) in on the north face; hydrofluoric
+ * acid (-4,-1,4, chemical engineering) out on the south face; the oxide (0,-1,3) out on the east (back) face; energy on the cabinet's top
  * heavy engineering block (0,2,1), where the model draws the roof connector.
  * No Minecraft classes here, so it can be tested on its own.
  */
 public final class DeconversionUnitStructure
 {
 	public static final int MIN_DX = -5, MAX_DX = 0;
-	public static final int MIN_DY = -1, MAX_DY = 4;
+	public static final int MIN_DY = -1, MAX_DY = 5;
 	public static final int MIN_DZ = -4, MAX_DZ = 4;
 
 	/** Master part (an LV coil of the furnace, in the middle of the machine); holds the machine. */
@@ -30,13 +31,13 @@ public final class DeconversionUnitStructure
 	 * b steel sheetmetal slab, i iron sheetmetal slab, q lead sheetmetal slab, c copper sheetmetal slab (the bus bars),
 	 * t steel block slab (all slabs lower), h furnace heater (under the electric furnace), L LV coil, f steel fence,
 	 * l light engineering, G generator, H heavy engineering, R redstone engineering (trigger), X radioactive handling
-	 * (the ports), p fluid pipe, . air (not checked).
+	 * (the ports), Q chemical engineering, B metal barrel (the tanks), C copper sheetmetal, p fluid pipe, . air (not checked).
 	 * LAYERS[dy - MIN_DY][dz - MIN_DZ].charAt(dx - MIN_DX); layer 0 is the bottom, row 0 the north end.
-	 * Read from the dev world build, x200..205, y4..9, z531..539 (13/11/2026, aligned with the model).
+	 * Read from the dev world build, x200..205, y4..10, z531..539 (14/11/2026, the user's update: barrels for the tanks).
 	 */
 	static final String[][] LAYERS = {
 			{ // y 4
-					"sXSSXs",
+					"sXSSls",
 					"sSSSSs",
 					"sSSSSs",
 					"shhSSs",
@@ -44,39 +45,39 @@ public final class DeconversionUnitStructure
 					"shhSSs",
 					"sSSSSs",
 					"sSSSSX",
-					"sXSSSs"},
+					"sQSSSs"},
 			{ // y 5
-					"ITT.I.",
-					"IllG..",
+					"BTT.B.",
+					"BllG..",
 					"...ls.",
 					".SL.s.",
 					".SLf.R",
 					".SLf.H",
-					".llG..",
-					".TTlbb",
-					"IpppI."},
+					"...G..",
+					".lllbb",
+					"BTTpB."},
 			{ // y 6
-					"ITTpI.",
-					"IPPp..",
-					".PPpI.",
-					".SLpI.",
+					"BHHpB.",
+					"BPPp..",
+					".PPpB.",
+					".SLpB.",
 					".SLf.H",
 					".SLf.H",
 					".PP...",
-					".TT...",
-					"I...I."},
+					".PP...",
+					"BHH.B."},
 			{ // y 7
-					".II.I.",
+					".CC.B.",
 					".qq...",
-					".qq.I.",
-					".SL.I.",
+					".qq.B.",
+					".SL.B.",
 					".SLccH",
 					".SLccH",
 					".qq...",
-					".tt...",
-					"....I."},
+					".qq...",
+					".tt.B."},
 			{ // y 8
-					".II.i.",
+					".II.B.",
 					"......",
 					"....p.",
 					"....p.",
@@ -84,9 +85,9 @@ public final class DeconversionUnitStructure
 					"....p.",
 					"....p.",
 					"....p.",
-					"....I."},
+					"....B."},
 			{ // y 9
-					".ii...",
+					".CCpp.",
 					"......",
 					"......",
 					"......",
@@ -95,6 +96,16 @@ public final class DeconversionUnitStructure
 					"......",
 					"......",
 					"....p."},
+			{ // y 10
+					".ii...",
+					"......",
+					"......",
+					"......",
+					"......",
+					"......",
+					"......",
+					"......",
+					"......"},
 	};
 
 	public static final char TRIGGER = 'R';

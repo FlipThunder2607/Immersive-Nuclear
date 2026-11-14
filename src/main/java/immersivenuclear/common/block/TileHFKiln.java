@@ -48,6 +48,8 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 {
 	// Provisional values
 	public static final int ACID_PER_CYCLE = 500, HF_PER_CYCLE = 500, GYPSUM_PER_CYCLE = 1, CYCLE_TICKS = 200, ENERGY_PER_TICK = 64;
+	/** Its control systems (panel, instruments) while it is not running (the user, 14/11/2026). */
+	public static final int IDLE_PER_TICK = 1;
 	public static final int ACID_CAPACITY = 8000, HF_CAPACITY = 8000, ENERGY_CAPACITY = 16000, PUSH_PER_TICK = 100;
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
 	/** Fluorite in, gypsum out; each tank has its container slots under it: in (full or empty container) and out. */
@@ -121,8 +123,8 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	int progress;
 	int state = STATE_IDLE;
 	boolean redstoneInverted;
-	/** Where each sound plays (template offsets): the motor and its gears, the heating coil, the drum (the master, in its middle). */
-	static final int[] DRIVE_PART = {3, 0, 2}, HEATER_PART = {1, 0, 2}, DRUM_PART = {2, 0, 3};
+	/** Where each sound plays (template offsets): the gearbox beside the motor, a furnace heater under the drum, a heating coil on the drum. */
+	static final int[] DRIVE_PART = {-1, 0, -1}, HEATER_PART = {-3, 0, 2}, DRUM_PART = {-2, 1, 1};
 	/** The loops come in as their starts end (drum and drive 3 s, heater 1 s). */
 	final LoopSound drumSound = new LoopSound(() -> INContent.soundKilnDrumStart, () -> INContent.soundKilnDrumLoop, () -> INContent.soundKilnDrumStop, 60);
 	final LoopSound drive = new LoopSound(() -> INContent.soundKilnDriveStart, () -> INContent.soundKilnDriveLoop, () -> INContent.soundKilnDriveStop, 60);
@@ -130,6 +132,8 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 
 	/** Running, as last sent to the clients (server), or as received (client): lights the heaters. */
 	boolean sentRunning, clientRunning;
+	/** Energy in the buffer, as last sent / as received: the red LED and the manometers' light. */
+	boolean sentPowered, clientPowered;
 	/** Client, master: the drum's turn (degrees) and speed (0..1, easing up and down); the gears and rollers follow it. */
 	public float drumAngle, drumSpeed;
 	/** The drum's degrees per tick at full speed: one turn in 9 s. */
@@ -405,6 +409,8 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 		{
 			handleContainers();
 			process();
+			if(state != STATE_RUNNING)
+				energy.use(IDLE_PER_TICK);                   // its control systems, while it waits: the panel goes dark when it runs out
 			sync();
 		}
 	}
@@ -438,13 +444,21 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	/** Tells the clients when the kiln starts or stops, so the heaters light up or go out. */
 	void sync()
 	{
-		boolean running = state == STATE_RUNNING;
-		if(running != sentRunning)
+		boolean running = state == STATE_RUNNING, powered = energy.getEnergyStored() > 0;
+		if(running != sentRunning || powered != sentPowered)
 		{
 			sentRunning = running;
+			sentPowered = powered;
 			IBlockState st = world.getBlockState(pos);
 			world.notifyBlockUpdate(pos, st, st, 2);
 		}
+	}
+
+	/** Whether the kiln has power, as the client knows it (the red LED and the manometers' light). */
+	public boolean powered()
+	{
+		TileHFKiln m = getMaster();
+		return m != null && m.clientPowered;
 	}
 
 	/** Whether the kiln runs, as the client knows it: lights the heaters, turns the motor's sound on. */
@@ -695,13 +709,17 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	{
 		writePart(nbt);
 		if(isMaster())
+		{
 			nbt.setBoolean("running", state == STATE_RUNNING);
+			nbt.setBoolean("powered", energy.getEnergyStored() > 0);
+		}
 	}
 
 	void readClient(NBTTagCompound nbt)
 	{
 		readPart(nbt);
 		clientRunning = nbt.getBoolean("running");
+		clientPowered = nbt.getBoolean("powered");
 	}
 
 	@Override
@@ -716,7 +734,7 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 			world.markBlockRangeForRenderUpdate(pos, pos);
 		if(isMaster() && lit != clientRunning)
 		{
-			world.markBlockRangeForRenderUpdate(pos.add(-4, -2, -4), pos.add(4, 2, 4));
+			world.markBlockRangeForRenderUpdate(pos.add(-5, -2, -5), pos.add(5, 3, 5));
 		}
 	}
 
@@ -763,10 +781,10 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 		stopSound();
 	}
 
-	/** The master's box covers the whole machine (any turn): 4 blocks each way, 1 down, 2 up. */
+	/** The master's box covers the whole machine (any turn): 5 blocks each way, 2 down, 3 up (the elevator's top). */
 	@Override
 	public AxisAlignedBB getRenderBoundingBox()
 	{
-		return isMaster() ? new AxisAlignedBB(pos.add(-4, -1, -4), pos.add(5, 3, 5)) : super.getRenderBoundingBox();
+		return isMaster() ? new AxisAlignedBB(pos.add(-5, -2, -5), pos.add(6, 4, 6)) : super.getRenderBoundingBox();
 	}
 }

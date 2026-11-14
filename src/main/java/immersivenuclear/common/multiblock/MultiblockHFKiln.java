@@ -50,6 +50,8 @@ public class MultiblockHFKiln implements IMultiblock
 			case 'G': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.GENERATOR.getMeta());
 			case 'r': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RADIATOR.getMeta());
 			case 'C': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.COPPER.getMeta());
+			case 'a': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.ALUMINUM.getMeta());
+			case 'A': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.ALUMINUM.getMeta());
 			case 'L': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.COIL_LV.getMeta());
 			case 'h': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FURNACE_HEATER.getMeta());
 			case 'f': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
@@ -64,7 +66,7 @@ public class MultiblockHFKiln implements IMultiblock
 	/** Required slab half: 0 = lower, -1 = not a slab. Matches IE's TileEntityIESlab.slabType. */
 	static int slabTypeFor(char c)
 	{
-		return c == 'b' ? 0 : -1;
+		return c == 'b' || c == 'A' ? 0 : -1;
 	}
 
 	/** The block state a structure code stands for, or null for air. */
@@ -255,6 +257,8 @@ public class MultiblockHFKiln implements IMultiblock
 			counts.put('S', count('S'));
 			counts.put('C', count('C'));
 			counts.put('b', count('b'));
+			counts.put('a', count('a'));
+			counts.put('A', count('A'));
 			counts.put('L', count('L'));
 			counts.put('h', count('h'));
 			counts.put('f', count('f'));

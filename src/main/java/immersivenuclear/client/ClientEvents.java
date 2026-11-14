@@ -142,13 +142,15 @@ public class ClientEvents
 		RenderMetalExtractor.bake();
 		RenderPrecipitationUnit.bake();
 		RenderHFKiln.bake();
+		RenderHFKiln.GLOW.bake();
 		RenderFilterPress.GLOW.bake();
 		RenderIndustrialDryer.GLOW.bake();
-		RenderHFKiln.GLOW.bake();
 		RenderDeconversionUnit.bake();
 		RenderDeconversionUnit.GLOW.bake();
 		RenderElectrolyzer.GLOW.bake();
 		RenderSulfuricAcidUnit.GLOW.bake();
+		RenderSulfuricAcidUnit.FIRE.bake();
+		RenderSulfuricAcidUnit.GLASS.bake();
 		RenderConversionUnit.GLOW.bake();
 		RenderConversionUnit.GLASS.bake();
 		RenderConversionUnit.LEDS.bake();
@@ -179,7 +181,7 @@ public class ClientEvents
 		if(event.getMap() != Minecraft.getMinecraft().getTextureMapBlocks())
 			return;
 		// Textures only the machines' renderers use (the lit and emissive layers of the glowing parts)
-		for(String t : new String[]{"red_led_emissive", "enrichment_led_green_emissive", "conversion_coil_heat", "common_lamp_red", "common_lamp_orange", "common_lamp_green", "conversion_glass", "conversion_window_reactor", "conversion_window_hotcell", "conversion_window_hidro", "conversion_window_cell", "conversion_window_fire", "computers/cabo_energia", "computers/cabo_dados", "furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "kiln_coil_off", "mixer_gauge_glass_emissive", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
+		for(String t : new String[]{"red_led_emissive", "enrichment_led_green_emissive", "conversion_coil_heat", "common_lamp_red", "common_lamp_orange", "common_lamp_green", "conversion_glass", "conversion_window_reactor", "conversion_window_hotcell", "conversion_window_hidro", "conversion_window_cell", "conversion_window_fire", "computers/cabo_energia", "computers/cabo_dados", "furnace_heater_active", "furnace_heater_active_emissive", "kiln_coil_glow", "kiln_coil_glow_emissive", "kiln_coil_off", "mixer_gauge_glass_emissive", "burner_sight_glass", "burner_firebox_glow", "burner_flame", "transparent", "arc_furnace_lamp_emissive", "electrolyzer_cell_stack_emissive"})
 			event.getMap().registerSprite(new net.minecraft.util.ResourceLocation(ImmersiveNuclear.MODID, "blocks/" + t));
 		for(Fluid f : INContent.fluids)
 			for(Fluid g : new Fluid[]{f, FluidRegistry.getFluid(f.getName())})

@@ -45,7 +45,11 @@ public class MultiblockSulfuricAcidUnit implements IMultiblock
 			case 's': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_SCAFFOLDING_0.getMeta());
 			case 'S': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.STEEL.getMeta());
 			case 'I': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.IRON.getMeta());
+			case 'a': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.ALUMINUM.getMeta());
+			case 'c': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.COPPER.getMeta());
 			case 'b': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.STEEL.getMeta());
+			case 'i': return new ItemStack(IEContent.blockSheetmetalSlabs, 1, BlockTypes_MetalsAll.IRON.getMeta());
+			case 'f': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
 			case 'H': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta());
 			case 'l': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta());
 			case 'R': return new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta());
@@ -63,7 +67,7 @@ public class MultiblockSulfuricAcidUnit implements IMultiblock
 	/** Required slab half: 0 = lower, -1 = not a slab. Matches IE's TileEntityIESlab.slabType. */
 	static int slabTypeFor(char c)
 	{
-		return c == 'b' ? 0 : -1;
+		return c == 'b' || c == 'i' ? 0 : -1;
 	}
 
 	/** The block state a structure code stands for, or null for air. */
@@ -253,7 +257,11 @@ public class MultiblockSulfuricAcidUnit implements IMultiblock
 			counts.put('s', count('s'));
 			counts.put('S', count('S'));
 			counts.put('I', count('I'));
+			counts.put('a', count('a'));
+			counts.put('c', count('c'));
 			counts.put('b', count('b'));
+			counts.put('i', count('i'));
+			counts.put('f', count('f'));
 			counts.put('K', count('K'));
 			counts.put('B', count('B'));
 			counts.put('p', count('p'));

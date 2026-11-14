@@ -1,3 +1,6 @@
+newmtl base_vent_cap
+map_Kd #base_vent_cap
+
 newmtl metal_decoration0_radiator_ctm
 map_Kd #metal_decoration0_radiator_ctm
 

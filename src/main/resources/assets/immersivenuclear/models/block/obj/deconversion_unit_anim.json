@@ -1,5 +1,6 @@
 {
   "textures": {
+    "#base_vent_cap": "immersivenuclear:blocks/base_vent_cap",
     "#kiln_coil_glow": "immersivenuclear:blocks/kiln_coil_glow",
     "#lead_tank_wall": "immersivenuclear:blocks/lead_tank_wall",
     "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",

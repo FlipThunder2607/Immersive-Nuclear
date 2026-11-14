@@ -22,7 +22,7 @@ import net.minecraft.item.ItemStack;
 
 /**
  * JEI page of the Sulfuric Acid Unit, a compact copy of its interface (GuiSulfuricAcidUnit) in the mod's finish:
- * sulfur into the BURNER (blue flame) > CONVERTER (four catalyst beds) > ABSORPTION TOWER > sulfuric acid; the water
+ * sulfur through the MELTER (copper steam jacket) into the BURNER (blue flame) > CONVERTER (four catalyst beds) > ABSORPTION TOWER > sulfuric acid; the water
  * goes in at the tower's top, the steam comes off the boiler. Energy and time come from the recipe (drawInfo).
  */
 public class SulfuricAcidUnitCategory implements IRecipeCategory<SulfuricAcidUnitRecipe>
@@ -31,6 +31,7 @@ public class SulfuricAcidUnitCategory implements IRecipeCategory<SulfuricAcidUni
 	static final int W = 176, H = 100;
 	static final int SULFUR_X = 34, SULFUR_Y = 4;
 	static final int WATER_X = 4, TANK_Y = 26;
+	static final int MELTER_X = 34, MELTER_Y = 23, MELTER_W = 18, MELTER_H = 13;
 	static final int BURNER_X = 30, BURNER_Y = 40, BURNER_W = 26, BURNER_H = 16;
 	static final int CONV_X = 62, CONV_Y = 18, CONV_W = 12, CONV_H = 58;
 	static final int TOWER_X = 80, TOWER_Y = 18, TOWER_W = 12, TOWER_H = 58;
@@ -100,7 +101,12 @@ public class SulfuricAcidUnitCategory implements IRecipeCategory<SulfuricAcidUni
 		JeiGraphite.pipe(BURNER_X + BURNER_W / 2, BURNER_Y + BURNER_H, BURNER_X + BURNER_W / 2, STEAM_Y);
 		JeiGraphite.pipe(BURNER_X + BURNER_W / 2, STEAM_Y, STEAM_X + 10, STEAM_Y);
 		JeiGraphite.pipe(STEAM_X + 10, STEAM_Y, STEAM_X + 10, TANK_Y + 51);
-		JeiGraphite.rect(SULFUR_X + 3, SULFUR_Y + 18, 10, BURNER_Y - SULFUR_Y - 18, JeiGraphite.WELL);
+		JeiGraphite.rect(MELTER_X + MELTER_W / 2 - 3, MELTER_Y + MELTER_H, 6, BURNER_Y - MELTER_Y - MELTER_H, JeiGraphite.WELL);
+		// The sulfur melter: its copper steam jacket
+		JeiGraphite.rect(MELTER_X, MELTER_Y, MELTER_W, MELTER_H, JeiGraphite.WELL);
+		JeiGraphite.rect(MELTER_X + 2, MELTER_Y + 2, MELTER_W - 4, MELTER_H - 4, COL_STEEL);
+		for(int y = MELTER_Y + 4; y < MELTER_Y + MELTER_H - 3; y += 2)
+			JeiGraphite.rect(MELTER_X + 1, y, MELTER_W - 2, 1, y % 4 == 0 ? 0xffe09a62 : 0xff8a4a26);
 
 		// The burner: firebrick round the blue flame
 		JeiGraphite.rect(BURNER_X, BURNER_Y, BURNER_W, BURNER_H, JeiGraphite.WELL);
@@ -159,6 +165,8 @@ public class SulfuricAcidUnitCategory implements IRecipeCategory<SulfuricAcidUni
 		String k = "gui.immersivenuclear.sulfuric_acid_unit.";
 		if(mx >= BURNER_X && mx < BURNER_X + BURNER_W && my >= BURNER_Y && my < BURNER_Y + BURNER_H)
 			return Arrays.asList(I18n.format(k + "burner"), I18n.format(k + "burner_info"));
+		if(mx >= MELTER_X && mx < MELTER_X + MELTER_W && my >= MELTER_Y && my < MELTER_Y + MELTER_H)
+			return Arrays.asList(I18n.format(k + "melter"), I18n.format(k + "melter_info"));
 		if(mx >= CONV_X && mx < CONV_X + CONV_W && my >= CONV_Y && my < CONV_Y + CONV_H)
 			return Arrays.asList(I18n.format(k + "converter"), I18n.format(k + "converter_info"));
 		if(mx >= TOWER_X && mx < TOWER_X + TOWER_W && my >= TOWER_Y && my < TOWER_Y + TOWER_H)

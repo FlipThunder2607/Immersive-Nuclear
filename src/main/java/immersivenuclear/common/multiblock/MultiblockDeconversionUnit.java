@@ -59,6 +59,9 @@ public class MultiblockDeconversionUnit implements IMultiblock
 			case 't': return new ItemStack(IEContent.blockStorageSlabs, 1, blusunrize.immersiveengineering.common.blocks.BlockTypes_MetalsIE.STEEL.getMeta());
 			case 'h': return new ItemStack(IEContent.blockMetalDevice1, 1, BlockTypes_MetalDevice1.FURNACE_HEATER.getMeta());
 			case 'f': return new ItemStack(IEContent.blockMetalDecoration1, 1, BlockTypes_MetalDecoration1.STEEL_FENCE.getMeta());
+			case 'Q': return new ItemStack(INContent.blockEngineering[4]);
+			case 'B': return new ItemStack(IEContent.blockMetalDevice0, 1, blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice0.BARREL.getMeta());
+			case 'C': return new ItemStack(IEContent.blockSheetmetal, 1, BlockTypes_MetalsAll.COPPER.getMeta());
 			default: return ItemStack.EMPTY;
 		}
 	}
@@ -265,6 +268,9 @@ public class MultiblockDeconversionUnit implements IMultiblock
 			counts.put('G', count('G'));
 			counts.put('p', count('p'));
 			counts.put('R', count('R'));
+			counts.put('Q', count('Q'));
+			counts.put('B', count('B'));
+			counts.put('C', count('C'));
 			counts.put('P', count('P'));
 			counts.put('q', count('q'));
 			counts.put('c', count('c'));

@@ -9,25 +9,28 @@ public class DeconversionUnitStructureTest
 	{
 		// Counts read from the dev world build (x200..205, y4..9, z531..539, 13/11/2026)
 		expect(count('S'), 36, "steel sheetmetal");
-		expect(count('I'), 21, "iron sheetmetal");
+		expect(count('I'), 2, "iron sheetmetal");
 		expect(count('s'), 19, "steel scaffolding");
 		expect(count('p'), 14, "fluid pipes");
 		expect(count('L'), 9, "LV coils");
-		expect(count('T'), 8, "steel blocks");
+		expect(count('T'), 4, "steel blocks");
 		expect(count('h'), 6, "furnace heaters");
-		expect(count('l'), 6, "light engineering");
-		expect(count('P'), 6, "lead sheetmetal");
-		expect(count('q'), 6, "lead sheetmetal slabs");
-		expect(count('H'), 5, "heavy engineering");
-		expect(count('X'), 4, "radioactive handling");
+		expect(count('l'), 7, "light engineering");
+		expect(count('P'), 8, "lead sheetmetal");
+		expect(count('q'), 8, "lead sheetmetal slabs");
+		expect(count('H'), 9, "heavy engineering");
+		expect(count('X'), 2, "radioactive handling");
 		expect(count('f'), 4, "steel fences");
 		expect(count('c'), 4, "copper sheetmetal slabs");
-		expect(count('i'), 3, "iron sheetmetal slabs");
+		expect(count('i'), 2, "iron sheetmetal slabs");
 		expect(count('G'), 2, "generators");
 		expect(count('b'), 2, "steel sheetmetal slabs");
 		expect(count('t'), 2, "steel block slabs");
 		expect(count('R'), 1, "redstone engineering");
-		expect(totalParts(), 158, "total parts");
+		expect(count('Q'), 1, "chemical engineering");
+		expect(count('B'), 18, "metal barrels");
+		expect(count('C'), 4, "copper sheetmetal");
+		expect(totalParts(), 164, "total parts");
 
 		expect(get(0, 0, 0), TRIGGER, "trigger at origin");
 		expect(get(MASTER_DX, MASTER_DY, MASTER_DZ), 'L', "master is a furnace coil");
@@ -35,9 +38,9 @@ public class DeconversionUnitStructureTest
 		expect(get(-4, -1, -4), 'X', "UF6 on radioactive handling");
 		expect(portFace(-4, -1, -4)[1], -1, "UF6 on the north face");
 		expect(portAt(-1, -1, -4), PORT_STEAM, "steam port");
-		expect(get(-1, -1, -4), 'X', "steam on radioactive handling");
+		expect(get(-1, -1, -4), 'l', "steam on light engineering");
 		expect(portAt(-4, -1, 4), PORT_HF, "hydrofluoric acid port");
-		expect(get(-4, -1, 4), 'X', "HF on radioactive handling");
+		expect(get(-4, -1, 4), 'Q', "HF on chemical engineering");
 		expect(portFace(-4, -1, 4)[1], 1, "HF on the south face");
 		expect(portAt(0, -1, 3), PORT_OXIDE, "oxide port");
 		expect(get(0, -1, 3), 'X', "oxide on radioactive handling");

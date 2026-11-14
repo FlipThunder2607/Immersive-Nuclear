@@ -19,6 +19,31 @@ the release title always carry the same version.
   variables, operator console with modules, analogue gauge panel, digital signal board, and expansion chips that make
   the machines report every phase of their process.
 
+### Line 2: Sulfuric Acid Unit and Hydrofluoric Acid Kiln remade (built 2026-11-14)
+
+Both machines get new models with octagonal vessels, new multiblocks, interfaces and lights.
+
+### Changed
+- **Sulfuric Acid Unit**: a new model and multiblock (5x9x8, 174 blocks): the sulfur now goes into a sulfur melter
+  (its copper steam jacket glows faintly while it runs) beside a lying burner. The burner is hollow: its blue flame burns
+  inside the firebox, seen through a smoked glass window; cold, the window shows the firebrick lining. Sulfur in at the
+  back, water in at the blower's end, sulfuric acid out of the chemical engineering block at the absorption tower's end,
+  steam beside it, energy on top of the electrical cabinet, the trigger at the cabinet's foot. The manometers have a
+  faint backlight. New interface: the blower, the lying burner with its flame and the melter under the sulfur's slot.
+- **Hydrofluoric Acid Kiln**: a new model and multiblock (5x9x5, 153 blocks): a bucket elevator lifts the fluorite into
+  the feed head, the drum turns inside three heating coil rings, driven by the girth gear at the feed end, a pinion on
+  the gearbox and an orange motor; panels on both hoods with a red LED (power, not producing), a green one (running) and
+  backlit manometers. Fluorite in at the elevator's foot, sulfuric acid in at the feed end, gypsum and hydrofluoric acid
+  out at the discharge end, energy on top of the electrical cabinet. Softer heater sound (a light electric hum). New
+  interface: the drive and the three coils as on the model; the fluorite's and the gypsum's slots without boxes.
+- **Deconversion Unit**: octagonal support rollers; the multiblock's tanks are metal barrels, the steam port a light
+  engineering block and the hydrofluoric acid port a chemical engineering block (6x9x7, 164 blocks).
+- The Sulfuric Acid Unit, the Hydrofluoric Acid Kiln and the Deconversion Unit draw 1 IF/t while they are stopped, for
+  their controls: once the energy runs out their panels go dark.
+
+### Fixed
+- The ends of octagonal vessels no longer flicker (two faces on one plane in every octagon).
+
 ### Line 2: Deconversion Unit (built 2026-11-13)
 
 The tails of the enrichment turned into a stable oxide, and their fluorine back into acid for the Conversion Unit.

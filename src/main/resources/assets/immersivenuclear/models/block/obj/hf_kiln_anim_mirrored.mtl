@@ -1,6 +1,3 @@
-newmtl arc_furnace_active
-map_Kd #arc_furnace_active
-
 newmtl furnace_heater
 map_Kd #furnace_heater
 
@@ -9,6 +6,18 @@ map_Kd #kiln_tank_wall
 
 newmtl metal_decoration0_coil_lv_side
 map_Kd #metal_decoration0_coil_lv_side
+
+newmtl metal_decoration2_steel_post
+map_Kd #metal_decoration2_steel_post
+
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl metal_multiblock_refinery
+map_Kd #metal_multiblock_refinery
+
+newmtl red_led
+map_Kd #red_led
 
 newmtl sheetmetal_steel
 map_Kd #sheetmetal_steel

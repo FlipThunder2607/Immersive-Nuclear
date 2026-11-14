@@ -24,8 +24,8 @@ public class ContainerHFKiln extends Container
 	public static final int WIDTH = 292, HEIGHT = 239, INV_X = 66, INV_Y = 157;
 	/** Slot positions (top-left of the 16x16 item), shared with the GUI; in TileHFKiln's slot order. */
 	public static final int[][] SLOT_XY = {
-			{46, 39},   // fluorite, in its box over the feed head (on the left panel's top row)
-			{209, 119}, // gypsum, in its box against the right panel
+			{46, 39},   // fluorite, alone over the feed head (on the left panel's top row)
+			{205, 119}, // gypsum, alone, centred under the condenser
 			{10, 39},   // sulfuric acid container, over the acid tank
 			{10, 119},  // the emptied acid container, under it
 			{244, 39},  // empty container for hydrofluoric acid, over its tank

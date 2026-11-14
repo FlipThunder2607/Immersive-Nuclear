@@ -53,6 +53,8 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 {
 	// Provisional values
 	public static final int WATER_PER_CYCLE = 500, ACID_PER_CYCLE = 500, STEAM_PER_CYCLE = 250, CYCLE_TICKS = 100, ENERGY_PER_TICK = 32;
+	/** Its control systems (panel, instruments) while it is not running (the user, 14/11/2026). */
+	public static final int IDLE_PER_TICK = 1;
 	public static final int WATER_CAPACITY = 8000, ACID_CAPACITY = 8000, STEAM_CAPACITY = 4000, ENERGY_CAPACITY = 16000, PUSH_PER_TICK = 100;
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
 	/** Each tank has its container slots under it: in (empty or full container) and out. */
@@ -141,14 +143,14 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 	 * Where each sound plays (template offsets): the burner (with its blower), the pump tank under the tower, the steam
 	 * drum (its relief valve).
 	 */
-	static final int[] BURNER_PART = {1, 0, 2}, PUMP_PART = {3, 0, 5}, DRUM_PART = {3, 3, 1};
+	static final int[] BURNER_PART = {-3, 0, 1}, PUMP_PART = {-1, 0, 7}, DRUM_PART = {-3, 2, 3};
 	/**
 	 * Where the effects come out, in template blocks from the trigger block's corner (as the model draws them): the
-	 * steam out of the relief valve's vent on the steam drum (model x 11.65, y 11.05, z 9.15), the faint plume out of the
-	 * absorption tower's stack, just over its rain cap (model x 4.9, y 16.05, z 6.0). Template x = (model z - 3) / 2,
-	 * y = model y / 2 - 1, z = (15 - model x) / 2.
+	 * steam out of the relief valve's vent on the steam drum (model x 8.7, y 9.1, z 5.9), the faint plume out of the
+	 * absorption tower's stack, just over its top (model x 1.3, y 15.9, z 5.9). Template x = (model z - 3) / 2 - 4,
+	 * y = model y / 2 - 1, z = (17 - model x) / 2.
 	 */
-	static final double[] RELIEF_AT = {3.08, 4.55, 1.68}, STACK_AT = {1.5, 7.1, 5.05};
+	static final double[] RELIEF_AT = {-2.55, 3.6, 4.15}, STACK_AT = {-2.55, 7.0, 7.85};
 	/** The loops come in as their starts end (burner 2.5 s, pump 1 s). */
 	final LoopSound burner = new LoopSound(() -> INContent.soundAcidBurnerStart, () -> INContent.soundAcidBurnerLoop, () -> INContent.soundAcidBurnerStop, 50);
 	final LoopSound pump = new LoopSound(() -> INContent.soundAcidPumpStart, () -> INContent.soundAcidPumpLoop, () -> INContent.soundAcidPumpStop, 20);
@@ -156,6 +158,8 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 
 	/** Running, as last sent to the clients (server), or as received (client): lights the burner. */
 	boolean sentRunning, clientRunning;
+	/** Energy in the buffer, as last sent / as received: the red LED and the manometers' light. */
+	boolean sentPowered, clientPowered;
 	/** The steam tank is full while it runs, so the relief valve vents: as last sent / as received. */
 	boolean sentVenting, clientVenting;
 
@@ -443,6 +447,8 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		{
 			handleContainers();
 			process();
+			if(state != STATE_RUNNING)
+				energy.use(IDLE_PER_TICK);                   // its control systems, while it waits: the panel goes dark when it runs out
 			sync();
 		}
 	}
@@ -477,11 +483,12 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 	/** Tells the clients when the machine starts or stops, so the burner lights up or goes out. */
 	void sync()
 	{
-		boolean running = state == STATE_RUNNING, venting = isVenting();
-		if(running != sentRunning || venting != sentVenting)
+		boolean running = state == STATE_RUNNING, venting = isVenting(), powered = energy.getEnergyStored() > 0;
+		if(running != sentRunning || venting != sentVenting || powered != sentPowered)
 		{
 			sentRunning = running;
 			sentVenting = venting;
+			sentPowered = powered;
 			IBlockState st = world.getBlockState(pos);
 			world.notifyBlockUpdate(pos, st, st, 2);
 		}
@@ -526,6 +533,13 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		BlockPos t = getTriggerPos();
 		double u = x - .5, v = z - .5;
 		return new Vec3d(t.getX() + .5 + ex[0] * u + ez[0] * v, t.getY() + y, t.getZ() + .5 + ex[1] * u + ez[1] * v);
+	}
+
+	/** Whether the machine has power, as the client knows it (the red LED and the manometers' light). */
+	public boolean powered()
+	{
+		TileSulfuricAcidUnit m = getMaster();
+		return m != null && m.clientPowered;
 	}
 
 	/** Whether the burner burns: the master's running state, as the client knows it. */
@@ -790,6 +804,7 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		{
 			nbt.setBoolean("running", state == STATE_RUNNING);
 			nbt.setBoolean("venting", isVenting());
+			nbt.setBoolean("powered", energy.getEnergyStored() > 0);
 		}
 	}
 
@@ -798,6 +813,7 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		readPart(nbt);
 		clientRunning = nbt.getBoolean("running");
 		clientVenting = nbt.getBoolean("venting");
+		clientPowered = nbt.getBoolean("powered");
 	}
 
 	@Override
@@ -812,7 +828,7 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 			world.markBlockRangeForRenderUpdate(pos, pos);
 		if(isMaster() && lit != clientRunning)
 		{
-			world.markBlockRangeForRenderUpdate(pos.add(-4, -2, -4), pos.add(4, 6, 4));
+			world.markBlockRangeForRenderUpdate(pos.add(-5, -1, -5), pos.add(5, 6, 5));
 		}
 	}
 
@@ -859,10 +875,10 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		stopSound();
 	}
 
-	/** The master's box covers the whole machine (any turn): 3 blocks each way, 2 down, 7 up to the stack's top. */
+	/** The master's box covers the whole machine (any turn): 5 blocks each way, 1 down, 7 up to the stack's top. */
 	@Override
 	public AxisAlignedBB getRenderBoundingBox()
 	{
-		return isMaster() ? new AxisAlignedBB(pos.add(-3, -2, -3), pos.add(4, 8, 4)) : super.getRenderBoundingBox();
+		return isMaster() ? new AxisAlignedBB(pos.add(-5, -1, -5), pos.add(6, 8, 6)) : super.getRenderBoundingBox();
 	}
 }

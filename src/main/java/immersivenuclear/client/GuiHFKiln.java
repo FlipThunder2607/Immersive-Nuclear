@@ -21,7 +21,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
  *   window, purple fluorite to white gypsum; the copper heating coil over 1/4..2/4 of it, it glows; two riding rings;
  *   the girth gear in the middle, driven through the gearbox by the green motor); the dark DISCHARGE HEAD, its chute into
  *   the gypsum's box; the gas through the SCRUBBER and the CONDENSER into the HF tank  [HF | energy over the status lamp]
- * Our sheet (textures/gui/hf_kiln_gui.png, made by ferramentas/gui_forno_hf_v4_esboco.py --jogo with the same numbers)
+ * Our sheet (textures/gui/hf_kiln_gui.png, made by ferramentas/gui_forno_hf_v14_esboco.py --jogo with the same numbers)
  * is the fixed background; what moves is drawn here. The JEI page keeps its own sheet.
  */
 public class GuiHFKiln extends GuiIEContainerBase
@@ -30,20 +30,23 @@ public class GuiHFKiln extends GuiIEContainerBase
 	static final String SHEET = ImmersiveNuclear.MODID + ":textures/gui/hf_kiln_gui.png";
 	static final int SHEET_SIZE = 512;
 
-	// Layout (same as gui_forno_hf_v4_esboco.py)
+	// Layout (same as gui_forno_hf_v14_esboco.py)
 	static final int ROW1 = 37, ROW2 = 62, ROW3 = 117, TANK_Y = ROW2;
 	static final int ACID_X = 8, HF_X = 242, CONTROL_X = 268;
 	static final int FEED_X = 42, FEED_Y = 72, FEED_W = 24, FEED_H = 46;
 	/** The drum; also JEI's click area (INJeiPlugin). */
 	public static final int DRUM_X = 66, DRUM_Y = 82, DRUM_W = 106, DRUM_H = 26;
 	static final int WIN_X0 = 69, WIN_X1 = 169, WIN_Y0 = 90, WIN_Y1 = 100;
-	static final int COIL_X0 = 90, COIL_X1 = 112, GEAR_X = 116;
-	static final int[] RINGS = {72, 156};
-	static final int MOTOR_X = 112, MOTOR_Y = 112, MOTOR_W = 46, MOTOR_H = 24;
+	/** The three heating coil rings' left x (6 wide), the girth gear at the feed end, the riding rings (the octagonal model). */
+	static final int[] COILS = {106, 118, 130};
+	static final int GEAR_X = 71;
+	static final int[] RINGS = {88, 150};
+	/** The drive: the orange motor at the feed head's foot and the gearbox under the girth gear. */
+	static final int MOTOR_X = 40, MOTOR_Y = 116, MOTOR_W = 40, MOTOR_H = 20;
 	static final int DISCH_X = 172, DISCH_Y = 72, DISCH_W = 24, DISCH_H = 46;
 	static final int SCRUB_X = 204, SCRUB_Y = 34, SCRUB_W = 18, SCRUB_H = 28;
 	static final int COND_X = 204, COND_Y = 66, COND_W = 18, COND_H = 28;
-	static final int CHUTE_X0 = 196, CHUTE_Y0 = 98, CHUTE_X1 = 213, CHUTE_Y1 = 104;
+	static final int CHUTE_X0 = 196, CHUTE_Y0 = 98, CHUTE_X1 = 209, CHUTE_Y1 = 111;
 	static final int ENERGY_X = CONTROL_X + 2, ENERGY_Y = ROW1, ENERGY_W = 11, ENERGY_H = ROW2 + 51 - ROW1;
 	static final int LAMP_X = CONTROL_X, LAMP_Y = ROW3 + 2, LAMP_SIZE = 16;
 	static final int PANEL_X = ContainerHFKiln.INV_X - 8, PANEL_Y = ContainerHFKiln.INV_Y - 8;
@@ -174,8 +177,9 @@ public class GuiHFKiln extends GuiIEContainerBase
 	/** Whether x is in the drum's window where nothing stands in front of it (the coil, the rings, the girth gear). */
 	static boolean bedShows(int x)
 	{
-		if(x >= COIL_X0 - 1 && x <= COIL_X1)
-			return false;
+		for(int c : COILS)
+			if(x >= c - 1 && x <= c + 6)
+				return false;
 		if(x >= GEAR_X - 1 && x <= GEAR_X + 6)
 			return false;
 		for(int r : RINGS)
@@ -203,10 +207,11 @@ public class GuiHFKiln extends GuiIEContainerBase
 			}
 		if(on)
 		{
-			// The heating coil glows (the part of the machine that glows), breathing a little
+			// The heating coils glow (the part of the machine that glows), breathing a little
 			int a = Math.round(150 + 60 * (float)Math.sin(ticks * 0.15));
-			for(int x = COIL_X0 + 1; x < COIL_X1 - 1; x += 2)
-				rect(x, DRUM_Y + 2, 1, DRUM_H - 4, a << 24 | COL_GLOW);
+			for(int c : COILS)
+				for(int x = c + 1; x < c + 5; x += 2)
+					rect(x, DRUM_Y + 1, 1, DRUM_H - 2, a << 24 | COL_GLOW);
 			// The girth gear's teeth moving round
 			int phase = (turn / 2) % 2;
 			for(int y = DRUM_Y - 4; y < DRUM_Y + DRUM_H + 4; y++)

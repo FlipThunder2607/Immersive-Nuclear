@@ -23,11 +23,12 @@ import org.lwjgl.opengl.GL11;
 /**
  * Interface of the Sulfuric Acid Unit, in the interface standard (01/11): separate riveted panels with the machine drawn
  * between them, the world showing through the gaps. The contact process left to right, as in the machine:
- *   [water: in / tank / out]  the sulfur's slot over its hopper; the brick BURNER (its blue flame); the BOILER up to its
- *   STEAM DRUM (the level in its glass); the CONVERTER (four catalyst beds, they glow); the ABSORPTION TOWER (the acid
- *   trickling down its packing)  [acid | steam | energy over the status lamp]
- * Our sheet (textures/gui/sulfuric_acid_unit_gui.png, made by ferramentas/gui_acido_sulfurico_v9_esboco.py --jogo with
- * the same numbers) is the fixed background; what moves is drawn here. The JEI page keeps its own sheet.
+ *   [water: in / tank / out]  the BLOWER blowing into the lying brick BURNER (its blue flame in a sight window), the
+ *   SULFUR MELTER (copper steam jacket) over it under the sulfur's slot; the BOILER up to its STEAM DRUM (the level in
+ *   its glass); the CONVERTER (four catalyst beds, they glow); the ABSORPTION TOWER (the acid trickling down its
+ *   packing)  [acid | steam | energy over the status lamp]
+ * Our sheet (textures/gui/sulfuric_acid_unit_gui.png, made by ferramentas/gui_acido_sulfurico_v12_esboco.py --jogo with
+ * the same numbers) is the fixed background; what moves is drawn here. The JEI page draws its own.
  */
 public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 {
@@ -35,11 +36,13 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 	static final String SHEET = ImmersiveNuclear.MODID + ":textures/gui/sulfuric_acid_unit_gui.png";
 	static final int SHEET_SIZE = 512;
 
-	// Layout (same as gui_acido_sulfurico_v9_esboco.py)
+	// Layout (same as gui_acido_sulfurico_v12_esboco.py)
 	static final int ROW1 = 37, ROW2 = 62, ROW3 = 117, TANK_Y = ROW2;
 	static final int WATER_X = 8, ACID_X = 210, STEAM_X = 240, CONTROL_X = 266;
-	static final int BURNER_X = 42, BURNER_Y = 92, BURNER_W = 44, BURNER_H = 44;
-	static final int FLAME_X = 51, FLAME_Y = 101, FLAME_W = 26, FLAME_H = 26;
+	static final int BLOWER_X = 40, BLOWER_Y = 102, BLOWER_W = 15, BLOWER_H = 34;
+	static final int BURNER_X = 56, BURNER_Y = 103, BURNER_W = 32, BURNER_H = 28;
+	static final int FLAME_X = 64, FLAME_Y = 111, FLAME_W = 16, FLAME_H = 9;
+	static final int MELTER_X = 60, MELTER_Y = 67, MELTER_W = 24, MELTER_H = 30;
 	static final int BOILER_X = 90, BOILER_Y = 80, BOILER_W = 28, BOILER_H = 56;
 	static final int DRUM_X = 86, DRUM_Y = 62, DRUM_W = 36, DRUM_H = 16, GLASS_X = 94, GLASS_Y = 66, GLASS_W = 20, GLASS_H = 6;
 	/** The converter; also JEI's click area (INJeiPlugin). */
@@ -322,6 +325,16 @@ public class GuiSulfuricAcidUnit extends GuiIEContainerBase
 		{
 			tip.add(I18n.format(K + "burner"));
 			tip.add("§7" + I18n.format(K + "burner_info"));
+		}
+		if(over(mx, my, BLOWER_X, BLOWER_Y, BLOWER_W, BLOWER_H))
+		{
+			tip.add(I18n.format(K + "blower"));
+			tip.add("§7" + I18n.format(K + "blower_info"));
+		}
+		if(over(mx, my, MELTER_X, MELTER_Y, MELTER_W, MELTER_H))
+		{
+			tip.add(I18n.format(K + "melter"));
+			tip.add("§7" + I18n.format(K + "melter_info"));
 		}
 		if(over(mx, my, BOILER_X, BOILER_Y, BOILER_W, BOILER_H) || over(mx, my, DRUM_X, DRUM_Y, DRUM_W, DRUM_H))
 		{

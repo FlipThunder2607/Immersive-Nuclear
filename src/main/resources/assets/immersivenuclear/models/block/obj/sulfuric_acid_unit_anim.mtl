@@ -1,12 +1,15 @@
-newmtl arc_furnace_active
-map_Kd #arc_furnace_active
+newmtl burner_firebox_glow
+map_Kd #burner_firebox_glow
 
 newmtl burner_flame
 map_Kd #burner_flame
 
-newmtl burner_glow
-map_Kd #burner_glow
+newmtl burner_sight_glass
+map_Kd #burner_sight_glass
 
-newmtl storage_steel
-map_Kd #storage_steel
+newmtl metal_multiblock_mixer
+map_Kd #metal_multiblock_mixer
+
+newmtl sheetmetal_copper
+map_Kd #sheetmetal_copper
 

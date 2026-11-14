@@ -133,11 +133,10 @@ public class HFKilnCategory implements IRecipeCategory<HFKilnCategory.Recipe>
 		JeiGraphite.rect(DRUM_X + 4, DRUM_Y + 5, DRUM_W - 8, DRUM_H - 10, 0xff1c1818);
 		for(int i = 0; i < DRUM_W - 8; i++)
 			JeiGraphite.rect(DRUM_X + 4 + i, DRUM_Y + DRUM_H - 10, 1, 5, mix(COL_FLUORITE, COL_GYPSUM, i / (float)(DRUM_W - 9)));
-		for(int x = DRUM_X + 4; x < DRUM_X + 24; x += 3)
-		{
-			JeiGraphite.rect(x, DRUM_Y + 2, 2, 2, COL_COIL);
-			JeiGraphite.rect(x, DRUM_Y + DRUM_H - 4, 2, 2, COL_COIL);
-		}
+		// the octagonal model's drive and coils (14/11/2026): the girth gear at the feed end, three coil rings round the middle
+		JeiGraphite.rect(DRUM_X + 3, DRUM_Y - 2, 4, DRUM_H + 4, 0xff5a5d62);
+		for(int x = DRUM_X + 22; x <= DRUM_X + 38; x += 8)
+			JeiGraphite.rect(x, DRUM_Y - 2, 3, DRUM_H + 4, COL_COIL);
 
 		GlStateManager.color(1, 1, 1, 1);
 		mc.getTextureManager().bindTexture(JeiGraphite.GRAPHITE);

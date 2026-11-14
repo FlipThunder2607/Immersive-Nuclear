@@ -48,6 +48,8 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 {
 	// Provisional values: one enrichment cycle's tails (400 mB) per cycle
 	public static final int UF6_PER_CYCLE = 400, STEAM_PER_CYCLE = 400, HF_PER_CYCLE = 250, OXIDE_PER_CYCLE = 1, CYCLE_TICKS = 200, ENERGY_PER_TICK = 96;
+	/** Its control systems (panel, instruments) while it is not running (the user, 14/11/2026). */
+	public static final int IDLE_PER_TICK = 1;
 	public static final int UF6_CAPACITY = 8000, STEAM_CAPACITY = 8000, HF_CAPACITY = 8000, ENERGY_CAPACITY = 16000, PUSH_PER_TICK = 100;
 	public static final int STATE_IDLE = 0, STATE_RUNNING = 1, STATE_DISABLED = 2, STATE_NO_INPUT = 3, STATE_NO_POWER = 4, STATE_OUTPUT_FULL = 5;
 	/** The oxide out; each tank has its container slots: in (full or empty container) over it, out under it. */
@@ -410,6 +412,8 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 		{
 			handleContainers();
 			process();
+			if(state != STATE_RUNNING)
+				energy.use(IDLE_PER_TICK);                   // its control systems, while it waits: the panel goes dark when it runs out
 			sync();
 		}
 	}

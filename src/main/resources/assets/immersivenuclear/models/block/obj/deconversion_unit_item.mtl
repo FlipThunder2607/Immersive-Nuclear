@@ -1,3 +1,6 @@
+newmtl base_vent_cap
+map_Kd #base_vent_cap
+
 newmtl kiln_coil_glow
 map_Kd #kiln_coil_glow
 
