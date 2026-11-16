@@ -183,12 +183,12 @@ public final class INRawMaterials
 		itemHafniumPrecipitate = INContent.item(event, "hafnium_precipitate");
 	}
 
-	static Item[] oreItems()
+	public static Item[] oreItems()
 	{
 		return new Item[]{itemZirconOreGranite, itemZirconOreSand, itemBoraxOreTerracotta, itemBoraxOreSand, itemTinOre, itemChromiteOre};
 	}
 
-	static Item[] metalBlockItems()
+	public static Item[] metalBlockItems()
 	{
 		List<Item> l = new ArrayList<>();
 		for(Metal m : Metal.values())
@@ -203,7 +203,7 @@ public final class INRawMaterials
 		return l.toArray(new Item[0]);
 	}
 
-	static Item[] ingotItems()
+	public static Item[] ingotItems()
 	{
 		List<Item> l = new ArrayList<>();
 		for(Metal m : Metal.values())
@@ -211,7 +211,7 @@ public final class INRawMaterials
 		return l.toArray(new Item[0]);
 	}
 
-	static Item[] nuggetItems()
+	public static Item[] nuggetItems()
 	{
 		List<Item> l = new ArrayList<>();
 		for(Metal m : Metal.values())
@@ -219,7 +219,7 @@ public final class INRawMaterials
 		return l.toArray(new Item[0]);
 	}
 
-	static Item[] plateItems()
+	public static Item[] plateItems()
 	{
 		List<Item> l = new ArrayList<>();
 		for(Metal m : Metal.values())
@@ -228,12 +228,12 @@ public final class INRawMaterials
 		return l.toArray(new Item[0]);
 	}
 
-	static Item[] dustItems()
+	public static Item[] dustItems()
 	{
 		return new Item[]{itemZirconDust, itemBoraxDust, itemTinDust, itemChromiteDust, itemBoricAcid, itemBoronCarbide};
 	}
 
-	static Item[] precipitateItems()
+	public static Item[] precipitateItems()
 	{
 		return new Item[]{itemZirconiumPrecipitate, itemHafniumPrecipitate};
 	}

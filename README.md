@@ -10,7 +10,7 @@ An Immersive Engineering addon that brings the nuclear fuel cycle to life: proce
 
 > **Early alpha.** The mod is under active development. Machines, recipes, numbers and registry names may still change between versions. Do not use it in worlds you care about yet.
 >
-> **Releases:** [0.1.0](../../releases/tag/v0.1.0) is the first pre-release and completes **line 1** (uranium powder to yellowcake). Line 2 (conversion and enrichment) is planned for **0.2.0**.
+> **Releases:** [0.2.0](../../releases/tag/v0.2.0) completes **line 2** (yellowcake to enriched uranium hexafluoride); [0.1.0](../../releases/tag/v0.1.0) completed **line 1** (uranium powder to yellowcake). Fuel fabrication is next.
 
 **Wiki:** [flipthunder2607.github.io/Immersive-Nuclear-wiki](https://flipthunder2607.github.io/Immersive-Nuclear-wiki/). Every machine, item and fluid, the production lines as interactive flow charts and the plans for enrichment and fuel fabrication (in Portuguese for now).
 
@@ -29,7 +29,7 @@ Design goals:
 
 ## Current content
 
-Release 0.1.0 has the whole of line 1. The machines of line 2 are planned for 0.2.0 (see [Production line](#production-line)).
+Release 0.2.0 has the whole of lines 1 and 2 (see [Production line](#production-line)), the supplies line's ores, metals and alloys, and the IN Workbench. Items marked *Work in progress* in their tooltip have no use yet.
 
 ### Machines
 
@@ -84,28 +84,29 @@ Uranium powder (IE)
 The **Metal Extractor** branches off the separation step and recovers the dissolved metals from the effluent before
 it is treated. The effluent itself is recycled, neutralized with quicklime or filtered into building material.
 
-### Line 2: conversion and enrichment (planned for 0.2.0)
+### Line 2: conversion and enrichment (released in 0.2.0)
 
 Line 2 makes its own supplies instead of depending on other mods, turns the yellowcake into uranium hexafluoride,
 enriches it, and treats the tails:
 
 | Machine | Status |
 |---|---|
-| **Sulfuric Acid Unit**: sulfur and water into sulfuric acid, with steam from its waste heat boiler | Planned |
-| **Hydrofluoric Acid Kiln**: fluorite dust and sulfuric acid into hydrofluoric acid (+ gypsum) | Planned |
-| **Electrolyzer**: water into hydrogen and oxygen | Planned |
-| **Conversion Unit**: yellowcake, hydrogen and hydrofluoric acid into uranium hexafluoride | Planned |
-| **Enrichment Unit**: centrifuge cascades, natural hexafluoride into enriched and depleted hexafluoride | Planned |
-| **Deconversion Unit**: depleted hexafluoride and steam into depleted uranium oxide and hydrofluoric acid | Planned |
+| **Sulfuric Acid Unit**: sulfur and water into sulfuric acid, with steam from its waste heat boiler | Released |
+| **Hydrofluoric Acid Kiln**: fluorite dust and sulfuric acid into hydrofluoric acid (+ gypsum) | Released |
+| **Electrolyzer**: water into hydrogen and oxygen | Released |
+| **Conversion Unit**: yellowcake, hydrogen and hydrofluoric acid into uranium hexafluoride | Released; to be remade in three modules |
+| **Enrichment Unit**: centrifuge cascades (2, 4 or 6 banks), natural hexafluoride into enriched and depleted hexafluoride | Released; to be remade as a modular cascade |
+| **Deconversion Unit**: depleted hexafluoride and steam into depleted uranium oxide and hydrofluoric acid | Released |
 
 ## Roadmap
 
 | Stage | Status |
 |---|---|
 | **Line 1**: uranium powder to yellowcake, with effluent treatment and the Concentrate Drum | Released in 0.1.0 |
-| **Line 2**: supplies (sulfuric acid, hydrofluoric acid, hydrogen), conversion, enrichment and deconversion | Planned (0.2.0) |
+| **Line 2**: supplies (sulfuric acid, hydrofluoric acid, hydrogen), conversion, enrichment and deconversion | Released in 0.2.0 |
+| **Lines 1 and 2 rework**: new models, conversion in three modules, modular enrichment cascade | Planned |
 | **Hazards**: contamination (radiological, chemical, particulate, physical), protective equipment, shielding, dosimetry, decontamination | Planned |
-| **Fuel fabrication** | Planned |
+| **Fuel fabrication**: items in the game, machines designed | In development |
 | **Reactors**, with an analog control and automation system (see [`TODO_List_automation.md`](TODO_List_automation.md)) | Planned |
 | **Spent fuel and waste management** | Planned |
 | **Balancing pass** (energy, time and quantities are placeholders) | Planned |
@@ -121,7 +122,7 @@ enriches it, and treats the tails:
 
 ## Installation
 
-Download the JAR of the latest pre-release from [Releases](../../releases) (currently 0.1.0, line 1).
+Download the JAR of the latest pre-release from [Releases](../../releases) (currently 0.2.0, lines 1 and 2).
 
 1. Install Minecraft Forge for 1.12.2.
 2. Put Immersive Engineering and the Immersive Nuclear JAR in the `mods` folder.

@@ -10,7 +10,24 @@ the release title always carry the same version.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-16
+
+Line 2 is complete: from yellowcake to enriched uranium hexafluoride, with the line's own supplies (sulfuric acid,
+hydrofluoric acid, hydrogen) and the treatment of the depleted tails. The Conversion Unit and the Enrichment Unit work
+as they are and will be remade later (a conversion in three modules and a modular centrifuge cascade); items made for
+that and for the computers already exist and are marked *Work in progress*.
+
 ### Added
+- **Line 2 complete:** Sulfuric Acid Unit, Hydrofluoric Acid Kiln and Electrolyzer (the line's supplies), Conversion Unit
+  (yellowcake, hydrogen and hydrofluoric acid into uranium hexafluoride), Enrichment Unit with 2, 4 or 6 centrifuge banks
+  (low, medium and high grade) and Deconversion Unit (the depleted tails into oxide and hydrofluoric acid; the oxide into a
+  depleted uranium ingot in IE's Arc Furnace).
+- **Engineer's Manual by stage:** Immersive Nuclear's pages are split into categories as the mod's stages (Resources,
+  General machines, Ore purification, Uranium enrichment, Fuel fabrication, Reactor, Power generation, Control and
+  automation); each opens with its related items, picture and text. Long texts continue on the next page.
+- **Work in progress** line in the tooltip of the items that do nothing yet: the computers' blocks, the station's
+  modules and jigs, the panel modules, the computer parts without a use, the station-only blueprints and the next
+  conversion's items and fluids (uranium dioxide, green salt, dilute hydrofluoric acid, 90% hexafluoride).
 - **Supplies (line 0):** zircon, borax, tin (cassiterite) and chromite ores with their veins and Excavator veins; zirconium, nuclear zirconium, hafnium, tin, ferroboron, ferrochrome, stainless steel, borated steel, Zircaloy and depleted uranium ingots, nuggets, plates, storage and sheet metal blocks; the alloys made in IE's Arc Furnace (Zircaloy with tin and ferrochrome).
 - **Line 1 runs more materials:** the Chemical Processing Unit, Chemical Separation and Precipitation Unit take zircon, borax and hafnium besides uranium, one material per batch.
 - **Silicon:** quartz dust dissolved in hydrofluoric acid (Chemical Processing Unit) into fluorosilicic acid, precipitated into pure silica (Precipitation Unit), reduced with coke in IE's Arc Furnace into silicon, sliced into wafers by IE's Metal Press with the new wafer mold. Ore names shared with Immersive Intelligence.
@@ -21,11 +38,20 @@ the release title always carry the same version.
 
 ### Changed
 - The electronic module and the relay module are now made on the IN Workbench (no longer on the crafting table).
-- New Conversion Unit model.
+- New models of the Conversion Unit, the Sulfuric Acid Unit, the Hydrofluoric Acid Kiln and the Deconversion Unit.
 - JEI and the creative tab list the new items by kind.
+
+### Performance
+- Machine parts that have nothing to do leave the world's ticking list (on the client after 2 s idle), which lightens
+  big bases; the machines' shared part code lives in one class.
+- At load the mod checks that every input of its own recipes matches an item and writes the result to the log.
 
 ### Fixed
 - The Control Engineering Block and the Remote Manipulator recipes asked for ore names that do not exist (IE's electron tube is `electronTube`; IE's steel and iron components have no ore name).
+- The formed machines in the Engineer's Manual were drawn back to front.
+- The Hydrofluoric Acid Kiln's coil glowed much brighter than the other machines.
+
+### Added (computers)
 - **Computers, first appearance (models only, no function yet):** six single-block devices you can place on the ground and that face you (Card Reader, Card Punch, Paper Tape Reader/Punch, CRT Terminal, Chart Recorder, Wall Panel), ten multiblocks formed with the Engineer's Hammer (Mainframe, I/O Processor, Memory Cabinet, Disk Unit, Tape Unit, Operator Console, Printer, Teletype, Power Cabinet, Data Cabinet), the Data Cable Coil Block, the Power Wire (laid with the Link Cable through the conduits, from one computer port to another; connections only for now) and 28 panel modules (commands, indicators and the universal text/colour ones) in the creative tab and JEI.
 - **Conduit:** the computers' cable tray. It connects by itself to the conduits on all six sides and to the back of the devices, runs vertically as a closed duct, takes a support on the face it was placed on, and the Engineer's Hammer cuts and rejoins each connection. No wires yet.
 

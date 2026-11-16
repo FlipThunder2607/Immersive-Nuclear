@@ -94,5 +94,9 @@ public class HazardTooltips
 		if(hazards != null)
 			for(String h : hazards)
 				event.getToolTip().add(I18n.format("desc.immersivenuclear.hazard." + h));
+		// Unfinished content (INRelease): the last line says so
+		FluidStack contained = FluidUtil.getFluidContained(stack);
+		if(immersivenuclear.common.INRelease.unfinished(stack.getItem()) || contained != null && immersivenuclear.common.INRelease.unfinished(contained.getFluid()))
+			event.getToolTip().add(I18n.format("desc.immersivenuclear.work_in_progress"));
 	}
 }
