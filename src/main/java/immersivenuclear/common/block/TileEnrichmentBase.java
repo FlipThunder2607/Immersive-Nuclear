@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -198,9 +200,9 @@ public abstract class TileEnrichmentBase extends TileEntity implements MachinePa
 		}
 	}
 
-	final LoopSound cascade = new LoopSound(() -> INContent.soundEnrichmentCascade[banks() / 2 - 1][0], () -> INContent.soundEnrichmentCascade[banks() / 2 - 1][1], () -> INContent.soundEnrichmentCascade[banks() / 2 - 1][2], 78);
-	final LoopSound converters = new LoopSound(() -> INContent.soundEnrichmentConverter[0], () -> INContent.soundEnrichmentConverter[1], () -> INContent.soundEnrichmentConverter[2], 78);
-	final LoopSound compressor = new LoopSound(() -> INContent.soundEnrichmentCompressor[0], () -> INContent.soundEnrichmentCompressor[1], () -> INContent.soundEnrichmentCompressor[2], 78);
+	final LoopSound cascade = new LoopSound(() -> INSounds.soundEnrichmentCascade[banks() / 2 - 1][0], () -> INSounds.soundEnrichmentCascade[banks() / 2 - 1][1], () -> INSounds.soundEnrichmentCascade[banks() / 2 - 1][2], 78);
+	final LoopSound converters = new LoopSound(() -> INSounds.soundEnrichmentConverter[0], () -> INSounds.soundEnrichmentConverter[1], () -> INSounds.soundEnrichmentConverter[2], 78);
+	final LoopSound compressor = new LoopSound(() -> INSounds.soundEnrichmentCompressor[0], () -> INSounds.soundEnrichmentCompressor[1], () -> INSounds.soundEnrichmentCompressor[2], 78);
 
 	// ---------- the part ----------
 	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
@@ -396,6 +398,9 @@ public abstract class TileEnrichmentBase extends TileEntity implements MachinePa
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isCascadePart() || isPart(CONVERTER_PART) || isPart(COMPRESSOR_PART) : true))
+			return;
 		if(world.isRemote)
 		{
 			if(!isMaster() && !isCascadePart() && !isPart(CONVERTER_PART) && !isPart(COMPRESSOR_PART))

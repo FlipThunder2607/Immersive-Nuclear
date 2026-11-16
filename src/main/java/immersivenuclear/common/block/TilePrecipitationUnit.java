@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -47,8 +49,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * which carries the solid up to the discharge head (wet concentrate, item) while the liquid runs back down and leaves
  * as chemical effluent. Without power the batch waits where it is; a redstone signal stops it (the hammer inverts that).
  */
-public class TilePrecipitationUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TilePrecipitationUnit extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from PrecipitationUnitStructure and MultiblockPrecipitationUnit (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return PrecipitationUnitStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return PrecipitationUnitStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return PrecipitationUnitStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return PrecipitationUnitStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockPrecipitationUnit.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockPrecipitationUnit.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockPrecipitationUnit.stackFor(c); }
+		@Override public int[] master() { return new int[]{PrecipitationUnitStructure.MASTER_DX, PrecipitationUnitStructure.MASTER_DY, PrecipitationUnitStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TilePrecipitationUnit getMaster()
+	{
+		return (TilePrecipitationUnit)master();
+	}
+
 	// Provisional values
 	/** The agitated tank holds 12000 mB (the user's choice); a batch is the full tank. */
 	public static final int BATCH_SOLUTION = 12000, AGENT_PER_BATCH = 6, CONCENTRATE_PER_BATCH = 24, EFFLUENT_PER_BATCH = 9000;
@@ -103,12 +129,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	public static final int SLOT_AGENT = 0, SLOT_CONCENTRATE = 1, SLOT_SOLUTION_IN = 2, SLOT_SOLUTION_OUT = 3, SLOT_EFFLUENT_IN = 4, SLOT_EFFLUENT_OUT = 5,
 			SLOTS = 6;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
 	/** The block this part replaced, put back on disassembly. */
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -200,9 +221,9 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	static final int AGITATOR_DX = 2, AGITATOR_DY = 3, AGITATOR_DZ = -5, SCREW_DX = 2, SCREW_DY = 1, SCREW_DZ = -1;
 	/** The loops come in as the starts end: the CS mixer's start is 4.5 s, the screw's 1.6 s. */
 	static final int AGITATOR_LOOP_DELAY = 90, SCREW_LOOP_DELAY = 30;
-	final LoopSound agitator = new LoopSound(() -> INContent.soundCsMixerStart, () -> INContent.soundCsMixerLoop, () -> INContent.soundCsMixerStop,
+	final LoopSound agitator = new LoopSound(() -> INSounds.soundCsMixerStart, () -> INSounds.soundCsMixerLoop, () -> INSounds.soundCsMixerStop,
 			AGITATOR_LOOP_DELAY);
-	final LoopSound screw = new LoopSound(() -> INContent.soundPuScrewStart, () -> INContent.soundPuScrewLoop, () -> INContent.soundPuScrewStop,
+	final LoopSound screw = new LoopSound(() -> INSounds.soundPuScrewStart, () -> INSounds.soundPuScrewLoop, () -> INSounds.soundPuScrewStop,
 			SCREW_LOOP_DELAY);
 
 	public TilePrecipitationUnit()
@@ -293,44 +314,6 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 
 	final ItemPort agentPort = new ItemPort(SLOT_AGENT, true), concentratePort = new ItemPort(SLOT_CONCENTRATE, false);
 
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return PrecipitationUnitStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return PrecipitationUnitStructure.portAt(dx, dy, dz);
-	}
-
 	/** What a broken part drops: the block it replaced (a double slab is two slabs). */
 	public ItemStack getOriginalStack()
 	{
@@ -340,69 +323,10 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 		return s;
 	}
 
-	public boolean isMaster()
-	{
-		return dx == PrecipitationUnitStructure.MASTER_DX && dy == PrecipitationUnitStructure.MASTER_DY && dz == PrecipitationUnitStructure.MASTER_DZ;
-	}
-
 	@Override
 	public String boundsName()
 	{
 		return "precipitation_unit";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.PrecipitationUnitStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.PrecipitationUnitStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.PrecipitationUnitStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = PrecipitationUnitStructure.rotate(dx, dz, MultiblockPrecipitationUnit.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockPrecipitationUnit.toWorld(getTriggerPos(), facing, mirrored,
-				PrecipitationUnitStructure.MASTER_DX, PrecipitationUnitStructure.MASTER_DY, PrecipitationUnitStructure.MASTER_DZ);
-	}
-
-	public TilePrecipitationUnit getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TilePrecipitationUnit && ((TilePrecipitationUnit)te).isMaster() ? (TilePrecipitationUnit)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = PrecipitationUnitStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = PrecipitationUnitStructure.rotate(f[0], f[1], MultiblockPrecipitationUnit.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -453,6 +377,9 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isAgitatorPart() || isScrewPart() : isMaster() || getPort() == PrecipitationUnitStructure.PORT_EFFLUENT || getPort() == PrecipitationUnitStructure.PORT_CONCENTRATE))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -784,24 +711,6 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			nbt.setTag("machine", m);
 		}
 		return nbt;
-	}
-
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
 	}
 
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, the batch's step. */

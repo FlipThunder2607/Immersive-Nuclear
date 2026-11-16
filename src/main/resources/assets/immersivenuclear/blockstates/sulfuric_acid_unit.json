@@ -14,6 +14,7 @@
       "#burner_sight_glass": "immersivenuclear:blocks/burner_sight_glass",
       "#crusher": "immersiveengineering:models/crusher",
       "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
+      "#metal_decoration2_steel_post": "immersiveengineering:blocks/metal_decoration2_steel_post",
       "#metal_device0_barrel_side": "immersiveengineering:blocks/metal_device0_barrel_side",
       "#metal_device1_fluid_pipe": "immersiveengineering:blocks/metal_device1_fluid_pipe",
       "#metal_multiblock_arc_furnace": "immersiveengineering:blocks/metal_multiblock_arc_furnace",

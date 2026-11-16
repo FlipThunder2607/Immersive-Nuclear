@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import immersivenuclear.common.INContent;
 
 /**
@@ -13,6 +15,6 @@ public class PumpSound extends LoopSound
 
 	public PumpSound()
 	{
-		super(() -> INContent.soundPumpStart, () -> INContent.soundPumpLoop, () -> INContent.soundPumpStop, LOOP_DELAY);
+		super(() -> INSounds.soundPumpStart, () -> INSounds.soundPumpLoop, () -> INSounds.soundPumpStop, LOOP_DELAY);
 	}
 }

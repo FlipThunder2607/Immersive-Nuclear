@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -52,8 +54,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * Each step sounds from where it happens: the rotary valve at the feed hopper, the heaters under the chamber, the
  * paddles' motor (the generator) at the drive end, the discharge valve at the yellowcake port.
  */
-public class TileIndustrialDryer extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileIndustrialDryer extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from IndustrialDryerStructure and MultiblockIndustrialDryer (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return IndustrialDryerStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return IndustrialDryerStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return IndustrialDryerStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return IndustrialDryerStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockIndustrialDryer.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockIndustrialDryer.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockIndustrialDryer.stackFor(c); }
+		@Override public int[] master() { return new int[]{IndustrialDryerStructure.MASTER_DX, IndustrialDryerStructure.MASTER_DY, IndustrialDryerStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileIndustrialDryer getMaster()
+	{
+		return (TileIndustrialDryer)master();
+	}
+
 	// Provisional values: one batch takes what the Precipitation Unit gives in one batch (24 wet concentrate, 90 s)
 	public static final int WET_PER_BATCH = 24, YELLOWCAKE_PER_BATCH = 16, CONDENSATE_PER_BATCH = 2000;
 	public static final int CONDENSATE_CAPACITY = 8000, ENERGY_CAPACITY = 16000, PUSH_PER_TICK = 100;
@@ -82,12 +108,7 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 	 */
 	public static final int FINES_EVERY = 4;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
 	/** The block this part replaced, put back on disassembly. */
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -152,7 +173,7 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 	static final int[] FEED_PART = {1, 1, 2}, HEATER_PART = {1, -1, 3}, MOTOR_PART = {1, 0, 0}, DISCHARGE_PART = {2, -1, 6};
 	/** The loops come in as their starts end (heaters 1.5 s, paddles 3 s). */
 	static final int HEATER_LOOP_DELAY = 28, PADDLES_LOOP_DELAY = 58, FILL_LOOP_DELAY = 10;
-	final LoopSound heaters = new LoopSound(() -> INContent.soundDryerHeatStart, () -> INContent.soundDryerHeatLoop, () -> INContent.soundDryerHeatStop,
+	final LoopSound heaters = new LoopSound(() -> INSounds.soundDryerHeatStart, () -> INSounds.soundDryerHeatLoop, () -> INSounds.soundDryerHeatStop,
 			HEATER_LOOP_DELAY);
 	/**
 	 * Where the effects come out, in template blocks from the trigger block's corner (as the model draws them): the
@@ -161,9 +182,9 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 	 */
 	static final double[] STEAM_AT = {2.63, 3.25, 4.75}, DUST_AT = {3.0, 0.55, 5.35};
 	/** The yellowcake pouring into the drum at the station, from the yellowcake port's part under it. */
-	final LoopSound drumFill = new LoopSound(() -> INContent.soundDryerFillStart, () -> INContent.soundDryerFillLoop, () -> INContent.soundDryerFillStop,
+	final LoopSound drumFill = new LoopSound(() -> INSounds.soundDryerFillStart, () -> INSounds.soundDryerFillLoop, () -> INSounds.soundDryerFillStop,
 			FILL_LOOP_DELAY);
-	final LoopSound paddles = new LoopSound(() -> INContent.soundDryerDryStart, () -> INContent.soundDryerDryLoop, () -> INContent.soundDryerDryStop,
+	final LoopSound paddles = new LoopSound(() -> INSounds.soundDryerDryStart, () -> INSounds.soundDryerDryLoop, () -> INSounds.soundDryerDryStop,
 			PADDLES_LOOP_DELAY);
 
 	public TileIndustrialDryer()
@@ -307,113 +328,10 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 		return !inventory.getStackInSlot(SLOT_DRUM_EMPTY).isEmpty() || !inventory.getStackInSlot(SLOT_DRUM_FILLING).isEmpty();
 	}
 
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return IndustrialDryerStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return IndustrialDryerStructure.portAt(dx, dy, dz);
-	}
-
-	/** What a broken part drops: the block it replaced. */
-	public ItemStack getOriginalStack()
-	{
-		return MultiblockIndustrialDryer.stackFor(getPartCode()).copy();
-	}
-
-	public boolean isMaster()
-	{
-		return dx == IndustrialDryerStructure.MASTER_DX && dy == IndustrialDryerStructure.MASTER_DY && dz == IndustrialDryerStructure.MASTER_DZ;
-	}
-
 	@Override
 	public String boundsName()
 	{
 		return "industrial_dryer";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.IndustrialDryerStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.IndustrialDryerStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.IndustrialDryerStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = IndustrialDryerStructure.rotate(dx, dz, MultiblockIndustrialDryer.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockIndustrialDryer.toWorld(getTriggerPos(), facing, mirrored,
-				IndustrialDryerStructure.MASTER_DX, IndustrialDryerStructure.MASTER_DY, IndustrialDryerStructure.MASTER_DZ);
-	}
-
-	public TileIndustrialDryer getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileIndustrialDryer && ((TileIndustrialDryer)te).isMaster() ? (TileIndustrialDryer)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = IndustrialDryerStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = IndustrialDryerStructure.rotate(f[0], f[1], MultiblockIndustrialDryer.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -464,6 +382,9 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPart(HEATER_PART) || isPart(MOTOR_PART) || isPart(DISCHARGE_PART) : isMaster() || getPort() == IndustrialDryerStructure.PORT_CONDENSATE || getPort() == IndustrialDryerStructure.PORT_YELLOWCAKE))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -935,24 +856,6 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, the batch's step. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -1042,10 +945,6 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 	}
 
 	// ---------- client: sound ----------
-	boolean isPart(int[] part)
-	{
-		return dx == part[0] && dy == part[1] && dz == part[2];
-	}
 
 	/**
 	 * Master, client side, every tick: the step's clock, and the one-off sounds of the steps that start with a
@@ -1064,9 +963,9 @@ public class TileIndustrialDryer extends TileEntity implements MachinePartTile, 
 		if(clientPhaseTicks > 20)
 			return;
 		if(clientPhase == PHASE_LOAD)
-			playAt(FEED_PART, INContent.soundDryerLoad);
+			playAt(FEED_PART, INSounds.soundDryerLoad);
 		else if(clientPhase == PHASE_DISCHARGE)
-			playAt(DISCHARGE_PART, INContent.soundDryerDischarge);
+			playAt(DISCHARGE_PART, INSounds.soundDryerDischarge);
 	}
 
 	/** The heaters are on while they heat the chamber up and while they hold it hot for the drying (client, master). */

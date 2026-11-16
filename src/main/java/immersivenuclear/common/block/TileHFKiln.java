@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -44,8 +46,32 @@ import net.minecraftforge.oredict.OreDictionary;
  * tank, the gypsum comes out of the discharge head at the end. Without power the cycle waits; a redstone signal stops it
  * (the hammer inverts that).
  */
-public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileHFKiln extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from HFKilnStructure and MultiblockHFKiln (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return HFKilnStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return HFKilnStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return HFKilnStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return HFKilnStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockHFKiln.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockHFKiln.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockHFKiln.stackFor(c); }
+		@Override public int[] master() { return new int[]{HFKilnStructure.MASTER_DX, HFKilnStructure.MASTER_DY, HFKilnStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileHFKiln getMaster()
+	{
+		return (TileHFKiln)master();
+	}
+
 	// Provisional values
 	public static final int ACID_PER_CYCLE = 500, HF_PER_CYCLE = 500, GYPSUM_PER_CYCLE = 1, CYCLE_TICKS = 200, ENERGY_PER_TICK = 64;
 	/** Its control systems (panel, instruments) while it is not running (the user, 14/11/2026). */
@@ -57,11 +83,6 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	/** Fluorite in any mod's ground form (Immersive Intelligence's too). */
 	public static final String FLUORITE = "dustFluorite";
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -126,9 +147,9 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	/** Where each sound plays (template offsets): the gearbox beside the motor, a furnace heater under the drum, a heating coil on the drum. */
 	static final int[] DRIVE_PART = {-1, 0, -1}, HEATER_PART = {-3, 0, 2}, DRUM_PART = {-2, 1, 1};
 	/** The loops come in as their starts end (drum and drive 3 s, heater 1 s). */
-	final LoopSound drumSound = new LoopSound(() -> INContent.soundKilnDrumStart, () -> INContent.soundKilnDrumLoop, () -> INContent.soundKilnDrumStop, 60);
-	final LoopSound drive = new LoopSound(() -> INContent.soundKilnDriveStart, () -> INContent.soundKilnDriveLoop, () -> INContent.soundKilnDriveStop, 60);
-	final LoopSound heater = new LoopSound(() -> INContent.soundKilnHeaterStart, () -> INContent.soundKilnHeaterLoop, () -> INContent.soundKilnHeaterStop, 20);
+	final LoopSound drumSound = new LoopSound(() -> INSounds.soundKilnDrumStart, () -> INSounds.soundKilnDrumLoop, () -> INSounds.soundKilnDrumStop, 60);
+	final LoopSound drive = new LoopSound(() -> INSounds.soundKilnDriveStart, () -> INSounds.soundKilnDriveLoop, () -> INSounds.soundKilnDriveStop, 60);
+	final LoopSound heater = new LoopSound(() -> INSounds.soundKilnHeaterStart, () -> INSounds.soundKilnHeaterLoop, () -> INSounds.soundKilnHeaterStop, 20);
 
 	/** Running, as last sent to the clients (server), or as received (client): lights the heaters. */
 	boolean sentRunning, clientRunning;
@@ -232,112 +253,11 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	}
 
 	// ---------- the part ----------
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return HFKilnStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return HFKilnStructure.portAt(dx, dy, dz);
-	}
-
-	/** What a broken part drops: the block it replaced. */
-	public ItemStack getOriginalStack()
-	{
-		return MultiblockHFKiln.stackFor(getPartCode()).copy();
-	}
-
-	public boolean isMaster()
-	{
-		return dx == HFKilnStructure.MASTER_DX && dy == HFKilnStructure.MASTER_DY && dz == HFKilnStructure.MASTER_DZ;
-	}
 
 	@Override
 	public String boundsName()
 	{
 		return "hf_kiln";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.HFKilnStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.HFKilnStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.HFKilnStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = HFKilnStructure.rotate(dx, dz, MultiblockHFKiln.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockHFKiln.toWorld(getTriggerPos(), facing, mirrored, HFKilnStructure.MASTER_DX, HFKilnStructure.MASTER_DY, HFKilnStructure.MASTER_DZ);
-	}
-
-	public TileHFKiln getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileHFKiln && ((TileHFKiln)te).isMaster() ? (TileHFKiln)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = HFKilnStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = HFKilnStructure.rotate(f[0], f[1], MultiblockHFKiln.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -388,6 +308,9 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPart(DRIVE_PART) || isPart(HEATER_PART) || isPart(DRUM_PART) : isMaster() || getPort() == HFKilnStructure.PORT_HF))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -663,24 +586,6 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, whether it runs. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -736,11 +641,6 @@ public class TileHFKiln extends TileEntity implements MachinePartTile, ITickable
 		{
 			world.markBlockRangeForRenderUpdate(pos.add(-5, -2, -5), pos.add(5, 3, 5));
 		}
-	}
-
-	boolean isPart(int[] part)
-	{
-		return dx == part[0] && dy == part[1] && dz == part[2];
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */

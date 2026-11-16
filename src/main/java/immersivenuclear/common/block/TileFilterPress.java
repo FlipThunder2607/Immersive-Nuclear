@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
@@ -55,8 +57,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * IE's Mixer (plain water + neutralization cake). The storage tank holds one of them at a time; a batch only starts
  * when the solution tank and the residue slot can take its products.
  */
-public class TileFilterPress extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileFilterPress extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from FilterPressStructure and MultiblockFilterPress (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return FilterPressStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return FilterPressStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return FilterPressStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return FilterPressStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockFilterPress.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockFilterPress.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockFilterPress.stackFor(c); }
+		@Override public int[] master() { return new int[]{FilterPressStructure.MASTER_DX, FilterPressStructure.MASTER_DY, FilterPressStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileFilterPress getMaster()
+	{
+		return (TileFilterPress)master();
+	}
+
 	// Gameplay values (provisional), the step lengths follow the length of each step's sound
 	public static final int PRESSURIZE_TICKS = 100, CLOSE_TICKS = 60, RELEASE_TICKS = 40, FILTER_TICKS = 200, OPEN_TICKS = 120;
 	/** During the opening: the plates are apart after this many ticks, the solids fall from then on. */
@@ -77,12 +103,7 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 	/** Machine slots: 28 filters, the residue output, then the bucket slots (slurry in / out, solution in / out). */
 	public static final int SLOT_RESIDUE = FILTERS, SLOT_SLURRY_IN = FILTERS + 1, SLOT_SLURRY_OUT = FILTERS + 2, SLOT_SOLUTION_IN = FILTERS + 3, SLOT_SOLUTION_OUT = FILTERS + 4, SLOTS = FILTERS + 5;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
 	/** The block this part replaced (state + tile NBT), put back on disassembly. */
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -345,112 +366,15 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 		}
 	}
 
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return FilterPressStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return FilterPressStructure.portAt(dx, dy, dz);
-	}
-
 	public ItemStack getOriginalStack()
 	{
 		return MultiblockFilterPress.stackFor(getPartCode());
-	}
-
-	public boolean isMaster()
-	{
-		return dx == FilterPressStructure.MASTER_DX && dy == FilterPressStructure.MASTER_DY && dz == FilterPressStructure.MASTER_DZ;
 	}
 
 	@Override
 	public String boundsName()
 	{
 		return "filter_press";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.FilterPressStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.FilterPressStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.FilterPressStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = FilterPressStructure.rotate(dx, dz, MultiblockFilterPress.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockFilterPress.toWorld(getTriggerPos(), facing, mirrored,
-				FilterPressStructure.MASTER_DX, FilterPressStructure.MASTER_DY, FilterPressStructure.MASTER_DZ);
-	}
-
-	public TileFilterPress getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileFilterPress && ((TileFilterPress)te).isMaster() ? (TileFilterPress)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = FilterPressStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = FilterPressStructure.rotate(f[0], f[1], MultiblockFilterPress.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -508,6 +432,9 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPumpPart() : isMaster() || getPort() == FilterPressStructure.PORT_SOLUTION || getPort() == FilterPressStructure.PORT_RESIDUE || getPort() == FilterPressStructure.PORT_FILTER_OUT))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -909,16 +836,16 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 		if(clientPhase != playedPhase)
 		{
 			if(clientPhase == PHASE_CLOSING)
-				playOnce(INContent.soundFpClose);
+				playOnce(INSounds.soundFpClose);
 			else if(clientPhase == PHASE_FILTERING)
-				playOnce(INContent.soundFpRelease);
+				playOnce(INSounds.soundFpRelease);
 			else if(clientPhase == PHASE_OPENING)
-				playOnce(INContent.soundFpOpen);
+				playOnce(INSounds.soundFpOpen);
 			playedPhase = clientPhase;
 		}
 		if(filterLoopOn())
 			immersivenuclear.client.TileSounds.revive(this);
-		ImmersiveEngineering.proxy.handleTileSound(INContent.soundFpFilterLoop, this, filterLoopOn(), 1, 1);
+		ImmersiveEngineering.proxy.handleTileSound(INSounds.soundFpFilterLoop, this, filterLoopOn(), 1, 1);
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */
@@ -927,7 +854,7 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 	{
 		if(isPumpPart())
 			return pump.shouldPlay(this, sound);
-		return isMaster() && filterLoopOn() && INContent.soundFpFilterLoop.getSoundName().toString().equals(sound);
+		return isMaster() && filterLoopOn() && INSounds.soundFpFilterLoop.getSoundName().toString().equals(sound);
 	}
 
 	boolean isPumpPart()
@@ -950,7 +877,7 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 	{
 		super.invalidate();
 		if(world != null && world.isRemote && isMaster())
-			ImmersiveEngineering.proxy.handleTileSound(INContent.soundFpFilterLoop, this, false, 1, 1);
+			ImmersiveEngineering.proxy.handleTileSound(INSounds.soundFpFilterLoop, this, false, 1, 1);
 		if(world != null && world.isRemote && isPumpPart())
 			pump.stop(this);
 	}
@@ -960,7 +887,7 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 	{
 		super.onChunkUnload();
 		if(world != null && world.isRemote && isMaster())
-			ImmersiveEngineering.proxy.handleTileSound(INContent.soundFpFilterLoop, this, false, 1, 1);
+			ImmersiveEngineering.proxy.handleTileSound(INSounds.soundFpFilterLoop, this, false, 1, 1);
 		if(world != null && world.isRemote && isPumpPart())
 			pump.stop(this);
 	}
@@ -1102,24 +1029,6 @@ public class TileFilterPress extends TileEntity implements MachinePartTile, ITic
 			nbt.setTag("machine", m);
 		}
 		return nbt;
-	}
-
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
 	}
 
 	/** The client only needs the part and, on the master, the step of the press and the pump. */

@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -47,8 +49,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * step sounds from its own part: the reduction reactor, the fluorinator, the fluorine cells, the cold traps and the
  * scrubber.
  */
-public class TileConversionUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileConversionUnit extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from ConversionUnitStructure and MultiblockConversionUnit (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return ConversionUnitStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return ConversionUnitStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return ConversionUnitStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return ConversionUnitStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockConversionUnit.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockConversionUnit.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockConversionUnit.stackFor(c); }
+		@Override public int[] master() { return new int[]{ConversionUnitStructure.MASTER_DX, ConversionUnitStructure.MASTER_DY, ConversionUnitStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileConversionUnit getMaster()
+	{
+		return (TileConversionUnit)master();
+	}
+
 	// Provisional values (the user's proposal, 31/10, and Arc Furnace level energy, 02/11): 1 yellowcake + 250 mB hydrogen
 	// + 1500 mB hydrofluoric acid (about 6 parts) -> 1000 mB hexafluoride + 1000 mB effluent in 10 s, and 1 ash in 4 cycles
 	public static final int H2_PER_CYCLE = 250, HF_PER_CYCLE = 1500, UF6_PER_CYCLE = 1000, EFFLUENT_PER_CYCLE = 1000, CYCLE_TICKS = 200, CYCLES_PER_ASH = 4;
@@ -60,11 +86,6 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	public static final int SLOT_CAKE = 0, SLOT_ASH = 1, SLOT_H2_IN = 2, SLOT_H2_OUT = 3, SLOT_HF_IN = 4, SLOT_HF_OUT = 5, SLOT_UF6_IN = 6,
 			SLOT_UF6_OUT = 7, SLOT_EFF_IN = 8, SLOT_EFF_OUT = 9, SLOTS = 10;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -129,11 +150,11 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	 * scrubber's column. */
 	static final int[] FLUORINATOR_PART = {-5, 1, -3}, CELLS_PART = {-1, 1, -5}, COLD_TRAP_PART = {-1, 1, -1}, SCRUBBER_PART = {-1, 1, 1};
 	static final int[] CHIMNEY = {4125, 10700, 8750};
-	final LoopSound reactor = new LoopSound(() -> INContent.soundConversionReactorStart, () -> INContent.soundConversionReactorLoop, () -> INContent.soundConversionReactorStop, 26);
-	final LoopSound fluorinator = new LoopSound(() -> INContent.soundConversionFluorinatorStart, () -> INContent.soundConversionFluorinatorLoop, () -> INContent.soundConversionFluorinatorStop, 16);
-	final LoopSound cells = new LoopSound(() -> INContent.soundConversionCellsStart, () -> INContent.soundConversionCellsLoop, () -> INContent.soundConversionCellsStop, 16);
-	final LoopSound coldTrap = new LoopSound(() -> INContent.soundConversionColdTrapStart, () -> INContent.soundConversionColdTrapLoop, () -> INContent.soundConversionColdTrapStop, 20);
-	final LoopSound scrubber = new LoopSound(() -> INContent.soundConversionScrubberStart, () -> INContent.soundConversionScrubberLoop, () -> INContent.soundConversionScrubberStop, 20);
+	final LoopSound reactor = new LoopSound(() -> INSounds.soundConversionReactorStart, () -> INSounds.soundConversionReactorLoop, () -> INSounds.soundConversionReactorStop, 26);
+	final LoopSound fluorinator = new LoopSound(() -> INSounds.soundConversionFluorinatorStart, () -> INSounds.soundConversionFluorinatorLoop, () -> INSounds.soundConversionFluorinatorStop, 16);
+	final LoopSound cells = new LoopSound(() -> INSounds.soundConversionCellsStart, () -> INSounds.soundConversionCellsLoop, () -> INSounds.soundConversionCellsStop, 16);
+	final LoopSound coldTrap = new LoopSound(() -> INSounds.soundConversionColdTrapStart, () -> INSounds.soundConversionColdTrapLoop, () -> INSounds.soundConversionColdTrapStop, 20);
+	final LoopSound scrubber = new LoopSound(() -> INSounds.soundConversionScrubberStart, () -> INSounds.soundConversionScrubberLoop, () -> INSounds.soundConversionScrubberStop, 20);
 
 	/** The hatch on top of the reactor tower: yellowcake in, nothing out. */
 	final IItemHandler itemPort = new IItemHandler()
@@ -268,112 +289,11 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	}
 
 	// ---------- the part ----------
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return ConversionUnitStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return ConversionUnitStructure.portAt(dx, dy, dz);
-	}
-
-	/** What a broken part drops: the block it replaced. */
-	public ItemStack getOriginalStack()
-	{
-		return MultiblockConversionUnit.stackFor(getPartCode()).copy();
-	}
-
-	public boolean isMaster()
-	{
-		return dx == ConversionUnitStructure.MASTER_DX && dy == ConversionUnitStructure.MASTER_DY && dz == ConversionUnitStructure.MASTER_DZ;
-	}
 
 	@Override
 	public String boundsName()
 	{
 		return "conversion_unit";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - ConversionUnitStructure.MASTER_DX, dy - ConversionUnitStructure.MASTER_DY, dz - ConversionUnitStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = ConversionUnitStructure.rotate(dx, dz, MultiblockConversionUnit.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockConversionUnit.toWorld(getTriggerPos(), facing, mirrored, ConversionUnitStructure.MASTER_DX, ConversionUnitStructure.MASTER_DY, ConversionUnitStructure.MASTER_DZ);
-	}
-
-	public TileConversionUnit getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileConversionUnit && ((TileConversionUnit)te).isMaster() ? (TileConversionUnit)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = ConversionUnitStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = ConversionUnitStructure.rotate(f[0], f[1], MultiblockConversionUnit.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -435,6 +355,9 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPart(FLUORINATOR_PART) || isPart(CELLS_PART) || isPart(COLD_TRAP_PART) || isPart(SCRUBBER_PART) : isMaster() || getPort() == ConversionUnitStructure.PORT_UF6 || getPort() == ConversionUnitStructure.PORT_EFFLUENT || getPort() == ConversionUnitStructure.PORT_ASH))
+			return;
 		if(world.isRemote)
 		{
 			if(!isMaster() && !isPart(FLUORINATOR_PART) && !isPart(CELLS_PART) && !isPart(COLD_TRAP_PART) && !isPart(SCRUBBER_PART))
@@ -514,7 +437,7 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 			return;
 		draining = true;
 		idleWithTrapped = 0;
-		world.playSound(null, pos, INContent.soundConversionColdTrapDrain, SoundCategory.BLOCKS, 1F, 1F);
+		world.playSound(null, pos, INSounds.soundConversionColdTrapDrain, SoundCategory.BLOCKS, 1F, 1F);
 	}
 
 	/** The batch thaws into the tank while production goes on; a stopped machine lets out what is left, so no hexafluoride stays stuck in the traps. */
@@ -833,24 +756,6 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, whether it runs. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -903,11 +808,6 @@ public class TileConversionUnit extends TileEntity implements MachinePartTile, I
 		readClient(pkt.getNbtCompound());
 		if(ox != dx || oy != dy || oz != dz || of != facing || om != mirrored)
 			world.markBlockRangeForRenderUpdate(pos, pos);
-	}
-
-	boolean isPart(int[] part)
-	{
-		return dx == part[0] && dy == part[1] && dz == part[2];
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */

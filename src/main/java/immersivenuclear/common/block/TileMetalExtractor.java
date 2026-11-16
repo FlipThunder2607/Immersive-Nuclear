@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -49,8 +51,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * only with all six; their materials set the recovery's energy and the batch's deposit, and each batch wears them.
  * Without power the batch waits where it is; a redstone signal stops it (the hammer inverts that).
  */
-public class TileMetalExtractor extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileMetalExtractor extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from MetalExtractorStructure and MultiblockMetalExtractor (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return MetalExtractorStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return MetalExtractorStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return MetalExtractorStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return MetalExtractorStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockMetalExtractor.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockMetalExtractor.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockMetalExtractor.stackFor(c); }
+		@Override public int[] master() { return new int[]{MetalExtractorStructure.MASTER_DX, MetalExtractorStructure.MASTER_DY, MetalExtractorStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileMetalExtractor getMaster()
+	{
+		return (TileMetalExtractor)master();
+	}
+
 	public static final int BATCH = 12000, DEPLETED_CAPACITY = 16000, ENERGY_CAPACITY = 32000;
 	// Provisional values
 	public static final int PREPARE_TICKS = 100, RECOVER_TICKS = 1200, LOWER_TICKS = 40;
@@ -73,12 +99,7 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 	/** The six electrode plates, left to right as seen from the front (the model's plate0 .. plate5). */
 	public static final int SLOT_PLATE0 = 5, PLATES = 6, SLOTS = SLOT_PLATE0 + PLATES;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
 	/** The block this part replaced, put back on disassembly. */
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -176,7 +197,7 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 	/** The pump stands at the right end, by the depleted effluent port (lower half of the IE pump). */
 	static final int PUMP_DX = 2, PUMP_DY = -1, PUMP_DZ = 0;
 	/** The plates' hum comes from the power controller, at the back (middle light engineering block). */
-	final LoopSound plates = new LoopSound(() -> INContent.soundMePlatesStart, () -> INContent.soundMePlatesLoop, () -> INContent.soundMePlatesStop, PLATES_LOOP_DELAY);
+	final LoopSound plates = new LoopSound(() -> INSounds.soundMePlatesStart, () -> INSounds.soundMePlatesLoop, () -> INSounds.soundMePlatesStop, PLATES_LOOP_DELAY);
 	static final int CABINET_DX = 3, CABINET_DY = 0, CABINET_DZ = -2;
 	/** The loop comes in as the 2.2 s start ends, less the 60 ms crossfade of the recording. */
 	static final int PLATES_LOOP_DELAY = 43;
@@ -265,112 +286,15 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 
 	final DepositPort depositPort = new DepositPort();
 
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return MetalExtractorStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return MetalExtractorStructure.portAt(dx, dy, dz);
-	}
-
 	public ItemStack getOriginalStack()
 	{
 		return MultiblockMetalExtractor.stackFor(getPartCode());
-	}
-
-	public boolean isMaster()
-	{
-		return dx == MetalExtractorStructure.MASTER_DX && dy == MetalExtractorStructure.MASTER_DY && dz == MetalExtractorStructure.MASTER_DZ;
 	}
 
 	@Override
 	public String boundsName()
 	{
 		return "metal_extractor";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.MetalExtractorStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.MetalExtractorStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.MetalExtractorStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = MetalExtractorStructure.rotate(dx, dz, MultiblockMetalExtractor.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockMetalExtractor.toWorld(getTriggerPos(), facing, mirrored,
-				MetalExtractorStructure.MASTER_DX, MetalExtractorStructure.MASTER_DY, MetalExtractorStructure.MASTER_DZ);
-	}
-
-	public TileMetalExtractor getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileMetalExtractor && ((TileMetalExtractor)te).isMaster() ? (TileMetalExtractor)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = MetalExtractorStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = MetalExtractorStructure.rotate(f[0], f[1], MultiblockMetalExtractor.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -420,6 +344,9 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPumpPart() || isCabinetPart() : isMaster() || getPort() == MetalExtractorStructure.PORT_DEPLETED || getPort() == MetalExtractorStructure.PORT_DEPOSIT))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -918,24 +845,6 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, the batch. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -1059,7 +968,7 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 				nextMove++;
 			}
 		if(clientPhase == PHASE_LOWER && !playedLower && clientPhaseTicks < 10)
-			LoopSound.play(this, INContent.soundMePlatformDown);
+			LoopSound.play(this, INSounds.soundMePlatformDown);
 		playedLower = clientPhase == PHASE_LOWER;
 		if(clientCollecting)
 			cleaningEffects();
@@ -1133,11 +1042,11 @@ public class TileMetalExtractor extends TileEntity implements MachinePartTile, I
 	{
 		switch(move)
 		{
-			case 0: return INContent.soundMePlatformUp;
-			case 1: return INContent.soundMeTrayIn;
-			case 2: return INContent.soundMeCleanerDown;
-			case 3: return INContent.soundMeCleanerUp;
-			default: return INContent.soundMeTrayOut;
+			case 0: return INSounds.soundMePlatformUp;
+			case 1: return INSounds.soundMeTrayIn;
+			case 2: return INSounds.soundMeCleanerDown;
+			case 3: return INSounds.soundMeCleanerUp;
+			default: return INSounds.soundMeTrayOut;
 		}
 	}
 

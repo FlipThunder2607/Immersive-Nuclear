@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -49,8 +51,32 @@ import net.minecraftforge.oredict.OreDictionary;
  * (a cloud and a hiss), so it never stops the machine. Without power the cycle waits; a redstone signal stops it (the
  * hammer inverts that). While it runs a faint plume leaves the absorption tower's stack.
  */
-public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileSulfuricAcidUnit extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from SulfuricAcidUnitStructure and MultiblockSulfuricAcidUnit (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return SulfuricAcidUnitStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return SulfuricAcidUnitStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return SulfuricAcidUnitStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return SulfuricAcidUnitStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockSulfuricAcidUnit.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockSulfuricAcidUnit.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockSulfuricAcidUnit.stackFor(c); }
+		@Override public int[] master() { return new int[]{SulfuricAcidUnitStructure.MASTER_DX, SulfuricAcidUnitStructure.MASTER_DY, SulfuricAcidUnitStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileSulfuricAcidUnit getMaster()
+	{
+		return (TileSulfuricAcidUnit)master();
+	}
+
 	// Provisional values
 	public static final int WATER_PER_CYCLE = 500, ACID_PER_CYCLE = 500, STEAM_PER_CYCLE = 250, CYCLE_TICKS = 100, ENERGY_PER_TICK = 32;
 	/** Its control systems (panel, instruments) while it is not running (the user, 14/11/2026). */
@@ -61,11 +87,6 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 	public static final int SLOT_SULFUR = 0, SLOT_ACID_IN = 1, SLOT_ACID_OUT = 2, SLOT_WATER_IN = 3, SLOT_WATER_OUT = 4, SLOT_STEAM_IN = 5,
 			SLOT_STEAM_OUT = 6, SLOTS = 7;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -152,9 +173,9 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 	 */
 	static final double[] RELIEF_AT = {-2.55, 3.6, 4.15}, STACK_AT = {-2.55, 7.0, 7.85};
 	/** The loops come in as their starts end (burner 2.5 s, pump 1 s). */
-	final LoopSound burner = new LoopSound(() -> INContent.soundAcidBurnerStart, () -> INContent.soundAcidBurnerLoop, () -> INContent.soundAcidBurnerStop, 50);
-	final LoopSound pump = new LoopSound(() -> INContent.soundAcidPumpStart, () -> INContent.soundAcidPumpLoop, () -> INContent.soundAcidPumpStop, 20);
-	final LoopSound vent = new LoopSound(() -> INContent.soundAcidVentStart, () -> INContent.soundAcidVentLoop, () -> INContent.soundAcidVentStop, 10);
+	final LoopSound burner = new LoopSound(() -> INSounds.soundAcidBurnerStart, () -> INSounds.soundAcidBurnerLoop, () -> INSounds.soundAcidBurnerStop, 50);
+	final LoopSound pump = new LoopSound(() -> INSounds.soundAcidPumpStart, () -> INSounds.soundAcidPumpLoop, () -> INSounds.soundAcidPumpStop, 20);
+	final LoopSound vent = new LoopSound(() -> INSounds.soundAcidVentStart, () -> INSounds.soundAcidVentLoop, () -> INSounds.soundAcidVentStop, 10);
 
 	/** Running, as last sent to the clients (server), or as received (client): lights the burner. */
 	boolean sentRunning, clientRunning;
@@ -270,113 +291,11 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 	};
 
 	// ---------- the part ----------
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return SulfuricAcidUnitStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return SulfuricAcidUnitStructure.portAt(dx, dy, dz);
-	}
-
-	/** What a broken part drops: the block it replaced. */
-	public ItemStack getOriginalStack()
-	{
-		return MultiblockSulfuricAcidUnit.stackFor(getPartCode()).copy();
-	}
-
-	public boolean isMaster()
-	{
-		return dx == SulfuricAcidUnitStructure.MASTER_DX && dy == SulfuricAcidUnitStructure.MASTER_DY && dz == SulfuricAcidUnitStructure.MASTER_DZ;
-	}
 
 	@Override
 	public String boundsName()
 	{
 		return "sulfuric_acid_unit";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.SulfuricAcidUnitStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.SulfuricAcidUnitStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.SulfuricAcidUnitStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = SulfuricAcidUnitStructure.rotate(dx, dz, MultiblockSulfuricAcidUnit.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockSulfuricAcidUnit.toWorld(getTriggerPos(), facing, mirrored,
-				SulfuricAcidUnitStructure.MASTER_DX, SulfuricAcidUnitStructure.MASTER_DY, SulfuricAcidUnitStructure.MASTER_DZ);
-	}
-
-	public TileSulfuricAcidUnit getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileSulfuricAcidUnit && ((TileSulfuricAcidUnit)te).isMaster() ? (TileSulfuricAcidUnit)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = SulfuricAcidUnitStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = SulfuricAcidUnitStructure.rotate(f[0], f[1], MultiblockSulfuricAcidUnit.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -428,6 +347,9 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPart(BURNER_PART) || isPart(PUMP_PART) || isPart(DRUM_PART) : isMaster() || getPort() == SulfuricAcidUnitStructure.PORT_ACID || getPort() == SulfuricAcidUnitStructure.PORT_STEAM))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -755,24 +677,6 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, whether it runs. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -830,11 +734,6 @@ public class TileSulfuricAcidUnit extends TileEntity implements MachinePartTile,
 		{
 			world.markBlockRangeForRenderUpdate(pos.add(-5, -1, -5), pos.add(5, 6, 5));
 		}
-	}
-
-	boolean isPart(int[] part)
-	{
-		return dx == part[0] && dy == part[1] && dz == part[2];
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */

@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -43,8 +45,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * tanks. The hydrogen's tank full stops the machine; the oxygen's tank full lifts its relief valve and the oxygen is
  * vented (a sound and a puff). Without power the cycle waits; a redstone signal stops it (the hammer inverts that).
  */
-public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileElectrolyzer extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from ElectrolyzerStructure and MultiblockElectrolyzer (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return ElectrolyzerStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return ElectrolyzerStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return ElectrolyzerStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return ElectrolyzerStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockElectrolyzer.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockElectrolyzer.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockElectrolyzer.stackFor(c); }
+		@Override public int[] master() { return new int[]{ElectrolyzerStructure.MASTER_DX, ElectrolyzerStructure.MASTER_DY, ElectrolyzerStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileElectrolyzer getMaster()
+	{
+		return (TileElectrolyzer)master();
+	}
+
 	// Provisional values (the user's proposal, 31/10): 250 mB water -> 500 mB hydrogen + 250 mB oxygen in 5 s
 	public static final int WATER_PER_CYCLE = 250, H2_PER_CYCLE = 500, O2_PER_CYCLE = 250, CYCLE_TICKS = 100;
 	public static final int ENERGY_PER_TICK = 160, ENERGY_PER_TICK_STEAM = 110;
@@ -55,11 +81,6 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 	/** How long (ticks) the oxygen's relief valve stays open after it vents: the interface shows it. */
 	public static final int VENT_TICKS = 40;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -122,10 +143,10 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 	/** Where each sound plays (template offsets): the rectifier, the cell stacks (the master), the circulation pump, the
 	 * water feed (the water port). */
 	static final int[] RECTIFIER_PART = {1, 0, 5}, PUMP_PART = {4, 0, 3}, FEED_PART = {2, -1, 0};
-	final LoopSound rectifier = new LoopSound(() -> INContent.soundElectrolyzerRectifierStart, () -> INContent.soundElectrolyzerRectifierLoop, () -> INContent.soundElectrolyzerRectifierStop, 20);
-	final LoopSound cells = new LoopSound(() -> INContent.soundElectrolyzerCellsStart, () -> INContent.soundElectrolyzerCellsLoop, () -> INContent.soundElectrolyzerCellsStop, 20);
-	final LoopSound pump = new LoopSound(() -> INContent.soundElectrolyzerPumpStart, () -> INContent.soundElectrolyzerPumpLoop, () -> INContent.soundElectrolyzerPumpStop, 24);
-	final LoopSound feed = new LoopSound(() -> INContent.soundElectrolyzerFeedStart, () -> INContent.soundElectrolyzerFeedLoop, () -> INContent.soundElectrolyzerFeedStop, 16);
+	final LoopSound rectifier = new LoopSound(() -> INSounds.soundElectrolyzerRectifierStart, () -> INSounds.soundElectrolyzerRectifierLoop, () -> INSounds.soundElectrolyzerRectifierStop, 20);
+	final LoopSound cells = new LoopSound(() -> INSounds.soundElectrolyzerCellsStart, () -> INSounds.soundElectrolyzerCellsLoop, () -> INSounds.soundElectrolyzerCellsStop, 20);
+	final LoopSound pump = new LoopSound(() -> INSounds.soundElectrolyzerPumpStart, () -> INSounds.soundElectrolyzerPumpLoop, () -> INSounds.soundElectrolyzerPumpStop, 24);
+	final LoopSound feed = new LoopSound(() -> INSounds.soundElectrolyzerFeedStart, () -> INSounds.soundElectrolyzerFeedLoop, () -> INSounds.soundElectrolyzerFeedStop, 16);
 
 	/** Running, as last sent to the clients (server), or as received (client): lights the panel's lamps. */
 	boolean sentRunning, clientRunning;
@@ -191,112 +212,11 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 	}
 
 	// ---------- the part ----------
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return ElectrolyzerStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return ElectrolyzerStructure.portAt(dx, dy, dz);
-	}
-
-	/** What a broken part drops: the block it replaced. */
-	public ItemStack getOriginalStack()
-	{
-		return MultiblockElectrolyzer.stackFor(getPartCode()).copy();
-	}
-
-	public boolean isMaster()
-	{
-		return dx == ElectrolyzerStructure.MASTER_DX && dy == ElectrolyzerStructure.MASTER_DY && dz == ElectrolyzerStructure.MASTER_DZ;
-	}
 
 	@Override
 	public String boundsName()
 	{
 		return "electrolyzer";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - ElectrolyzerStructure.MASTER_DX, dy - ElectrolyzerStructure.MASTER_DY, dz - ElectrolyzerStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = ElectrolyzerStructure.rotate(dx, dz, MultiblockElectrolyzer.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockElectrolyzer.toWorld(getTriggerPos(), facing, mirrored, ElectrolyzerStructure.MASTER_DX, ElectrolyzerStructure.MASTER_DY, ElectrolyzerStructure.MASTER_DZ);
-	}
-
-	public TileElectrolyzer getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileElectrolyzer && ((TileElectrolyzer)te).isMaster() ? (TileElectrolyzer)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = ElectrolyzerStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = ElectrolyzerStructure.rotate(f[0], f[1], MultiblockElectrolyzer.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -344,6 +264,9 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPart(RECTIFIER_PART) || isPart(PUMP_PART) || isPart(FEED_PART) : isMaster() || getPort() == ElectrolyzerStructure.PORT_HYDROGEN || getPort() == ElectrolyzerStructure.PORT_OXYGEN))
+			return;
 		if(world.isRemote)
 		{
 			boolean on = running();
@@ -403,7 +326,7 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 	{
 		venting = VENT_TICKS;
 		BlockPos at = MultiblockElectrolyzer.toWorld(getTriggerPos(), facing, mirrored, 4, 1, 0);
-		world.playSound(null, at, INContent.soundElectrolyzerVent, SoundCategory.BLOCKS, 0.8F, 1F);
+		world.playSound(null, at, INSounds.soundElectrolyzerVent, SoundCategory.BLOCKS, 0.8F, 1F);
 	}
 
 	/** Tells the clients when it starts or stops, so the lamps light and the sounds play. */
@@ -627,24 +550,6 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, whether it runs. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -691,11 +596,6 @@ public class TileElectrolyzer extends TileEntity implements MachinePartTile, ITi
 		readClient(pkt.getNbtCompound());
 		if(ox != dx || oy != dy || oz != dz || of != facing || om != mirrored)
 			world.markBlockRangeForRenderUpdate(pos, pos);
-	}
-
-	boolean isPart(int[] part)
-	{
-		return dx == part[0] && dy == part[1] && dz == part[2];
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */

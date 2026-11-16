@@ -13,6 +13,9 @@ map_Kd #crusher
 newmtl metal_decoration0_radiator_ctm
 map_Kd #metal_decoration0_radiator_ctm
 
+newmtl metal_decoration2_steel_post
+map_Kd #metal_decoration2_steel_post
+
 newmtl metal_device0_barrel_side
 map_Kd #metal_device0_barrel_side
 

@@ -8,6 +8,7 @@ import immersivenuclear.common.INGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -43,8 +44,16 @@ public class ImmersiveNuclear
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		immersivenuclear.common.INRawMaterials.lateRecipes();
 		// IE builds its Engineer's Manual in its own client postInit, which runs before ours
 		if(event.getSide().isClient())
 			immersivenuclear.client.ManualEntries.register();
+	}
+
+	/** Every mod's items and ore names are in by now: check that each of our recipes can be made (RecipeCheck, in the log). */
+	@Mod.EventHandler
+	public void loadComplete(FMLLoadCompleteEvent event)
+	{
+		immersivenuclear.common.RecipeCheck.run();
 	}
 }

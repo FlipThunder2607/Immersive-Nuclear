@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -44,8 +46,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * hydrofluoric acid gas leaves through the candle filters and the condenser into its tank. It draws power while it runs
  * (the furnace and the kiln's motor); without power the cycle waits; a redstone signal stops it (the hammer inverts that).
  */
-public class TileDeconversionUnit extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileDeconversionUnit extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from DeconversionUnitStructure and MultiblockDeconversionUnit (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return DeconversionUnitStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return DeconversionUnitStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return DeconversionUnitStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return DeconversionUnitStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockDeconversionUnit.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockDeconversionUnit.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockDeconversionUnit.stackFor(c); }
+		@Override public int[] master() { return new int[]{DeconversionUnitStructure.MASTER_DX, DeconversionUnitStructure.MASTER_DY, DeconversionUnitStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileDeconversionUnit getMaster()
+	{
+		return (TileDeconversionUnit)master();
+	}
+
 	// Provisional values: one enrichment cycle's tails (400 mB) per cycle
 	public static final int UF6_PER_CYCLE = 400, STEAM_PER_CYCLE = 400, HF_PER_CYCLE = 250, OXIDE_PER_CYCLE = 1, CYCLE_TICKS = 200, ENERGY_PER_TICK = 96;
 	/** Its control systems (panel, instruments) while it is not running (the user, 14/11/2026). */
@@ -55,11 +81,6 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 	/** The oxide out; each tank has its container slots: in (full or empty container) over it, out under it. */
 	public static final int SLOT_OXIDE = 0, SLOT_UF6_IN = 1, SLOT_UF6_OUT = 2, SLOT_STEAM_IN = 3, SLOT_STEAM_OUT = 4, SLOT_HF_IN = 5, SLOT_HF_OUT = 6, SLOTS = 7;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -112,11 +133,11 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 	 * kiln's motor and gearbox (the base under them), the hydrolysis reactor, the candle filters. */
 	static final int[] HEATER_PART = {-3, 0, 1}, DRIVE_PART = {-2, -1, -3}, REACTOR_PART = {-3, 3, -4}, FILTER_PART = {-1, 1, -2};
 	/** The loops come in as their starts end; the drive keeps the HF Kiln's sound (motor and gears). */
-	final LoopSound kilnSound = new LoopSound(() -> INContent.soundDeconvKilnStart, () -> INContent.soundDeconvKilnLoop, () -> INContent.soundDeconvKilnStop, 40);
-	final LoopSound drive = new LoopSound(() -> INContent.soundKilnDriveStart, () -> INContent.soundKilnDriveLoop, () -> INContent.soundKilnDriveStop, 60);
-	final LoopSound heater = new LoopSound(() -> INContent.soundDeconvFurnaceStart, () -> INContent.soundDeconvFurnaceLoop, () -> INContent.soundDeconvFurnaceStop, 24);
-	final LoopSound reactor = new LoopSound(() -> INContent.soundDeconvReactorStart, () -> INContent.soundDeconvReactorLoop, () -> INContent.soundDeconvReactorStop, 30);
-	final LoopSound filterSound = new LoopSound(() -> INContent.soundDeconvFiltersStart, () -> INContent.soundDeconvFiltersLoop, () -> INContent.soundDeconvFiltersStop, 24);
+	final LoopSound kilnSound = new LoopSound(() -> INSounds.soundDeconvKilnStart, () -> INSounds.soundDeconvKilnLoop, () -> INSounds.soundDeconvKilnStop, 40);
+	final LoopSound drive = new LoopSound(() -> INSounds.soundKilnDriveStart, () -> INSounds.soundKilnDriveLoop, () -> INSounds.soundKilnDriveStop, 60);
+	final LoopSound heater = new LoopSound(() -> INSounds.soundDeconvFurnaceStart, () -> INSounds.soundDeconvFurnaceLoop, () -> INSounds.soundDeconvFurnaceStop, 24);
+	final LoopSound reactor = new LoopSound(() -> INSounds.soundDeconvReactorStart, () -> INSounds.soundDeconvReactorLoop, () -> INSounds.soundDeconvReactorStop, 30);
+	final LoopSound filterSound = new LoopSound(() -> INSounds.soundDeconvFiltersStart, () -> INSounds.soundDeconvFiltersLoop, () -> INSounds.soundDeconvFiltersStop, 24);
 
 	/** Client, master: the kiln's turn (degrees) and speed (0..1, easing up and down); the pinion and rollers follow it. */
 	public float drumAngle, drumSpeed;
@@ -230,112 +251,11 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 	};
 
 	// ---------- the part ----------
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return DeconversionUnitStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return DeconversionUnitStructure.portAt(dx, dy, dz);
-	}
-
-	/** What a broken part drops: the block it replaced. */
-	public ItemStack getOriginalStack()
-	{
-		return MultiblockDeconversionUnit.stackFor(getPartCode()).copy();
-	}
-
-	public boolean isMaster()
-	{
-		return dx == DeconversionUnitStructure.MASTER_DX && dy == DeconversionUnitStructure.MASTER_DY && dz == DeconversionUnitStructure.MASTER_DZ;
-	}
 
 	@Override
 	public String boundsName()
 	{
 		return "deconversion_unit";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - DeconversionUnitStructure.MASTER_DX, dy - DeconversionUnitStructure.MASTER_DY, dz - DeconversionUnitStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = DeconversionUnitStructure.rotate(dx, dz, MultiblockDeconversionUnit.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockDeconversionUnit.toWorld(getTriggerPos(), facing, mirrored, DeconversionUnitStructure.MASTER_DX, DeconversionUnitStructure.MASTER_DY, DeconversionUnitStructure.MASTER_DZ);
-	}
-
-	public TileDeconversionUnit getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileDeconversionUnit && ((TileDeconversionUnit)te).isMaster() ? (TileDeconversionUnit)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = DeconversionUnitStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = DeconversionUnitStructure.rotate(f[0], f[1], MultiblockDeconversionUnit.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -387,6 +307,9 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPart(HEATER_PART) || isPart(DRIVE_PART) || isPart(REACTOR_PART) || isPart(FILTER_PART) : isMaster() || getPort() == DeconversionUnitStructure.PORT_HF))
+			return;
 		if(world.isRemote)
 		{
 			boolean on = running();
@@ -667,24 +590,6 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, whether it runs. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -735,11 +640,6 @@ public class TileDeconversionUnit extends TileEntity implements MachinePartTile,
 		readClient(pkt.getNbtCompound());
 		if(ox != dx || oy != dy || oz != dz || of != facing || om != mirrored)
 			world.markBlockRangeForRenderUpdate(pos, pos);
-	}
-
-	boolean isPart(int[] part)
-	{
-		return dx == part[0] && dy == part[1] && dz == part[2];
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false. */

@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
@@ -53,8 +55,32 @@ import net.minecraftforge.oredict.OreDictionary;
  * Sounds: the machine's own sound while the agitator turns; the mod's pump sound ({@link PumpSound}), on the pump
  * part, while the reactor fills or drains.
  */
-public class TileChemicalProcessor extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileChemicalProcessor extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from ChemicalProcessorStructure and MultiblockChemicalProcessor (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return ChemicalProcessorStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return ChemicalProcessorStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return ChemicalProcessorStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return ChemicalProcessorStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockChemicalProcessor.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockChemicalProcessor.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockChemicalProcessor.stackFor(c); }
+		@Override public int[] master() { return new int[]{ChemicalProcessorStructure.MASTER_DX, ChemicalProcessorStructure.MASTER_DY, ChemicalProcessorStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileChemicalProcessor getMaster()
+	{
+		return (TileChemicalProcessor)master();
+	}
+
 	// One batch (provisional): 8000 mB of water, 16 uranium powder and 16 reagent make 8000 mB of slurry.
 	// Gameplay values, not real chemistry.
 	public static final int BATCH_WATER = 8000, BATCH_SOLIDS = 16;
@@ -76,12 +102,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 			/** The recycled liquor's own container pair (added at the end, so older machines keep their slots). */
 			SLOT_RECYCLED_IN = 6, SLOT_RECYCLED_OUT = 7, SLOTS = 8;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
 	/** The block this part replaced, put back on disassembly. */
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	final ItemStackHandler inventory = new ItemStackHandler(SLOTS)
@@ -380,112 +401,15 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		return false;
 	}
 
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return ChemicalProcessorStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return ChemicalProcessorStructure.portAt(dx, dy, dz);
-	}
-
 	public ItemStack getOriginalStack()
 	{
 		return MultiblockChemicalProcessor.stackFor(getPartCode());
-	}
-
-	public boolean isMaster()
-	{
-		return dx == ChemicalProcessorStructure.MASTER_DX && dy == ChemicalProcessorStructure.MASTER_DY && dz == ChemicalProcessorStructure.MASTER_DZ;
 	}
 
 	@Override
 	public String boundsName()
 	{
 		return "chemical_processor";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.ChemicalProcessorStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.ChemicalProcessorStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.ChemicalProcessorStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = ChemicalProcessorStructure.rotate(dx, dz, MultiblockChemicalProcessor.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockChemicalProcessor.toWorld(getTriggerPos(), facing, mirrored,
-				ChemicalProcessorStructure.MASTER_DX, ChemicalProcessorStructure.MASTER_DY, ChemicalProcessorStructure.MASTER_DZ);
-	}
-
-	public TileChemicalProcessor getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileChemicalProcessor && ((TileChemicalProcessor)te).isMaster() ? (TileChemicalProcessor)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = ChemicalProcessorStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = ChemicalProcessorStructure.rotate(f[0], f[1], MultiblockChemicalProcessor.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	boolean portServes(Capability<?> cap, EnumFacing side)
@@ -559,6 +483,9 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || isPumpPart() : isMaster() || getPort() == ChemicalProcessorStructure.PORT_SLURRY))
+			return;
 		if(world.isRemote)
 		{
 			if(isMaster())
@@ -930,24 +857,6 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		return nbt;
 	}
 
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
-	}
-
 	/** The client only needs the part (and, on the master, the tank window), not the replaced block. */
 	@Override
 	public NBTTagCompound getUpdateTag()
@@ -1019,17 +928,17 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		boolean on = running || soundOn && offTicks < STOP_GRACE_TICKS;
 		if(on && !soundOn)
 		{
-			playOnce(INContent.soundStart);
+			playOnce(INSounds.soundStart);
 			loopDelay = LOOP_DELAY_TICKS;
 		}
 		else if(!on && soundOn)
-			playOnce(INContent.soundStop);
+			playOnce(INSounds.soundStop);
 		soundOn = on;
 		if(loopDelay > 0)
 			loopDelay--;
 		if(on && loopDelay == 0 && !isInvalid())
 			immersivenuclear.client.TileSounds.revive(this);
-		ImmersiveEngineering.proxy.handleTileSound(INContent.soundLoop, this, on && loopDelay == 0 && !isInvalid(), SOUND_VOLUME, SOUND_PITCH);
+		ImmersiveEngineering.proxy.handleTileSound(INSounds.soundLoop, this, on && loopDelay == 0 && !isInvalid(), SOUND_VOLUME, SOUND_PITCH);
 	}
 
 	/** IE's looping tile sound asks this every 2 s and ends the loop when it is false (or the tile is not an ISoundTile). */
@@ -1038,7 +947,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	{
 		if(isPumpPart())
 			return pump.shouldPlay(this, sound);
-		return isMaster() && !isInvalid() && soundOn && loopDelay == 0 && INContent.soundLoop.getSoundName().toString().equals(sound);
+		return isMaster() && !isInvalid() && soundOn && loopDelay == 0 && INSounds.soundLoop.getSoundName().toString().equals(sound);
 	}
 
 	void playOnce(SoundEvent sound)
@@ -1052,7 +961,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	{
 		super.invalidate();
 		if(world != null && world.isRemote && isMaster())
-			ImmersiveEngineering.proxy.handleTileSound(INContent.soundLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
+			ImmersiveEngineering.proxy.handleTileSound(INSounds.soundLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
 		if(world != null && world.isRemote && isPumpPart())
 			pump.stop(this);
 	}
@@ -1062,7 +971,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	{
 		super.onChunkUnload();
 		if(world != null && world.isRemote && isMaster())
-			ImmersiveEngineering.proxy.handleTileSound(INContent.soundLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
+			ImmersiveEngineering.proxy.handleTileSound(INSounds.soundLoop, this, false, SOUND_VOLUME, SOUND_PITCH);
 		if(world != null && world.isRemote && isPumpPart())
 			pump.stop(this);
 	}

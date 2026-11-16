@@ -278,6 +278,16 @@ public final class INRawMaterials
 	public static final int STEEL_PER_ALLOY = 3, ALLOY_OUT = 4, ZIRCONIUM_PER_ZIRCALOY = 6, ZIRCALOY_OUT = 8;
 	public static final float EXCAVATOR_FAIL = .1F;
 
+	/**
+	 * Recipes for other mods' ores, added only when some mod has them (in postInit, once every mod has registered its ore
+	 * names): GregTech's cassiterite ore crushes into our tin dust. The recipe check found it matching nothing without them.
+	 */
+	public static void lateRecipes()
+	{
+		if(!OreDictionary.getOres("oreCassiterite", false).isEmpty())
+			CrusherRecipe.addRecipe(new ItemStack(itemTinDust, ORE_DUST), "oreCassiterite", CRUSH_ENERGY);
+	}
+
 	static void recipes()
 	{
 		// ore dictionary: shared with other mods (their zirconium, hafnium, boron... work in our machines and the other way)
@@ -312,12 +322,11 @@ public final class INRawMaterials
 		CrusherRecipe.addRecipe(new ItemStack(itemZirconDust, ORE_DUST), "oreZircon", CRUSH_ENERGY);
 		CrusherRecipe.addRecipe(new ItemStack(itemBoraxDust, ORE_DUST), "oreBorax", CRUSH_ENERGY);
 		CrusherRecipe.addRecipe(new ItemStack(itemTinDust, ORE_DUST), "oreTin", CRUSH_ENERGY);
-		CrusherRecipe.addRecipe(new ItemStack(itemTinDust, ORE_DUST), "oreCassiterite", CRUSH_ENERGY);     // GregTech's tin ore
 		CrusherRecipe.addRecipe(new ItemStack(itemChromiteDust, ORE_DUST), "oreChromite", CRUSH_ENERGY);
 		CrusherRecipe.addRecipe(new ItemStack(itemTinDust), "ingotTin", CRUSH_ENERGY / 2);
 		// IE's Arc Furnace. Normal scale: the zircon to common zirconium (hafnium left in it), as IE's ores and dusts;
 		// the borax with iron and coke to ferroboron (the alloy the steel industry adds boron with)
-		ItemStack slag = new ItemStack(blusunrize.immersiveengineering.common.IEContent.itemMaterial, 1, INContent.SLAG_META);
+		ItemStack slag = new ItemStack(blusunrize.immersiveengineering.common.IEContent.itemMaterial, 1, INRecipes.SLAG_META);
 		ArcFurnaceRecipe.addRecipe(new ItemStack(Metal.ZIRCONIUM.ingot, 2), "oreZircon", slag, ARC_TICKS * 2, ARC_ENERGY);
 		ArcFurnaceRecipe.addRecipe(new ItemStack(Metal.ZIRCONIUM.ingot), "dustZircon", ItemStack.EMPTY, ARC_TICKS, ARC_ENERGY);
 		ArcFurnaceRecipe.addRecipe(new ItemStack(Metal.FERROBORON.ingot), "dustBorax", slag, ARC_TICKS, ARC_ENERGY, "ingotIron", "dustCoke");

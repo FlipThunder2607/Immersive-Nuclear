@@ -1,5 +1,7 @@
 package immersivenuclear.common.block;
 
+import immersivenuclear.common.INSounds;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
@@ -51,8 +53,32 @@ import net.minecraftforge.items.ItemStackHandler;
  * looping sound per block): the two mixers while they mix, the pump of each settler while it drains, and the middle
  * pump while the loaded solvent goes from settler A to its line (see {@link #SOUND_PARTS}).
  */
-public class TileChemicalSeparator extends TileEntity implements MachinePartTile, ITickable, IHammerInteraction, ISoundTile
+public class TileChemicalSeparator extends TileMachinePart implements ITickable, IHammerInteraction, ISoundTile
 {
+	/** The structure, from ChemicalSeparatorStructure and MultiblockChemicalSeparator (TileMachinePart). */
+	static final Layout LAYOUT = new Layout()
+	{
+		@Override public char get(int dx, int dy, int dz) { return ChemicalSeparatorStructure.get(dx, dy, dz); }
+		@Override public int portAt(int dx, int dy, int dz) { return ChemicalSeparatorStructure.portAt(dx, dy, dz); }
+		@Override public int[] portFace(int dx, int dy, int dz) { return ChemicalSeparatorStructure.portFace(dx, dy, dz); }
+		@Override public int[] rotate(int dx, int dz, int turns, boolean mirror) { return ChemicalSeparatorStructure.rotate(dx, dz, turns, mirror); }
+		@Override public int turns(EnumFacing facing) { return MultiblockChemicalSeparator.turns(facing); }
+		@Override public BlockPos toWorld(BlockPos trigger, EnumFacing facing, boolean mirror, int dx, int dy, int dz) { return MultiblockChemicalSeparator.toWorld(trigger, facing, mirror, dx, dy, dz); }
+		@Override public ItemStack stackFor(char c) { return MultiblockChemicalSeparator.stackFor(c); }
+		@Override public int[] master() { return new int[]{ChemicalSeparatorStructure.MASTER_DX, ChemicalSeparatorStructure.MASTER_DY, ChemicalSeparatorStructure.MASTER_DZ}; }
+	};
+
+	@Override
+	protected Layout layout()
+	{
+		return LAYOUT;
+	}
+
+	public TileChemicalSeparator getMaster()
+	{
+		return (TileChemicalSeparator)master();
+	}
+
 	public static final int TANK_CAPACITY = 12000, SETTLER_CAPACITY = 16000, ENERGY_CAPACITY = 32000;
 	/** One batch of each settler (provisional): A takes 10000 crude + 6000 solvent, B 6000 loaded solvent + 5000 stripping. */
 	public static final int A_AQUEOUS = 10000, A_SOLVENT = 6000, B_SOLVENT = 6000, B_AQUEOUS = 5000;
@@ -74,12 +100,7 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 	public static final int SLOT_CRUDE_IN = 0, SLOT_CRUDE_OUT = 1, SLOT_STRIPPING_IN = 2, SLOT_STRIPPING_OUT = 3,
 			SLOT_EFFLUENT_IN = 4, SLOT_EFFLUENT_OUT = 5, SLOT_PURIFIED_IN = 6, SLOT_PURIFIED_OUT = 7, SLOTS = 8;
 
-	int dx, dy, dz;
-	EnumFacing facing = EnumFacing.NORTH;
-	boolean mirrored;
 	/** The block this part replaced (state + tile NBT), put back on disassembly. */
-	IBlockState originalState;
-	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
 	/**
@@ -330,112 +351,15 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 		}
 	}
 
-	public void setPart(int dx, int dy, int dz, EnumFacing facing, boolean mirrored)
-	{
-		this.dx = dx;
-		this.dy = dy;
-		this.dz = dz;
-		this.facing = facing;
-		this.mirrored = mirrored;
-		markDirty();
-	}
-
-	public void setOriginal(IBlockState state, NBTTagCompound nbt)
-	{
-		originalState = state;
-		originalNbt = nbt;
-		markDirty();
-	}
-
-	public IBlockState getOriginalState()
-	{
-		return originalState;
-	}
-
-	public NBTTagCompound getOriginalNbt()
-	{
-		return originalNbt;
-	}
-
-	public char getPartCode()
-	{
-		return ChemicalSeparatorStructure.get(dx, dy, dz);
-	}
-
-	@Override
-	public int getPort()
-	{
-		return ChemicalSeparatorStructure.portAt(dx, dy, dz);
-	}
-
 	public ItemStack getOriginalStack()
 	{
 		return MultiblockChemicalSeparator.stackFor(getPartCode());
-	}
-
-	public boolean isMaster()
-	{
-		return dx == ChemicalSeparatorStructure.MASTER_DX && dy == ChemicalSeparatorStructure.MASTER_DY && dz == ChemicalSeparatorStructure.MASTER_DZ;
 	}
 
 	@Override
 	public String boundsName()
 	{
 		return "chemical_separator";
-	}
-
-	@Override
-	public int[] fromMaster()
-	{
-		return new int[]{dx - immersivenuclear.common.multiblock.ChemicalSeparatorStructure.MASTER_DX, dy - immersivenuclear.common.multiblock.ChemicalSeparatorStructure.MASTER_DY, dz - immersivenuclear.common.multiblock.ChemicalSeparatorStructure.MASTER_DZ};
-	}
-
-	@Override
-	public EnumFacing getFacing()
-	{
-		return facing;
-	}
-
-	@Override
-	public boolean isMirrored()
-	{
-		return mirrored;
-	}
-
-	/** World position of the trigger block this part was formed from (also the redstone port). */
-	public BlockPos getTriggerPos()
-	{
-		int[] w = ChemicalSeparatorStructure.rotate(dx, dz, MultiblockChemicalSeparator.turns(facing), mirrored);
-		return pos.add(-w[0], -dy, -w[1]);
-	}
-
-	public BlockPos getMasterPos()
-	{
-		return MultiblockChemicalSeparator.toWorld(getTriggerPos(), facing, mirrored,
-				ChemicalSeparatorStructure.MASTER_DX, ChemicalSeparatorStructure.MASTER_DY, ChemicalSeparatorStructure.MASTER_DZ);
-	}
-
-	public TileChemicalSeparator getMaster()
-	{
-		if(isMaster())
-			return this;
-		if(world == null)
-			return null;
-		BlockPos m = getMasterPos();
-		if(!world.isBlockLoaded(m))
-			return null;
-		TileEntity te = world.getTileEntity(m);
-		return te instanceof TileChemicalSeparator && ((TileChemicalSeparator)te).isMaster() ? (TileChemicalSeparator)te : null;
-	}
-
-	/** World face a port works on, or null when it works on every side. */
-	EnumFacing portWorldFace()
-	{
-		int[] f = ChemicalSeparatorStructure.portFace(dx, dy, dz);
-		if(f == null || f[0] == 0 && f[1] == 0)
-			return null;
-		int[] w = ChemicalSeparatorStructure.rotate(f[0], f[1], MultiblockChemicalSeparator.turns(facing), mirrored);
-		return EnumFacing.getFacingFromVector(w[0], 0, w[1]);
 	}
 
 	/** The master's tank behind a fluid port, or null. */
@@ -495,14 +419,17 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 	@Override
 	public void update()
 	{
+		// parts with nothing to do on this side leave the tick list (TickRetire): the master, the output ports and the animated parts stay
+		if(TickRetire.idle(this, world.isRemote ? isMaster() || soundBits() != 0 : isMaster() || getPort() == ChemicalSeparatorStructure.PORT_EFFLUENT || getPort() == ChemicalSeparatorStructure.PORT_PURIFIED))
+			return;
 		if(world.isRemote)
 		{
 			int bits = soundBits();
 			if(bits != 0)
 			{
 				if(sound == null)
-					sound = (bits & (MOVE_MIXER_A | MOVE_MIXER_B)) != 0 ? new LoopSound(() -> INContent.soundCsMixerStart,
-							() -> INContent.soundCsMixerLoop, () -> INContent.soundCsMixerStop, MIXER_LOOP_DELAY) : new PumpSound();
+					sound = (bits & (MOVE_MIXER_A | MOVE_MIXER_B)) != 0 ? new LoopSound(() -> INSounds.soundCsMixerStart,
+							() -> INSounds.soundCsMixerLoop, () -> INSounds.soundCsMixerStop, MIXER_LOOP_DELAY) : new PumpSound();
 				TileChemicalSeparator m = getMaster();
 				sound.update(this, m != null && (m.clientMoving & bits) != 0);
 			}
@@ -885,24 +812,6 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 			nbt.setTag("machine", m);
 		}
 		return nbt;
-	}
-
-	void readPart(NBTTagCompound nbt)
-	{
-		dx = nbt.getInteger("dx");
-		dy = nbt.getInteger("dy");
-		dz = nbt.getInteger("dz");
-		facing = EnumFacing.byHorizontalIndex(nbt.getInteger("facing"));
-		mirrored = nbt.getBoolean("mirrored");
-	}
-
-	void writePart(NBTTagCompound nbt)
-	{
-		nbt.setInteger("dx", dx);
-		nbt.setInteger("dy", dy);
-		nbt.setInteger("dz", dz);
-		nbt.setInteger("facing", facing.getHorizontalIndex());
-		nbt.setBoolean("mirrored", mirrored);
 	}
 
 	/** The client needs the part (which block of the structure, how it is turned) and, on the master, the settlers. */
