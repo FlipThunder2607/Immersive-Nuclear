@@ -33,7 +33,9 @@ public class ContainerChemicalSeparator extends Container
 	};
 	public static final int BUTTON_REDSTONE = 0;
 	public static final int V_CRUDE = 0, V_STRIPPING = 1, V_SOLVENT = 2, V_EFFLUENT = 3, V_PURIFIED = 4, V_LOADED = 5, V_ENERGY = 6,
-			V_STATE = 7, V_REDSTONE = 8, V_A = 9, V_B = 13, V_FLOW = 17, VALUES = 18;
+			V_STATE = 7, V_REDSTONE = 8, V_A = 9, V_B = 13, V_FLOW = 17,
+			// the materials (TileChemicalSeparator.MAT_*): of the crude, effluent and purified tanks, of each settler's batch
+			V_CRUDE_M = 18, V_EFFLUENT_M = 19, V_PURIFIED_M = 20, V_A_M = 21, V_B_M = 22, VALUES = 23;
 
 	final TileChemicalSeparator tile;
 	/** Client copies of the master's values (on the server they are read straight from the tile). */
@@ -93,11 +95,14 @@ public class ContainerChemicalSeparator extends Container
 		values[id] = data;
 		switch(id)
 		{
-			case V_CRUDE: set(crude, INContent.fluidCrudeSolution, data); break;
+			case V_CRUDE: set(crude, TileChemicalSeparator.crudeOf(values[V_CRUDE_M]), data); break;
+			case V_CRUDE_M: set(crude, TileChemicalSeparator.crudeOf(data), crude.getFluidAmount()); break;
+			case V_EFFLUENT_M: set(effluent, TileChemicalSeparator.effluentOf(data), effluent.getFluidAmount()); break;
+			case V_PURIFIED_M: set(purified, TileChemicalSeparator.purifiedOf(data), purified.getFluidAmount()); break;
 			case V_STRIPPING: set(stripping, INContent.fluidStrippingSolution, data); break;
 			case V_SOLVENT: set(solvent, INContent.fluidSolvent, data); break;
-			case V_EFFLUENT: set(effluent, INContent.fluidEffluent, data); break;
-			case V_PURIFIED: set(purified, INContent.fluidPurifiedSolution, data); break;
+			case V_EFFLUENT: set(effluent, TileChemicalSeparator.effluentOf(values[V_EFFLUENT_M]), data); break;
+			case V_PURIFIED: set(purified, TileChemicalSeparator.purifiedOf(values[V_PURIFIED_M]), data); break;
 			case V_LOADED: set(loaded, INContent.fluidSolvent, data); break;
 		}
 	}

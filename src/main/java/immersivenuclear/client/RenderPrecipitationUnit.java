@@ -110,13 +110,8 @@ public class RenderPrecipitationUnit extends TileEntitySpecialRenderer<TilePreci
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
 			GlStateManager.enableCull();
-			Tessellator tess = Tessellator.getInstance();
-			BufferBuilder buffer = tess.getBuffer();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			buffer.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), mirrored ? rotorMirrored : rotor, state, pos, buffer, false);
-			buffer.setTranslation(0, 0, 0);
-			tess.draw();
+			GlStateManager.disableLighting();
+			ModelLists.drawLit(state, mirrored ? rotorMirrored : rotor, te.getWorld().getCombinedLight(pos.up(), 0));
 			RenderHelper.enableStandardItemLighting();
 			GlStateManager.popMatrix();
 		}
@@ -139,7 +134,7 @@ public class RenderPrecipitationUnit extends TileEntitySpecialRenderer<TilePreci
 			GlStateManager.depthMask(false);
 			int light = te.getWorld().getCombinedLight(te.getPos().up(2), 0);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light & 0xFFFF, light >> 16);
-			TextureAtlasSprite s = RenderChemicalProcessor.sprite(INContent.fluidPurifiedSolution.getStill().toString());
+			TextureAtlasSprite s = RenderChemicalProcessor.sprite(TilePrecipitationUnit.solutionOf(te.clientMaterial).getStill().toString());
 			float top = TANK_FLOOR + (TANK_FULL - TANK_FLOOR) * level;
 			// The window's wall first (behind the glass), then the others and the surface
 			wall(s, true, TANK_X0, TANK_Z0, TANK_Z1, top, r, g, b, a);

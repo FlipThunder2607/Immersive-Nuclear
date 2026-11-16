@@ -118,15 +118,10 @@ public class RenderIndustrialDryer extends TileEntitySpecialRenderer<TileIndustr
 	{
 		if(model == null)
 			return;
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder buffer = tess.getBuffer();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(dx, 0, dz);
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-		buffer.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
-		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), model, state, pos, buffer, false);
-		buffer.setTranslation(0, 0, 0);
-		tess.draw();
+		GlStateManager.disableLighting();
+		ModelLists.drawLit(state, model, te.getWorld().getCombinedLight(pos.up(), 0));
 		GlStateManager.popMatrix();
 	}
 

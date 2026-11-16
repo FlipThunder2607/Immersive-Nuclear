@@ -1,0 +1,8 @@
+{
+  "parent": "block/half_slab",
+  "textures": {
+    "bottom": "immersivenuclear:blocks/hafnium_sheetmetal",
+    "top": "immersivenuclear:blocks/hafnium_sheetmetal",
+    "side": "immersivenuclear:blocks/hafnium_sheetmetal"
+  }
+}

@@ -10,10 +10,7 @@
             "type": "forge:ore_dict",
             "ore": "stickSteel"
         },
-        "C": {
-            "type": "forge:ore_dict",
-            "ore": "componentSteel"
-        },
+        "C": {"item": "immersiveengineering:material", "data": 9},
         "F": {
             "type": "forge:ore_dict",
             "ore": "fabricHemp"

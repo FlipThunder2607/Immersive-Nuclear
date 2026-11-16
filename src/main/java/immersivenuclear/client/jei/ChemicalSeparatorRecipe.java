@@ -16,16 +16,29 @@ import net.minecraftforge.fluids.FluidStack;
  */
 public class ChemicalSeparatorRecipe implements IRecipeWrapper
 {
+	/** TileChemicalSeparator.MAT_*: the uranium's page and the zirconium's. */
+	final int material;
+
+	public ChemicalSeparatorRecipe()
+	{
+		this(TileChemicalSeparator.MAT_URANIUM);
+	}
+
+	public ChemicalSeparatorRecipe(int material)
+	{
+		this.material = material;
+	}
+
 	@Override
 	public void getIngredients(IIngredients ingredients)
 	{
 		ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(
-				new FluidStack(INContent.fluidCrudeSolution, TileChemicalSeparator.A_AQUEOUS),
+				new FluidStack(TileChemicalSeparator.crudeOf(material), TileChemicalSeparator.A_AQUEOUS),
 				new FluidStack(INContent.fluidStrippingSolution, TileChemicalSeparator.B_AQUEOUS),
 				new FluidStack(INContent.fluidSolvent, TileChemicalSeparator.SOLVENT_LOSS)));
 		ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(
-				new FluidStack(INContent.fluidEffluent, TileChemicalSeparator.A_AQUEOUS),
-				new FluidStack(INContent.fluidPurifiedSolution, TileChemicalSeparator.B_AQUEOUS)));
+				new FluidStack(TileChemicalSeparator.effluentOf(material), TileChemicalSeparator.A_AQUEOUS),
+				new FluidStack(TileChemicalSeparator.purifiedOf(material), TileChemicalSeparator.B_AQUEOUS)));
 	}
 
 	/** Mixing both batches, then the pumps draining both settlers (each drains its two layers at once). */

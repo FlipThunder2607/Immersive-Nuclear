@@ -1,0 +1,32 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "ABC",
+    "DDD",
+    "PPP"
+  ],
+  "key": {
+    "A": {
+      "item": "immersiveengineering:material",
+      "data": 9
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "plateSteel"
+    },
+    "C": {
+      "item": "immersiveengineering:material",
+      "data": 8
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBrown"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:blueprint_station_modules"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "immersivenuclear:items/enriched_uranium_dioxide_90"
+  }
+}

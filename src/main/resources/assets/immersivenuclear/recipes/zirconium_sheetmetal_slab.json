@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "immersivenuclear:zirconium_sheetmetal"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:zirconium_sheetmetal_slab",
+    "count": 6,
+    "data": 0
+  }
+}

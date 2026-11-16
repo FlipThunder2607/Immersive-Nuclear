@@ -1,0 +1,13 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "ingotDepletedUranium"
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:depleted_uranium_nugget",
+    "count": 9
+  }
+}

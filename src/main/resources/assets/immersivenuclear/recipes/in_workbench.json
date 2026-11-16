@@ -1,0 +1,29 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WWW",
+    "CBC",
+    "S S"
+  ],
+  "key": {
+    "W": {
+      "type": "forge:ore_dict",
+      "ore": "plankTreatedWood"
+    },
+    "C": {
+      "item": "immersiveengineering:material",
+      "data": 9
+    },
+    "B": {
+      "item": "immersiveengineering:material",
+      "data": 27
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stickSteel"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:in_workbench"
+  }
+}

@@ -39,9 +39,19 @@ public class HazardTooltips
 		items.put(INContent.itemAgglomerate, new String[]{TRACE});
 		items.put(INContent.itemWetConcentrate, new String[]{RAD, TOXIC});
 		items.put(INContent.itemYellowcake, new String[]{RAD, TOXIC});
+		items.put(INContent.itemUraniumDioxide, new String[]{RAD, TOXIC});
+		items.put(INContent.itemGreenSalt, new String[]{RAD, TOXIC});
 		items.put(INContent.itemFluorinationAsh, new String[]{RAD, TOXIC});
 		items.put(INContent.itemDepletedUraniumOxide, new String[]{TRACE, TOXIC});
 		items.put(INContent.itemDepletedUraniumIngot, new String[]{TRACE});
+		immersivenuclear.common.INRawMaterials.Metal du = immersivenuclear.common.INRawMaterials.Metal.DEPLETED_URANIUM;
+		for(Item i : new Item[]{du.plate, du.storageItem, du.sheetmetalItem, du.slabItem})
+			items.put(i, new String[]{TRACE});
+		// the fuel line: the enriched powder is radioactive and toxic; pellets, rods and elements radioactive (sealed in the rod: no dust)
+		items.put(immersivenuclear.common.INFuel.itemEnrichedUraniumDioxide, new String[]{RAD, TOXIC});
+		for(Item i : new Item[]{immersivenuclear.common.INFuel.itemGreenPellet, immersivenuclear.common.INFuel.itemSinteredPellet,
+				immersivenuclear.common.INFuel.itemFuelRod, immersivenuclear.common.INFuel.itemFuelElement})
+			items.put(i, new String[]{RAD});
 		fluids = new HashMap<>();
 		fluids.put(INContent.fluidSlurry.getName(), new String[]{CORR, RAD});
 		fluids.put(INContent.fluidCrudeSolution.getName(), new String[]{CORR, RAD});
@@ -53,9 +63,14 @@ public class HazardTooltips
 		fluids.put(INContent.fluidSulfuricAcid.getName(), new String[]{CORR, OXID});
 		fluids.put(INContent.fluidSteam.getName(), new String[]{HOT});
 		fluids.put(INContent.fluidHydrofluoricAcid.getName(), new String[]{CORR, TOXIC});
+		fluids.put(INContent.fluidDiluteHydrofluoricAcid.getName(), new String[]{CORR, TOXIC});
+		for(net.minecraftforge.fluids.Fluid f : new net.minecraftforge.fluids.Fluid[]{immersivenuclear.common.INRawMaterials.fluidZirconiumSolution,
+				immersivenuclear.common.INRawMaterials.fluidZirconiumSolutionPurified, immersivenuclear.common.INRawMaterials.fluidHafniumSolution,
+				immersivenuclear.common.INRawMaterials.fluidBoricAcidSolution})
+			fluids.put(f.getName(), new String[]{CORR});
 		fluids.put(INContent.fluidHydrogen.getName(), new String[]{FIRE});
 		fluids.put(INContent.fluidOxygen.getName(), new String[]{OXID});
-		for(net.minecraftforge.fluids.Fluid f : new net.minecraftforge.fluids.Fluid[]{INContent.fluidUF6, INContent.fluidUF6Low, INContent.fluidUF6Medium, INContent.fluidUF6High})
+		for(net.minecraftforge.fluids.Fluid f : new net.minecraftforge.fluids.Fluid[]{INContent.fluidUF6, INContent.fluidUF6Low, INContent.fluidUF6Medium, INContent.fluidUF6High, INContent.fluidUF6VeryHigh})
 			fluids.put(f.getName(), new String[]{RAD, CORR, TOXIC});
 		fluids.put(INContent.fluidUF6Depleted.getName(), new String[]{TRACE, CORR, TOXIC});
 		fluids.put(INContent.fluidFluorinatedEffluent.getName(), new String[]{CORR, TOXIC, TRACE});

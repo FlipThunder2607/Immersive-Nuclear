@@ -129,7 +129,7 @@ public class GlowLayer
 		{
 			IBakedModel model = isMirrored ? mirrored[i] : normal[i];
 			if(model != null && i < lit.length && lit[i])
-				Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(state, model, 1, 1, 1, 1);
+				ModelLists.draw(state, model);
 		}
 		GlStateManager.disablePolygonOffset();
 		GlStateManager.disableBlend();

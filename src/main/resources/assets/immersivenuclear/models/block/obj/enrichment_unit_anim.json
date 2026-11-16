@@ -1,7 +1,6 @@
 {
   "textures": {
     "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
-    "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
     "#common_hazard": "immersivenuclear:blocks/common_hazard",
     "#conversion_led_green_off": "immersivenuclear:blocks/conversion_led_green_off",
     "#conversion_led_red_off": "immersivenuclear:blocks/conversion_led_red_off",

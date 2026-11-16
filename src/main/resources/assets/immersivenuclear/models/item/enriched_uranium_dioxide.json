@@ -1,0 +1,26 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "immersivenuclear:items/enriched_uranium_dioxide"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "immersivenuclear:grade": 0.3
+      },
+      "model": "immersivenuclear:item/enriched_uranium_dioxide_5"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:grade": 0.6
+      },
+      "model": "immersivenuclear:item/enriched_uranium_dioxide_20"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:grade": 0.9
+      },
+      "model": "immersivenuclear:item/enriched_uranium_dioxide_90"
+    }
+  ]
+}

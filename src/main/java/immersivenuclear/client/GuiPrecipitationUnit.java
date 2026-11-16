@@ -230,7 +230,7 @@ public class GuiPrecipitationUnit extends GuiIEContainerBase
 		float p = precipitated();
 		if(lh > 0)
 		{
-			fluid(INContent.fluidPurifiedSolution, WIN_X, surface, WIN_W, lh);
+			fluid(TilePrecipitationUnit.solutionOf(container.material), WIN_X, surface, WIN_W, lh);
 			rect(WIN_X, surface, WIN_W, lh, (int)(150 * p) << 24 | COL_SOLID & 0xffffff);
 			rect(WIN_X, surface, WIN_W, 1, 0x46ffffff);
 			// Solid specks swirling while it precipitates, settling low as it goes on

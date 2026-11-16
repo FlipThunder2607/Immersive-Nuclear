@@ -7,7 +7,6 @@
     },
     "textures": {
       "#arc_furnace_active": "immersiveengineering:models/arc_furnace_active",
-      "#base_handwheel": "immersivenuclear:blocks/base_handwheel",
       "#common_hazard": "immersivenuclear:blocks/common_hazard",
       "#conversion_led_green_off": "immersivenuclear:blocks/conversion_led_green_off",
       "#conversion_led_red_off": "immersivenuclear:blocks/conversion_led_red_off",
@@ -232,8 +231,8 @@
           "gui": {
             "translation": [
               -0.0282,
-              -0.1466,
-              -0.052
+              -0.1439,
+              -0.0504
             ],
             "scale": 0.0799,
             "rotation": [
@@ -250,7 +249,7 @@
           "ground": {
             "translation": [
               0.037,
-              -0.1419,
+              -0.1389,
               -0.0
             ],
             "scale": 0.0741
@@ -258,7 +257,7 @@
           "fixed": {
             "translation": [
               -0.0604,
-              -0.2311,
+              -0.2263,
               -0.0
             ],
             "scale": 0.1207,
@@ -271,8 +270,8 @@
           "thirdperson_righthand": {
             "translation": [
               0.023,
-              -0.01,
-              -0.1262
+              -0.0093,
+              -0.1237
             ],
             "scale": 0.065,
             "rotation": [
@@ -289,8 +288,8 @@
           "thirdperson_lefthand": {
             "translation": [
               0.023,
-              -0.01,
-              -0.1262
+              -0.0093,
+              -0.1237
             ],
             "scale": 0.065,
             "rotation": [
@@ -307,7 +306,7 @@
           "firstperson_righthand": {
             "translation": [
               0.0262,
-              -0.1419,
+              -0.1389,
               -0.0262
             ],
             "scale": 0.0741,
@@ -320,7 +319,7 @@
           "firstperson_lefthand": {
             "translation": [
               -0.0262,
-              -0.1419,
+              -0.1389,
               0.0262
             ],
             "scale": 0.0741,
@@ -340,8 +339,8 @@
           "gui": {
             "translation": [
               -0.0282,
-              -0.1466,
-              -0.052
+              -0.1439,
+              -0.0504
             ],
             "scale": 0.0799,
             "rotation": [
@@ -358,7 +357,7 @@
           "ground": {
             "translation": [
               0.037,
-              -0.1419,
+              -0.1389,
               -0.0
             ],
             "scale": 0.0741
@@ -366,7 +365,7 @@
           "fixed": {
             "translation": [
               -0.0604,
-              -0.2311,
+              -0.2263,
               -0.0
             ],
             "scale": 0.1207,
@@ -379,8 +378,8 @@
           "thirdperson_righthand": {
             "translation": [
               0.023,
-              -0.01,
-              -0.1262
+              -0.0093,
+              -0.1237
             ],
             "scale": 0.065,
             "rotation": [
@@ -397,8 +396,8 @@
           "thirdperson_lefthand": {
             "translation": [
               0.023,
-              -0.01,
-              -0.1262
+              -0.0093,
+              -0.1237
             ],
             "scale": 0.065,
             "rotation": [
@@ -415,7 +414,7 @@
           "firstperson_righthand": {
             "translation": [
               0.0262,
-              -0.1419,
+              -0.1389,
               -0.0262
             ],
             "scale": 0.0741,
@@ -428,7 +427,7 @@
           "firstperson_lefthand": {
             "translation": [
               -0.0262,
-              -0.1419,
+              -0.1389,
               0.0262
             ],
             "scale": 0.0741,

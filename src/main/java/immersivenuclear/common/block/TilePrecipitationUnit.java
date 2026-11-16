@@ -3,6 +3,10 @@ package immersivenuclear.common.block;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ISoundTile;
 import immersivenuclear.common.INContent;
+import immersivenuclear.common.INRawMaterials;
+import immersivenuclear.common.INAssembly;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraft.item.Item;
 import immersivenuclear.common.multiblock.MultiblockPrecipitationUnit;
 import immersivenuclear.common.multiblock.PrecipitationUnitStructure;
 import net.minecraft.block.Block;
@@ -48,6 +52,46 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	// Provisional values
 	/** The agitated tank holds 12000 mB (the user's choice); a batch is the full tank. */
 	public static final int BATCH_SOLUTION = 12000, AGENT_PER_BATCH = 6, CONCENTRATE_PER_BATCH = 24, EFFLUENT_PER_BATCH = 9000;
+	/**
+	 * The materials it precipitates (15/11/2026, line 3's raw materials in the nuclear scale): the uranium's purified solution
+	 * into the wet concentrate, the purified zirconium solution and the hafnium solution into their precipitates, the
+	 * boric acid solution into boric acid crystals (crystallised as it cools). One batch is one material: the tank only
+	 * takes another once it is empty. The effluent is the same chemical effluent for all (provisional amounts).
+	 */
+	public static final int MAT_URANIUM = 0, MAT_ZIRCONIUM = 1, MAT_HAFNIUM = 2, MAT_BORON = 3, MAT_SILICA = 4, MATERIALS = 5;
+	/** Per batch; silica (15/11/2026): the fluorosilicic acid neutralised, the pure silica settles (6 make one silicon). */
+	public static final int[] PRODUCT_PER_BATCH = {CONCENTRATE_PER_BATCH, 24, 12, 24, 24};
+
+	/** The solution of a material. */
+	public static Fluid solutionOf(int material)
+	{
+		switch(material)
+		{
+			case MAT_ZIRCONIUM: return INRawMaterials.fluidZirconiumSolutionPurified;
+			case MAT_HAFNIUM: return INRawMaterials.fluidHafniumSolution;
+			case MAT_BORON: return INRawMaterials.fluidBoricAcidSolution;
+			case MAT_SILICA: return INRawMaterials.fluidFluorosilicicAcid;
+			default: return INContent.fluidPurifiedSolution;
+		}
+	}
+
+	/** What a batch of a material gives. */
+	public static ItemStack productOf(int material)
+	{
+		int m = material < 0 || material >= MATERIALS ? MAT_URANIUM : material;
+		Item i = m == MAT_ZIRCONIUM ? INRawMaterials.itemZirconiumPrecipitate : m == MAT_HAFNIUM ? INRawMaterials.itemHafniumPrecipitate
+				: m == MAT_BORON ? INRawMaterials.itemBoricAcid : m == MAT_SILICA ? INAssembly.itemSilica : INContent.itemWetConcentrate;
+		return new ItemStack(i, PRODUCT_PER_BATCH[m]);
+	}
+
+	/** The material of a solution, or -1 for anything else. */
+	public static int materialOf(Fluid f)
+	{
+		for(int m = 0; m < MATERIALS; m++)
+			if(f != null && f == solutionOf(m))
+				return m;
+		return -1;
+	}
 	/** Room for a whole batch's effluent and some more, like the Metal Extractor's depleted effluent tank. */
 	public static final int EFFLUENT_CAPACITY = 16000, ENERGY_CAPACITY = 16000;
 	public static final int PRECIPITATE_TICKS = 1200, DEWATER_TICKS = 600, PUSH_PER_TICK = 100;
@@ -78,7 +122,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 					return stack.getItem() == INContent.itemPrecipitatingAgent;
 				case SLOT_SOLUTION_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
-					return in != null && in.getFluid() == INContent.fluidPurifiedSolution;
+					return in != null && materialOf(in.getFluid()) >= 0;
 				case SLOT_EFFLUENT_IN:
 					FluidStack held = FluidUtil.getFluidContained(stack);
 					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidEffluent);
@@ -109,7 +153,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 		@Override
 		public boolean canFillFluidType(FluidStack f)
 		{
-			return f != null && f.getFluid() == INContent.fluidPurifiedSolution;
+			return f != null && materialOf(f.getFluid()) >= 0;
 		}
 
 		@Override
@@ -135,6 +179,8 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	final Energy energy = new Energy();
 	int phase = PHASE_FILL, phaseTicks;
 	int state = STATE_IDLE;
+	/** The material of the batch in the tank (MAT_*). */
+	int material = MAT_URANIUM;
 	/** What happened this tick, for the state. */
 	boolean progressed, noPower, outputFull, noInput;
 	boolean redstoneInverted;
@@ -144,7 +190,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	boolean sentRunning;
 
 	// ---------- client ----------
-	public int clientPhase = PHASE_FILL, clientPhaseTicks, clientMixer;
+	public int clientPhase = PHASE_FILL, clientPhaseTicks, clientMixer, clientMaterial;
 	public boolean clientRunning;
 	/** The agitator: its turn in degrees and its speed (0 stopped .. 1 full), easing up and down; the level shown, easing. */
 	public float rotorAngle, rotorSpeed, shownLevel;
@@ -489,6 +535,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			noInput = true;
 			return;
 		}
+		material = Math.max(MAT_URANIUM, materialOf(mixer.getFluid() == null ? null : mixer.getFluid().getFluid()));
 		inventory.extractItem(SLOT_AGENT, AGENT_PER_BATCH, false);
 		next(PHASE_PRECIPITATE);
 		progressed = true;
@@ -501,7 +548,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	void dewater()
 	{
 		if(phaseTicks == 0 && (effluent.getCapacity() - effluent.getFluidAmount() < EFFLUENT_PER_BATCH
-				|| !canOutput(SLOT_CONCENTRATE, new ItemStack(INContent.itemWetConcentrate, CONCENTRATE_PER_BATCH))))
+				|| !canOutput(SLOT_CONCENTRATE, productOf(material))))
 		{
 			outputFull = true;
 			return;
@@ -513,7 +560,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			return;
 		}
 		moveDewatered(DEWATER_TICKS);
-		output(SLOT_CONCENTRATE, new ItemStack(INContent.itemWetConcentrate, CONCENTRATE_PER_BATCH));
+		output(SLOT_CONCENTRATE, productOf(material));
 		mixer.setFluid(null);
 		next(PHASE_FILL);
 	}
@@ -684,7 +731,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 	public int[] guiValues()
 	{
 		return new int[]{mixer.getFluidAmount(), effluent.getFluidAmount(), energy.getEnergyStored(), phase, phaseTicks, state,
-				redstoneInverted ? 1 : 0};
+				redstoneInverted ? 1 : 0, shownMaterial()};
 	}
 
 	// ---------- saving and syncing ----------
@@ -708,6 +755,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			phaseTicks = m.getInteger("phaseTicks");
 			state = m.getInteger("state");
 			redstoneInverted = m.getBoolean("redstoneInverted");
+			material = m.getInteger("material");   // absent in machines from before: 0, the uranium
 			lastMixer = mixer.getFluidAmount();
 		}
 	}
@@ -727,6 +775,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			m.setTag("inventory", inventory.serializeNBT());
 			m.setTag("mixer", mixer.writeToNBT(new NBTTagCompound()));
 			m.setTag("effluent", effluent.writeToNBT(new NBTTagCompound()));
+			m.setInteger("material", material);
 			m.setInteger("energy", energy.getEnergyStored());
 			m.setInteger("phase", phase);
 			m.setInteger("phaseTicks", phaseTicks);
@@ -799,7 +848,15 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			nbt.setInteger("phaseTicks", phaseTicks);
 			nbt.setBoolean("running", state == STATE_RUNNING);
 			nbt.setInteger("mixer", mixer.getFluidAmount());
+			nbt.setInteger("material", shownMaterial());
 		}
+	}
+
+	/** The material to show: the batch's once it runs; while it fills, the one coming in. */
+	int shownMaterial()
+	{
+		int m = mixer.getFluid() == null ? -1 : materialOf(mixer.getFluid().getFluid());
+		return phase == PHASE_FILL && m >= 0 ? m : material;
 	}
 
 	void readClient(NBTTagCompound nbt)
@@ -814,6 +871,7 @@ public class TilePrecipitationUnit extends TileEntity implements MachinePartTile
 			clientPhase = p;
 			clientRunning = nbt.getBoolean("running");
 			clientMixer = nbt.getInteger("mixer");
+			clientMaterial = nbt.getInteger("material");
 		}
 	}
 

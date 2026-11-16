@@ -197,7 +197,7 @@ public class GuiChemicalSeparator extends GuiIEContainerBase
 		{
 			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			blend(true);
-			fluid(st == 0 ? INContent.fluidCrudeSolution : INContent.fluidStrippingSolution, cx - MIX_WIN_R, cy - MIX_WIN_R, 2 * MIX_WIN_R + 1, 2 * MIX_WIN_R + 1, 0xffffffff);
+			fluid(st == 0 ? immersivenuclear.common.block.TileChemicalSeparator.crudeOf(container.values[ContainerChemicalSeparator.V_A_M]) : INContent.fluidStrippingSolution, cx - MIX_WIN_R, cy - MIX_WIN_R, 2 * MIX_WIN_R + 1, 2 * MIX_WIN_R + 1, 0xffffffff);
 			fluid(INContent.fluidSolvent, cx - MIX_WIN_R, cy - MIX_WIN_R, 2 * MIX_WIN_R + 1, 2 * MIX_WIN_R + 1, st == 0 ? 0x90ffffff : 0x90ffb04a);
 			blend(false);
 		}

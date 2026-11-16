@@ -1,0 +1,68 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "immersivenuclear:items/component_tape"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.0625
+      },
+      "model": "immersivenuclear:item/component_tape_resistor"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.125
+      },
+      "model": "immersivenuclear:item/component_tape_capacitor"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.1875
+      },
+      "model": "immersivenuclear:item/component_tape_ferrite_core"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.25
+      },
+      "model": "immersivenuclear:item/component_tape_inductor"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.3125
+      },
+      "model": "immersivenuclear:item/component_tape_diode"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.375
+      },
+      "model": "immersivenuclear:item/component_tape_transistor"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.4375
+      },
+      "model": "immersivenuclear:item/component_tape_integrated_circuit"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.5
+      },
+      "model": "immersivenuclear:item/component_tape_crystal_oscillator"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.5625
+      },
+      "model": "immersivenuclear:item/component_tape_relay"
+    },
+    {
+      "predicate": {
+        "immersivenuclear:component": 0.625
+      },
+      "model": "immersivenuclear:item/component_tape_nixie_tube"
+    }
+  ]
+}

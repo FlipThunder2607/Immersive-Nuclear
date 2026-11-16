@@ -91,18 +91,18 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		{
 			switch(slot)
 			{
-				case SLOT_URANIUM: return isUraniumPowder(stack);
+				case SLOT_URANIUM: return solidsMaterial(stack) >= 0;
 				case SLOT_REAGENT: return stack.getItem() == INContent.itemReagent;
 				case SLOT_WATER_IN:
 					FluidStack in = FluidUtil.getFluidContained(stack);
-					return in != null && in.getFluid() == FluidRegistry.WATER;
+					return in != null && isBatchLiquid(in.getFluid());
 				case SLOT_RECYCLED_IN:
 					FluidStack liquor = FluidUtil.getFluidContained(stack);
 					return liquor != null && isRecycled(liquor);
 				case SLOT_SLURRY_IN:
 					// An empty container, or one that already holds slurry
 					FluidStack held = FluidUtil.getFluidContained(stack);
-					return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidSlurry);
+					return FluidUtil.getFluidHandler(stack) != null && (held == null || outputMaterial(held.getFluid()) >= 0);
 				default: return false; // the two outputs only take what the machine puts there
 			}
 		}
@@ -125,7 +125,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		@Override
 		public boolean canFillFluidType(FluidStack fluid)
 		{
-			return fluid != null && fluid.getFluid() == FluidRegistry.WATER;
+			return fluid != null && isBatchLiquid(fluid.getFluid());
 		}
 
 		@Override
@@ -163,6 +163,8 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	int state = STATE_IDLE;
 	/** The batch: its step, the ticks in it, the liquid in the reactor (mB), the recycled liquor it takes (mB). */
 	int phase = PHASE_IDLE, phaseTicks, reactor, batchRecycled;
+	/** The material of the batch in the reactor (MAT_*). */
+	int material = MAT_URANIUM;
 	/** What moved this tick: water into the reactor, slurry out of it. */
 	boolean filling, draining;
 	/** What the client last got for the reactor window (see RenderChemicalProcessor); sent every SYNC_TICKS when it changes. */
@@ -172,7 +174,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	public static final int MIX_STEPS = 32;
 
 	// ---------- client only: the reactor seen through the windows of the model, and the sounds ----------
-	public int clientReactor, clientPhase, clientMix;
+	public int clientReactor, clientPhase, clientMix, clientMaterial;
 	public boolean clientFilling, clientDraining, clientRunning;
 	/** Smoothed level the renderer draws, 0..1 of the reactor. */
 	public float shownLevel;
@@ -291,6 +293,78 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 	public static int reagentFor(int recycled)
 	{
 		return BATCH_SOLIDS - Math.round(REAGENT_SAVED * recycled / (float)MAX_RECYCLED);
+	}
+
+	/**
+	 * The materials it leaches (15/11/2026, line 3's raw materials in the nuclear scale): the uranium dusts (and the
+	 * fluorination ash) into the slurry for the Filter Press, as always; zircon dust into the zirconium solution (straight to the
+	 * Chemical Separation, no Filter Press: one step less); borax dust into the boric acid solution (for the Precipitation Unit).
+	 * Same reagent and water for all; one batch is one material, and the output tank only takes another once it is empty.
+	 */
+	public static final int MAT_URANIUM = 0, MAT_ZIRCONIUM = 1, MAT_BORON = 2, MAT_SILICA = 3, MATERIALS = 4;
+
+	/**
+	 * The liquid a batch of a material takes (15/11/2026): water for all, but quartz: quartz dust is dissolved in HYDROFLUORIC
+	 * ACID (line 2's) into fluorosilicic acid, which the Precipitation Unit turns into pure silica (the silicon's chain). The acid
+	 * comes in by the water port into the water's tank; a silica batch takes no reagent and no recycled liquor.
+	 */
+	public static net.minecraftforge.fluids.Fluid liquidOf(int material)
+	{
+		return material == MAT_SILICA ? INContent.fluidHydrofluoricAcid : FluidRegistry.WATER;
+	}
+
+	/** Water or hydrofluoric acid: what the water's tank takes. */
+	public static boolean isBatchLiquid(net.minecraftforge.fluids.Fluid f)
+	{
+		return f == FluidRegistry.WATER || f != null && f == INContent.fluidHydrofluoricAcid;
+	}
+
+	/** The material of a solid for the hopper, or -1. */
+	public static int solidsMaterial(ItemStack stack)
+	{
+		if(isUraniumPowder(stack))
+			return MAT_URANIUM;
+		if(stack.isEmpty())
+			return -1;
+		for(int id : OreDictionary.getOreIDs(stack))
+		{
+			String name = OreDictionary.getOreName(id);
+			if("dustZircon".equals(name))
+				return MAT_ZIRCONIUM;
+			if("dustBorax".equals(name))
+				return MAT_BORON;
+			if("dustQuartz".equals(name))
+				return MAT_SILICA;
+		}
+		return -1;
+	}
+
+	/** What a batch of a material leaves in the output tank. */
+	public static net.minecraftforge.fluids.Fluid outputOf(int material)
+	{
+		return material == MAT_ZIRCONIUM ? immersivenuclear.common.INRawMaterials.fluidZirconiumSolution
+				: material == MAT_BORON ? immersivenuclear.common.INRawMaterials.fluidBoricAcidSolution
+				: material == MAT_SILICA ? immersivenuclear.common.INRawMaterials.fluidFluorosilicicAcid : INContent.fluidSlurry;
+	}
+
+	/** The material of an output fluid, or -1. */
+	public static int outputMaterial(net.minecraftforge.fluids.Fluid f)
+	{
+		for(int m = 0; m < MATERIALS; m++)
+			if(f != null && f == outputOf(m))
+				return m;
+		return -1;
+	}
+
+	/** The batch's material and the output tank's (MAT_*; the tank may still empty an older batch). */
+	public int getMaterial()
+	{
+		return material;
+	}
+
+	public int getOutputMaterial()
+	{
+		return slurry.getFluid() == null ? material : Math.max(0, outputMaterial(slurry.getFluid().getFluid()));
 	}
 
 	public static boolean isUraniumPowder(ItemStack stack)
@@ -598,15 +672,20 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		{
 			case PHASE_IDLE:
 				// A new batch: the hopper doses the solids (less reagent with recycled liquor), then the reactor fills
-				int share = recycledShare(recycled.getFluidAmount());
-				int reagent = reagentFor(share, recycled.getFluid());
-				if(inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < reagent
-						|| water.getFluidAmount() + share < FILL_PER_TICK)
+				int next = solidsMaterial(inventory.getStackInSlot(SLOT_URANIUM));
+				boolean acid = next == MAT_SILICA;
+				int share = acid ? 0 : recycledShare(recycled.getFluidAmount());
+				int reagent = acid ? 0 : reagentFor(share, recycled.getFluid());
+				boolean liquidOk = next >= 0 && water.getFluid() != null && water.getFluid().getFluid() == liquidOf(next);
+				if(next < 0 || inventory.getStackInSlot(SLOT_URANIUM).getCount() < BATCH_SOLIDS || inventory.getStackInSlot(SLOT_REAGENT).getCount() < reagent
+						|| !liquidOk && share < BATCH_WATER || (liquidOk ? water.getFluidAmount() : 0) + share < FILL_PER_TICK)
 					state = STATE_NO_INPUT;
-				else if(slurry.getCapacity() - slurry.getFluidAmount() < BATCH_WATER)
-					state = STATE_OUTPUT_FULL;
+				else if(slurry.getCapacity() - slurry.getFluidAmount() < BATCH_WATER
+						|| slurry.getFluid() != null && slurry.getFluid().getFluid() != outputOf(next))
+					state = STATE_OUTPUT_FULL;    // another material still in the output tank: it has to empty first
 				else
 				{
+					material = next;
 					inventory.extractItem(SLOT_URANIUM, BATCH_SOLIDS, false);
 					inventory.extractItem(SLOT_REAGENT, reagent, false);
 					batchRecycled = share;
@@ -650,7 +729,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 					state = STATE_NO_POWER;
 				else
 				{
-					int out = slurry.fillInternal(new FluidStack(INContent.fluidSlurry, Math.min(DRAIN_PER_TICK, reactor)), true);
+					int out = slurry.fillInternal(new FluidStack(outputOf(material), Math.min(DRAIN_PER_TICK, reactor)), true);
 					reactor -= out;
 					draining = out > 0;
 					phaseTicks++;
@@ -814,6 +893,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 			slurry.readFromNBT(m.getCompoundTag("slurry"));
 			energy.set(m.getInteger("energy"));
 			phase = m.getInteger("phase");
+			material = m.getInteger("material");   // absent in machines from before: 0, the uranium
 			phaseTicks = m.getInteger("phaseTicks");
 			reactor = m.getInteger("reactor");
 			state = m.getInteger("state");
@@ -840,6 +920,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 			m.setTag("slurry", slurry.writeToNBT(new NBTTagCompound()));
 			m.setInteger("energy", energy.getEnergyStored());
 			m.setInteger("phase", phase);
+			m.setInteger("material", material);
 			m.setInteger("phaseTicks", phaseTicks);
 			m.setInteger("reactor", reactor);
 			m.setInteger("state", state);
@@ -914,6 +995,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 			nbt.setBoolean("filling", filling);
 			nbt.setBoolean("draining", draining);
 			nbt.setBoolean("running", state == STATE_RUNNING);
+			nbt.setInteger("material", material);
 		}
 	}
 
@@ -926,6 +1008,7 @@ public class TileChemicalProcessor extends TileEntity implements MachinePartTile
 		clientFilling = nbt.getBoolean("filling");
 		clientDraining = nbt.getBoolean("draining");
 		clientRunning = nbt.getBoolean("running");
+		clientMaterial = nbt.getInteger("material");
 	}
 
 	/** The machine's own sound runs while the agitator turns. */

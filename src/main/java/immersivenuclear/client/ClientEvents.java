@@ -80,8 +80,10 @@ public class ClientEvents
 				INContent.itemElectrodeLeadSilver, INContent.itemElectrodeElectrum, INContent.itemQuicklime, INContent.itemCake, INContent.itemPrecipitatingAgent,
 				INContent.itemWetConcentrate, INContent.itemYellowcake, INContent.itemAgglomerate, INContent.itemConcentrateDrum,
 				INContent.itemAgglomerateBlock, INContent.itemAgglomerateTile, INContent.itemAgglomerateBricks, INContent.itemAgglomerateStairs, INContent.itemAgglomerateSlab,
-				INContent.itemLeadedGlass, INContent.itemRemoteManipulator, INContent.itemPrecisionBearing, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemFluorinationAsh, INContent.itemDepletedUraniumOxide, INContent.itemDepletedUraniumIngot, INContent.itemPlaster, INContent.itemPlasterTile, INContent.itemPlasterBricks, INContent.itemPlasterSlab, INContent.itemPlasterStairs,
+				INContent.itemLeadedGlass, INContent.itemRemoteManipulator, INContent.itemPrecisionBearing, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemUraniumDioxide, INContent.itemGreenSalt, INContent.itemFluorinationAsh, INContent.itemDepletedUraniumOxide, INContent.itemDepletedUraniumIngot, INContent.itemPlaster, INContent.itemPlasterTile, INContent.itemPlasterBricks, INContent.itemPlasterSlab, INContent.itemPlasterStairs,
 				INContent.itemFluoriteOre})
+			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+		for(Item item : immersivenuclear.common.INRawMaterials.modelItems())
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 		for(Item item : INContent.itemEngineering)
 			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
@@ -138,6 +140,7 @@ public class ClientEvents
 	@SubscribeEvent
 	public static void onModelBake(ModelBakeEvent event)
 	{
+		ModelLists.clear();
 		RenderFilterPress.bake();
 		RenderMetalExtractor.bake();
 		RenderPrecipitationUnit.bake();

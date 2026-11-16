@@ -1,5 +1,7 @@
 package immersivenuclear.client.jei;
 
+import immersivenuclear.common.block.TileChemicalProcessor;
+
 import java.util.Collections;
 
 import immersivenuclear.client.GuiChemicalProcessor;
@@ -33,6 +35,7 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeCategories(new MetalExtractorCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new PrecipitationUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new IndustrialDryerCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new INWorkbenchCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new SulfuricAcidUnitCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new HFKilnCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new DeconversionUnitCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -48,14 +51,16 @@ public class INJeiPlugin implements IModPlugin
 				|| f == INContent.fluidSludge || f == INContent.fluidDepletedEffluent || f == INContent.fluidCondensate
 				|| f == INContent.fluidSulfuricAcid || f == INContent.fluidSteam || f == INContent.fluidHydrofluoricAcid
 				|| f == INContent.fluidHydrogen || f == INContent.fluidOxygen || f == INContent.fluidUF6 || f == INContent.fluidFluorinatedEffluent
-				|| f == INContent.fluidUF6Low || f == INContent.fluidUF6Medium || f == INContent.fluidUF6High || f == INContent.fluidUF6Depleted;
+				|| f == INContent.fluidUF6Low || f == INContent.fluidUF6Medium || f == INContent.fluidUF6High || f == INContent.fluidUF6VeryHigh || f == INContent.fluidUF6Depleted;
 	}
 
 	@Override
 	public void register(IModRegistry registry)
 	{
 		registry.addRecipes(java.util.Arrays.asList(new ChemicalProcessorRecipe(false), new ChemicalProcessorRecipe(true),
-				new ChemicalProcessorRecipe(false, true)), ChemicalProcessorCategory.UID);
+				new ChemicalProcessorRecipe(false, true), new ChemicalProcessorRecipe(false, false, TileChemicalProcessor.MAT_ZIRCONIUM),
+				new ChemicalProcessorRecipe(false, false, TileChemicalProcessor.MAT_BORON),
+				new ChemicalProcessorRecipe(false, false, TileChemicalProcessor.MAT_SILICA)), ChemicalProcessorCategory.UID);
 		ItemStack machine = new ItemStack(INContent.itemChemicalProcessor);
 		registry.addRecipeCatalyst(machine, ChemicalProcessorCategory.UID);
 		// Clicking the arrow of the interface shows the recipes, like IE's machines
@@ -68,7 +73,8 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeClickArea(GuiFilterPress.class, GuiFilterPress.PUMP_X, GuiFilterPress.PUMP_Y, GuiFilterPress.PUMP_W, GuiFilterPress.PUMP_H, FilterPressCategory.UID);
 		registry.addRecipeClickArea(GuiFilterPress.class, GuiFilterPress.PRESS_X, GuiFilterPress.PRESS_Y, GuiFilterPress.PRESS_W, GuiFilterPress.PRESS_H, FilterPressCategory.UID);
 		registry.addIngredientInfo(press, VanillaTypes.ITEM, "jei.immersivenuclear.filter_press.info");
-		registry.addRecipes(Collections.singletonList(new ChemicalSeparatorRecipe()), ChemicalSeparatorCategory.UID);
+		registry.addRecipes(java.util.Arrays.asList(new ChemicalSeparatorRecipe(), new ChemicalSeparatorRecipe(immersivenuclear.common.block.TileChemicalSeparator.MAT_ZIRCONIUM)),
+				ChemicalSeparatorCategory.UID);
 		ItemStack separator = new ItemStack(INContent.itemChemicalSeparator);
 		registry.addRecipeCatalyst(separator, ChemicalSeparatorCategory.UID);
 		for(int[] s : GuiChemicalSeparator.SETTLERS)
@@ -81,7 +87,10 @@ public class INJeiPlugin implements IModPlugin
 		// Clicking the vat of the interface shows the recipe
 		registry.addRecipeClickArea(GuiMetalExtractor.class, GuiMetalExtractor.VAT_X, GuiMetalExtractor.VAT_Y, GuiMetalExtractor.VAT_W, GuiMetalExtractor.VAT_H, MetalExtractorCategory.UID);
 		registry.addIngredientInfo(extractor, VanillaTypes.ITEM, "jei.immersivenuclear.metal_extractor.info");
-		registry.addRecipes(Collections.singletonList(new PrecipitationUnitRecipe()), PrecipitationUnitCategory.UID);
+		java.util.List<PrecipitationUnitRecipe> precipitationRecipes = new java.util.ArrayList<>();
+		for(int m = 0; m < immersivenuclear.common.block.TilePrecipitationUnit.MATERIALS; m++)
+			precipitationRecipes.add(new PrecipitationUnitRecipe(m));
+		registry.addRecipes(precipitationRecipes, PrecipitationUnitCategory.UID);
 		ItemStack precipitation = new ItemStack(INContent.itemPrecipitationUnit);
 		registry.addRecipeCatalyst(precipitation, PrecipitationUnitCategory.UID);
 		// Clicking the agitated tank of the interface shows the recipe
@@ -89,6 +98,8 @@ public class INJeiPlugin implements IModPlugin
 				GuiPrecipitationUnit.MIXER_H, PrecipitationUnitCategory.UID);
 		registry.addIngredientInfo(precipitation, VanillaTypes.ITEM, "jei.immersivenuclear.precipitation_unit.info");
 		registry.addRecipes(Collections.singletonList(new IndustrialDryerRecipe()), IndustrialDryerCategory.UID);
+		registry.addRecipes(INWorkbenchCategory.recipes(), INWorkbenchCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(immersivenuclear.common.INAssembly.itemINWorkbench), INWorkbenchCategory.UID);
 		ItemStack dryer = new ItemStack(INContent.itemIndustrialDryer);
 		registry.addRecipeCatalyst(dryer, IndustrialDryerCategory.UID);
 		// Clicking the drying chamber of the interface shows the recipe
@@ -143,7 +154,11 @@ public class INJeiPlugin implements IModPlugin
 		registry.addRecipeClickArea(immersivenuclear.client.GuiElectrolyzer.class, immersivenuclear.client.GuiElectrolyzer.STACK_X, immersivenuclear.client.GuiElectrolyzer.STACK_Y,
 				immersivenuclear.client.GuiElectrolyzer.STACK_W, immersivenuclear.client.GuiElectrolyzer.STACK_H, ElectrolyzerCategory.UID);
 		for(Item item : new Item[]{INContent.itemFluoriteOre, INContent.itemFluorite, INContent.itemFluoriteDust, INContent.itemGypsum, INContent.itemPlaster,
-				INContent.itemFluorinationAsh, INContent.itemDepletedUraniumOxide, INContent.itemDepletedUraniumIngot})
+				INContent.itemUraniumDioxide, INContent.itemGreenSalt, INContent.itemFluorinationAsh, INContent.itemDepletedUraniumOxide, INContent.itemDepletedUraniumIngot})
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
+		for(Item item : immersivenuclear.common.INRawMaterials.infoItems())
+			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
+		for(Item item : immersivenuclear.common.INAssembly.infoItems())
 			registry.addIngredientInfo(new ItemStack(item), VanillaTypes.ITEM, "jei." + item.getTranslationKey().substring(5) + ".info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemConcentrateDrum), VanillaTypes.ITEM, "jei.immersivenuclear.concentrate_drum.info");
 		registry.addIngredientInfo(new ItemStack(INContent.itemAgglomerateBlock), VanillaTypes.ITEM, "jei.immersivenuclear.agglomerate_block.info");

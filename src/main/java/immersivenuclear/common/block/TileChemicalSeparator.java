@@ -82,7 +82,60 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 	NBTTagCompound originalNbt;
 
 	// ---------- master only ----------
-	final FluidTank crude = input(TANK_CAPACITY, () -> INContent.fluidCrudeSolution);
+	/**
+	 * The materials it separates (15/11/2026): the uranium's crude solution as always (chemical effluent and purified
+	 * uranium solution out), and the zirconium solution straight from the Chemical Processor: the hafnium leaves settler A by the effluent
+	 * port as the hafnium solution, the zirconium comes out of settler B as the purified zirconium solution. Each settler
+	 * and the loaded solvent line keep their batch's material, so two materials never meet; same solvent and stripping
+	 * solution for both.
+	 */
+	public static final int MAT_URANIUM = 0, MAT_ZIRCONIUM = 1, MATERIALS = 2;
+
+	public static Fluid crudeOf(int m)
+	{
+		return m == MAT_ZIRCONIUM ? immersivenuclear.common.INRawMaterials.fluidZirconiumSolution : INContent.fluidCrudeSolution;
+	}
+
+	public static Fluid effluentOf(int m)
+	{
+		return m == MAT_ZIRCONIUM ? immersivenuclear.common.INRawMaterials.fluidHafniumSolution : INContent.fluidEffluent;
+	}
+
+	public static Fluid purifiedOf(int m)
+	{
+		return m == MAT_ZIRCONIUM ? immersivenuclear.common.INRawMaterials.fluidZirconiumSolutionPurified : INContent.fluidPurifiedSolution;
+	}
+
+	/** The material of a fluid in one of the three roles (crude, effluent, purified), or -1. */
+	public static int materialOf(Fluid f, java.util.function.IntFunction<Fluid> role)
+	{
+		for(int m = 0; m < MATERIALS; m++)
+			if(f != null && f == role.apply(m))
+				return m;
+		return -1;
+	}
+
+	static int materialIn(FluidTank t, java.util.function.IntFunction<Fluid> role)
+	{
+		return t.getFluid() == null ? 0 : Math.max(0, materialOf(t.getFluid().getFluid(), role));
+	}
+
+	final FluidTank crude = new FluidTank(TANK_CAPACITY)
+	{
+		@Override
+		public boolean canFillFluidType(FluidStack f)
+		{
+			return f != null && materialOf(f.getFluid(), TileChemicalSeparator::crudeOf) >= 0;
+		}
+
+		@Override
+		protected void onContentsChanged()
+		{
+			markDirty();
+		}
+	};
+	/** The material of the solvent waiting in the loaded line (MAT_*). */
+	int loadedMaterial = MAT_URANIUM;
 	final FluidTank stripping = input(TANK_CAPACITY, () -> INContent.fluidStrippingSolution);
 	/** Solvent reservoir: the initial charge, the top-ups (up to MAKEUP_LEVEL) and the clean solvent coming back from settler B. */
 	final FluidTank solvent = new FluidTank(SOLVENT_CAPACITY)
@@ -129,10 +182,10 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 			FluidStack held = FluidUtil.getFluidContained(stack);
 			switch(slot)
 			{
-				case SLOT_CRUDE_IN: return held != null && held.getFluid() == INContent.fluidCrudeSolution;
+				case SLOT_CRUDE_IN: return held != null && materialOf(held.getFluid(), TileChemicalSeparator::crudeOf) >= 0;
 				case SLOT_STRIPPING_IN: return held != null && held.getFluid() == INContent.fluidStrippingSolution;
-				case SLOT_EFFLUENT_IN: return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidEffluent);
-				case SLOT_PURIFIED_IN: return FluidUtil.getFluidHandler(stack) != null && (held == null || held.getFluid() == INContent.fluidPurifiedSolution);
+				case SLOT_EFFLUENT_IN: return FluidUtil.getFluidHandler(stack) != null && (held == null || materialOf(held.getFluid(), TileChemicalSeparator::effluentOf) >= 0);
+				case SLOT_PURIFIED_IN: return FluidUtil.getFluidHandler(stack) != null && (held == null || materialOf(held.getFluid(), TileChemicalSeparator::purifiedOf) >= 0);
 				default: return false; // outputs only take what the machine puts there
 			}
 		}
@@ -184,6 +237,8 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 	static class Settler
 	{
 		int phase = PHASE_FILL, ticks, top, bottom;
+		/** The batch's material (MAT_*). */
+		int material = MAT_URANIUM;
 
 		int total()
 		{
@@ -197,6 +252,7 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 			n.setInteger("ticks", ticks);
 			n.setInteger("top", top);
 			n.setInteger("bottom", bottom);
+			n.setInteger("material", material);
 			return n;
 		}
 
@@ -206,6 +262,7 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 			ticks = n.getInteger("ticks");
 			top = n.getInteger("top");
 			bottom = n.getInteger("bottom");
+			material = n.getInteger("material");   // absent before: 0, the uranium
 		}
 	}
 
@@ -481,7 +538,10 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 		if(a.phase == PHASE_FILL)
 		{
 			int needAq = Math.min(A_AQUEOUS_RATE, A_AQUEOUS - a.bottom), needSol = Math.min(A_SOLVENT_RATE, A_SOLVENT - a.top);
-			if(crude.getFluidAmount() >= needAq && solvent.getFluidAmount() >= needSol)
+			int inTank = crude.getFluid() == null ? -1 : materialOf(crude.getFluid().getFluid(), TileChemicalSeparator::crudeOf);
+			if(a.bottom == 0 && a.top == 0 && inTank >= 0)
+				a.material = inTank;
+			if(inTank == a.material && crude.getFluidAmount() >= needAq && solvent.getFluidAmount() >= needSol)
 			{
 				if(energy.use(MIXER_ENERGY))
 				{
@@ -504,7 +564,11 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 		}
 		else
 		{
-			int[] moved = drain(a, effluent, INContent.fluidEffluent, loaded, INContent.fluidSolvent);
+			// the loaded line takes this batch's solvent only if it holds nothing of another material
+			int[] moved = loaded.getFluidAmount() > 0 && loadedMaterial != a.material ? new int[]{0, 0}
+					: drain(a, effluent, effluentOf(a.material), loaded, INContent.fluidSolvent);
+			if(moved != null && moved[1] > 0)
+				loadedMaterial = a.material;
 			if(moved == null)
 				noPower = true;
 			else
@@ -520,7 +584,9 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 		if(b.phase == PHASE_FILL)
 		{
 			int needSol = Math.min(B_SOLVENT_RATE, B_SOLVENT - b.top), needAq = Math.min(B_AQUEOUS_RATE, B_AQUEOUS - b.bottom);
-			if(loaded.getFluidAmount() >= needSol && stripping.getFluidAmount() >= needAq)
+			if(b.bottom == 0 && b.top == 0 && loaded.getFluidAmount() > 0)
+				b.material = loadedMaterial;
+			if(loadedMaterial == b.material && loaded.getFluidAmount() >= needSol && stripping.getFluidAmount() >= needAq)
 			{
 				if(energy.use(MIXER_ENERGY))
 				{
@@ -547,7 +613,7 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 		}
 		else
 		{
-			int[] moved = drain(b, purified, INContent.fluidPurifiedSolution, solvent, INContent.fluidSolvent);
+			int[] moved = drain(b, purified, purifiedOf(b.material), solvent, INContent.fluidSolvent);
 			if(moved == null)
 				noPower = true;
 			else
@@ -758,7 +824,8 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 		return new int[]{crude.getFluidAmount(), stripping.getFluidAmount(), solvent.getFluidAmount(), effluent.getFluidAmount(),
 				purified.getFluidAmount(), loaded.getFluidAmount(), energy.getEnergyStored(), state, redstoneInverted ? 1 : 0,
 				settlerA.phase, settlerA.ticks, settlerA.top, settlerA.bottom, settlerB.phase, settlerB.ticks, settlerB.top, settlerB.bottom,
-				moving()};
+				moving(), materialIn(crude, TileChemicalSeparator::crudeOf), materialIn(effluent, TileChemicalSeparator::effluentOf),
+				materialIn(purified, TileChemicalSeparator::purifiedOf), settlerA.material, settlerB.material};
 	}
 
 	// ---------- saving and syncing ----------
@@ -781,6 +848,7 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 			effluent.readFromNBT(m.getCompoundTag("effluent"));
 			purified.readFromNBT(m.getCompoundTag("purified"));
 			loaded.readFromNBT(m.getCompoundTag("loaded"));
+			loadedMaterial = m.getInteger("loadedMaterial");
 			settlerA.read(m.getCompoundTag("settlerA"));
 			settlerB.read(m.getCompoundTag("settlerB"));
 			energy.set(m.getInteger("energy"));
@@ -808,6 +876,7 @@ public class TileChemicalSeparator extends TileEntity implements MachinePartTile
 			m.setTag("effluent", effluent.writeToNBT(new NBTTagCompound()));
 			m.setTag("purified", purified.writeToNBT(new NBTTagCompound()));
 			m.setTag("loaded", loaded.writeToNBT(new NBTTagCompound()));
+			m.setInteger("loadedMaterial", loadedMaterial);
 			m.setTag("settlerA", settlerA.write());
 			m.setTag("settlerB", settlerB.write());
 			m.setInteger("energy", energy.getEnergyStored());

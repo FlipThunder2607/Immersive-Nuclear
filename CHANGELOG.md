@@ -11,6 +11,21 @@ the release title always carry the same version.
 ## [Unreleased]
 
 ### Added
+- **Supplies (line 0):** zircon, borax, tin (cassiterite) and chromite ores with their veins and Excavator veins; zirconium, nuclear zirconium, hafnium, tin, ferroboron, ferrochrome, stainless steel, borated steel, Zircaloy and depleted uranium ingots, nuggets, plates, storage and sheet metal blocks; the alloys made in IE's Arc Furnace (Zircaloy with tin and ferrochrome).
+- **Line 1 runs more materials:** the Chemical Processing Unit, Chemical Separation and Precipitation Unit take zircon, borax and hafnium besides uranium, one material per batch.
+- **Silicon:** quartz dust dissolved in hydrofluoric acid (Chemical Processing Unit) into fluorosilicic acid, precipitated into pure silica (Precipitation Unit), reduced with coke in IE's Arc Furnace into silicon, sliced into wafers by IE's Metal Press with the new wafer mold. Ore names shared with Immersive Intelligence.
+- **Ferrite:** iron and nickel dust in IE's Arc Furnace.
+- **IN Workbench:** one block that takes two, like IE's Engineer's Workbench. With a sepia blueprint on its drafting board it makes, by hand, the ten electronic components (resistor, capacitor, ferrite core, inductor, diode, transistor, integrated circuit, crystal oscillator, relay, Nixie tube), the empty reel and the component tape, the electronic and relay modules, the nine Modular Assembly Station modules and the four jigs. Choices it cannot make are dimmed, their tooltip lists what is missing. With no item chosen it loads the component tape (up to 128 of one component). JEI page for its recipes.
+- **Sepia blueprints** (crafted like IE's), **component tapes**, **station modules** and **jigs** for the coming Modular Assembly Station; the station-only blueprints list what they will make.
+- **Fuel line items:** enriched uranium dioxide, green and sintered pellets, Zircaloy tube (IE's Metal Press with the tube mold), fuel rod, fuel element and hafnium control rod, carrying their enrichment grade.
+
+### Changed
+- The electronic module and the relay module are now made on the IN Workbench (no longer on the crafting table).
+- New Conversion Unit model.
+- JEI and the creative tab list the new items by kind.
+
+### Fixed
+- The Control Engineering Block and the Remote Manipulator recipes asked for ore names that do not exist (IE's electron tube is `electronTube`; IE's steel and iron components have no ore name).
 - **Computers, first appearance (models only, no function yet):** six single-block devices you can place on the ground and that face you (Card Reader, Card Punch, Paper Tape Reader/Punch, CRT Terminal, Chart Recorder, Wall Panel), ten multiblocks formed with the Engineer's Hammer (Mainframe, I/O Processor, Memory Cabinet, Disk Unit, Tape Unit, Operator Console, Printer, Teletype, Power Cabinet, Data Cabinet), the Data Cable Coil Block, the Power Wire (laid with the Link Cable through the conduits, from one computer port to another; connections only for now) and 28 panel modules (commands, indicators and the universal text/colour ones) in the creative tab and JEI.
 - **Conduit:** the computers' cable tray. It connects by itself to the conduits on all six sides and to the back of the devices, runs vertically as a closed duct, takes a support on the face it was placed on, and the Engineer's Hammer cuts and rejoins each connection. No wires yet.
 

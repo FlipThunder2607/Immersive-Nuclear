@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "immersivenuclear:zircaloy_block"
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:zircaloy_ingot",
+    "count": 9
+  }
+}

@@ -36,9 +36,9 @@ public class ContainerPrecipitationUnit extends Container
 	final TilePrecipitationUnit tile;
 	/** Client copies of the master's values (on the server they are read straight from the tile). */
 	public final FluidTank effluent = new FluidTank(TilePrecipitationUnit.EFFLUENT_CAPACITY);
-	public int mixer, energy, phase, phaseTicks, state;
+	public int mixer, energy, phase, phaseTicks, state, material;
 	public boolean redstoneInverted;
-	final int[] sent = {-1, -1, -1, -1, -1, -1, -1};
+	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1};
 
 	public ContainerPrecipitationUnit(InventoryPlayer playerInv, TilePrecipitationUnit tile)
 	{
@@ -88,6 +88,7 @@ public class ContainerPrecipitationUnit extends Container
 			case 4: phaseTicks = data; break;
 			case 5: state = data; break;
 			case 6: redstoneInverted = data != 0; break;
+			case 7: material = data; break;
 		}
 	}
 

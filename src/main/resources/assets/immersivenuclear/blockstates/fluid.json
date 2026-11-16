@@ -1,125 +1,167 @@
 {
-    "forge_marker": 1,
-    "variants": {
-        "uranium_slurry": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "uranium_slurry"
-            }
-        },
-        "crude_uranium_solution": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "crude_uranium_solution"
-            }
-        },
-        "extraction_solvent": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "extraction_solvent"
-            }
-        },
-        "stripping_solution": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "stripping_solution"
-            }
-        },
-        "purified_uranium_solution": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "purified_uranium_solution"
-            }
-        },
-        "chemical_effluent": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "chemical_effluent"
-            }
-        },
-        "neutralized_sludge": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "neutralized_sludge"
-            }
-        },
-        "depleted_effluent": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "depleted_effluent"
-            }
-        },
-        "process_condensate": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "process_condensate"
-            }
-        },
-        "sulfuric_acid": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "sulfuric_acid"
-            }
-        },
-        "steam": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "steam"
-            }
-        },
-        "hydrofluoric_acid": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "hydrofluoric_acid"
-            }
-        },
-        "hydrogen": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "hydrogen"
-            }
-        },
-        "oxygen": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "oxygen"
-            }
-        },
-        "uranium_hexafluoride": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "uranium_hexafluoride"
-            }
-        },
-        "uranium_hexafluoride_low": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "uranium_hexafluoride_low"
-            }
-        },
-        "uranium_hexafluoride_medium": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "uranium_hexafluoride_medium"
-            }
-        },
-        "uranium_hexafluoride_high": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "uranium_hexafluoride_high"
-            }
-        },
-        "depleted_uranium_hexafluoride": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "depleted_uranium_hexafluoride"
-            }
-        },
-        "fluorinated_effluent": {
-            "model": "forge:fluid",
-            "custom": {
-                "fluid": "fluorinated_effluent"
-            }
-        }
+  "forge_marker": 1,
+  "variants": {
+    "uranium_slurry": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "uranium_slurry"
+      }
+    },
+    "crude_uranium_solution": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "crude_uranium_solution"
+      }
+    },
+    "extraction_solvent": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "extraction_solvent"
+      }
+    },
+    "stripping_solution": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "stripping_solution"
+      }
+    },
+    "purified_uranium_solution": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "purified_uranium_solution"
+      }
+    },
+    "chemical_effluent": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "chemical_effluent"
+      }
+    },
+    "neutralized_sludge": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "neutralized_sludge"
+      }
+    },
+    "depleted_effluent": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "depleted_effluent"
+      }
+    },
+    "process_condensate": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "process_condensate"
+      }
+    },
+    "sulfuric_acid": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "sulfuric_acid"
+      }
+    },
+    "steam": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "steam"
+      }
+    },
+    "hydrofluoric_acid": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "hydrofluoric_acid"
+      }
+    },
+    "hydrogen": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "hydrogen"
+      }
+    },
+    "oxygen": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "oxygen"
+      }
+    },
+    "uranium_hexafluoride": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "uranium_hexafluoride"
+      }
+    },
+    "uranium_hexafluoride_low": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "uranium_hexafluoride_low"
+      }
+    },
+    "uranium_hexafluoride_medium": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "uranium_hexafluoride_medium"
+      }
+    },
+    "uranium_hexafluoride_high": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "uranium_hexafluoride_high"
+      }
+    },
+    "dilute_hydrofluoric_acid": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "dilute_hydrofluoric_acid"
+      }
+    },
+    "uranium_hexafluoride_very_high": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "uranium_hexafluoride_very_high"
+      }
+    },
+    "depleted_uranium_hexafluoride": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "depleted_uranium_hexafluoride"
+      }
+    },
+    "fluorinated_effluent": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "fluorinated_effluent"
+      }
+    },
+    "zirconium_solution": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "zirconium_solution"
+      }
+    },
+    "zirconium_solution_purified": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "zirconium_solution_purified"
+      }
+    },
+    "hafnium_solution": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "hafnium_solution"
+      }
+    },
+    "boric_acid_solution": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "boric_acid_solution"
+      }
+    },
+    "fluorosilicic_acid": {
+      "model": "forge:fluid",
+      "custom": {
+        "fluid": "fluorosilicic_acid"
+      }
     }
+  }
 }

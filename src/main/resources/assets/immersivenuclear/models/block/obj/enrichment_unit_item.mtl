@@ -1,9 +1,6 @@
 newmtl arc_furnace_active
 map_Kd #arc_furnace_active
 
-newmtl base_handwheel
-map_Kd #base_handwheel
-
 newmtl common_hazard
 map_Kd #common_hazard
 

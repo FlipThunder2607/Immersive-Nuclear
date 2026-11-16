@@ -130,6 +130,8 @@ public class RenderDeconversionUnit extends TileEntitySpecialRenderer<TileDeconv
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
 		GlStateManager.enableCull();
+		GlStateManager.disableLighting();
+		int light = te.getWorld().getCombinedLight(pos.up(), 0);
 		for(int i = 0; i < PARTS.length; i++)
 		{
 			IBakedModel m = mirrored ? partsMirrored[i] : parts[i];
@@ -142,13 +144,7 @@ public class RenderDeconversionUnit extends TileEntitySpecialRenderer<TileDeconv
 			GlStateManager.translate(a[0], a[1], az);
 			GlStateManager.rotate(drum * a[2], 0, 0, dz);
 			GlStateManager.translate(-a[0], -a[1], -az);
-			Tessellator tess = Tessellator.getInstance();
-			BufferBuilder buffer = tess.getBuffer();
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			buffer.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(te.getWorld(), m, state, pos, buffer, false);
-			buffer.setTranslation(0, 0, 0);
-			tess.draw();
+			ModelLists.drawLit(state, m, light);
 			GlStateManager.popMatrix();
 		}
 		// The heaters in the world's light (cold or hot); then, while it runs, only their glowing pixels again, full bright
@@ -156,9 +152,8 @@ public class RenderDeconversionUnit extends TileEntitySpecialRenderer<TileDeconv
 		GlStateManager.disableLighting();
 		if(heat != null)
 		{
-			int light = te.getWorld().getCombinedLight(pos.up(), 0);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light & 0xFFFF, light >> 16);
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(state, heat, 1, 1, 1, 1);
+			ModelLists.draw(state, heat);
 		}
 		IBakedModel shine = mirrored ? heatShineMirrored : heatShine;
 		if(lit && shine != null)
@@ -168,7 +163,7 @@ public class RenderDeconversionUnit extends TileEntitySpecialRenderer<TileDeconv
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.enableAlpha();
 			GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(state, shine, 1, 1, 1, 1);
+			ModelLists.draw(state, shine);
 			GlStateManager.disableBlend();
 		}
 		RenderHelper.enableStandardItemLighting();

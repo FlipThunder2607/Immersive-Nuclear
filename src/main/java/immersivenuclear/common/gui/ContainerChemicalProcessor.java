@@ -42,7 +42,9 @@ public class ContainerChemicalProcessor extends Container
 	public final FluidTank recycled = new FluidTank(TileChemicalProcessor.TANK_CAPACITY);
 	public int energy, phase, phaseTicks, reactor, moving, state, recycledType, batchRecycled;
 	public boolean redstoneInverted;
-	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+	/** The batch's material and the output tank's (TileChemicalProcessor.MAT_*). */
+	public int material, outputMaterial;
+	final int[] sent = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 	public ContainerChemicalProcessor(InventoryPlayer playerInv, TileChemicalProcessor tile)
 	{
@@ -60,7 +62,8 @@ public class ContainerChemicalProcessor extends Container
 	int[] values()
 	{
 		return new int[]{tile.getWater(), tile.getSlurry(), tile.getEnergy(), tile.getPhase(), tile.getPhaseTicks(), tile.getReactor(),
-				tile.getMoving(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0, tile.getRecycledType(), tile.getRecycled(), tile.getBatchRecycled()};
+				tile.getMoving(), tile.getState(), tile.isRedstoneInverted() ? 1 : 0, tile.getRecycledType(), tile.getRecycled(), tile.getBatchRecycled(),
+				tile.getMaterial(), tile.getOutputMaterial()};
 	}
 
 	/** Server side: mirror the tile into the client copies, so the same fields can be read on both sides. */
@@ -98,7 +101,13 @@ public class ContainerChemicalProcessor extends Container
 				break;
 			case 11: batchRecycled = data; break;
 			case 0: water.setFluid(data > 0 ? new FluidStack(FluidRegistry.WATER, data) : null); break;
-			case 1: slurry.setFluid(data > 0 ? new FluidStack(INContent.fluidSlurry, data) : null); break;
+			case 13:
+				outputMaterial = data;
+				if(slurry.getFluid() != null)
+					slurry.setFluid(new FluidStack(TileChemicalProcessor.outputOf(outputMaterial), slurry.getFluidAmount()));
+				break;
+			case 12: material = data; break;
+			case 1: slurry.setFluid(data > 0 ? new FluidStack(TileChemicalProcessor.outputOf(outputMaterial), data) : null); break;
 			case 2: energy = data; break;
 			case 3: phase = data; break;
 			case 4: phaseTicks = data; break;

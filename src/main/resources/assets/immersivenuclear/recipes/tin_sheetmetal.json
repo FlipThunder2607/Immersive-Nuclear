@@ -1,0 +1,18 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " P ",
+    "P P",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateTin"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:tin_sheetmetal",
+    "count": 4
+  }
+}

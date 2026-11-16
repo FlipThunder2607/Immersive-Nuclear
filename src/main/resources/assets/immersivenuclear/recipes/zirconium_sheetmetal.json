@@ -1,0 +1,18 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " P ",
+    "P P",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateZirconium"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:zirconium_sheetmetal",
+    "count": 4
+  }
+}

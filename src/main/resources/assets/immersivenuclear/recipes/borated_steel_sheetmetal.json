@@ -1,0 +1,18 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " P ",
+    "P P",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateBoratedSteel"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:borated_steel_sheetmetal",
+    "count": 4
+  }
+}

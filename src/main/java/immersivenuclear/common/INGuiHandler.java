@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 /** Opened with the master's position; the client class is only touched on the client. */
 public class INGuiHandler implements IGuiHandler
 {
-	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9, CONVERSION_UNIT = 10, ENRICHMENT_UNIT = 11, DECONVERSION_UNIT = 12;
+	public static final int CHEMICAL_PROCESSOR = 0, FILTER_PRESS = 1, CHEMICAL_SEPARATOR = 2, METAL_EXTRACTOR = 3, PRECIPITATION_UNIT = 4, INDUSTRIAL_DRYER = 5, CONCENTRATE_DRUM = 6, SULFURIC_ACID_UNIT = 7, HF_KILN = 8, ELECTROLYZER = 9, CONVERSION_UNIT = 10, ENRICHMENT_UNIT = 11, DECONVERSION_UNIT = 12, IN_WORKBENCH = 13;
 
 	static TileChemicalProcessor master(World world, int x, int y, int z)
 	{
@@ -116,6 +116,12 @@ public class INGuiHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
+		if(id == IN_WORKBENCH)
+		{
+			TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+			return te instanceof immersivenuclear.common.block.TileINWorkbench
+					? new immersivenuclear.common.gui.ContainerINWorkbench(player.inventory, (immersivenuclear.common.block.TileINWorkbench)te) : null;
+		}
 		if(id == SULFURIC_ACID_UNIT)
 		{
 			TileSulfuricAcidUnit a = acidUnit(world, x, y, z);
@@ -183,6 +189,12 @@ public class INGuiHandler implements IGuiHandler
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
 	{
+		if(id == IN_WORKBENCH)
+		{
+			TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+			return te instanceof immersivenuclear.common.block.TileINWorkbench ? new immersivenuclear.client.GuiINWorkbench(
+					new immersivenuclear.common.gui.ContainerINWorkbench(player.inventory, (immersivenuclear.common.block.TileINWorkbench)te)) : null;
+		}
 		if(id == SULFURIC_ACID_UNIT)
 		{
 			TileSulfuricAcidUnit a = acidUnit(world, x, y, z);

@@ -11,12 +11,20 @@ import net.minecraftforge.fluids.FluidStack;
 /** One batch of the Precipitation Unit, with the amounts the tile uses (TilePrecipitationUnit). */
 public class PrecipitationUnitRecipe implements IRecipeWrapper
 {
+	/** TilePrecipitationUnit.MAT_*: one page per material. */
+	final int material;
+
+	public PrecipitationUnitRecipe(int material)
+	{
+		this.material = material;
+	}
+
 	@Override
 	public void getIngredients(IIngredients ingredients)
 	{
 		ingredients.setInput(VanillaTypes.ITEM, new ItemStack(INContent.itemPrecipitatingAgent, TilePrecipitationUnit.AGENT_PER_BATCH));
-		ingredients.setInput(VanillaTypes.FLUID, new FluidStack(INContent.fluidPurifiedSolution, TilePrecipitationUnit.BATCH_SOLUTION));
-		ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(INContent.itemWetConcentrate, TilePrecipitationUnit.CONCENTRATE_PER_BATCH));
+		ingredients.setInput(VanillaTypes.FLUID, new FluidStack(TilePrecipitationUnit.solutionOf(material), TilePrecipitationUnit.BATCH_SOLUTION));
+		ingredients.setOutput(VanillaTypes.ITEM, TilePrecipitationUnit.productOf(material));
 		ingredients.setOutput(VanillaTypes.FLUID, new FluidStack(INContent.fluidEffluent, TilePrecipitationUnit.EFFLUENT_PER_BATCH));
 	}
 

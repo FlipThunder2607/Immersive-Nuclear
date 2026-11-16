@@ -13,8 +13,6 @@
     "#conversion_window_reactor": "immersivenuclear:blocks/conversion_window_reactor",
     "#conversion_window_reactor_off": "immersivenuclear:blocks/conversion_window_reactor_off",
     "#lead_tank_wall": "immersivenuclear:blocks/lead_tank_wall",
-    "#metal_decoration0_coil_hv_side": "immersiveengineering:blocks/metal_decoration0_coil_hv_side",
-    "#metal_decoration0_coil_hv_top": "immersiveengineering:blocks/metal_decoration0_coil_hv_top",
     "#metal_decoration0_generator": "immersiveengineering:blocks/metal_decoration0_generator",
     "#metal_decoration0_radiator_ctm": "immersiveengineering:blocks/ctm/metal_decoration0_radiator_ctm",
     "#metal_decoration2_steel_post": "immersiveengineering:blocks/metal_decoration2_steel_post",

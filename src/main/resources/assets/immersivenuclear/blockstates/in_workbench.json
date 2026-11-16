@@ -1,0 +1,58 @@
+{
+ "variants": {
+  "blueprint=false,dummy=false,facing=north": {
+   "model": "immersivenuclear:in_workbench_bare"
+  },
+  "blueprint=false,dummy=true,facing=north": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=true,dummy=false,facing=north": {
+   "model": "immersivenuclear:in_workbench"
+  },
+  "blueprint=true,dummy=true,facing=north": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=false,dummy=false,facing=east": {
+   "model": "immersivenuclear:in_workbench_bare",
+   "y": 90
+  },
+  "blueprint=false,dummy=true,facing=east": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=true,dummy=false,facing=east": {
+   "model": "immersivenuclear:in_workbench",
+   "y": 90
+  },
+  "blueprint=true,dummy=true,facing=east": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=false,dummy=false,facing=south": {
+   "model": "immersivenuclear:in_workbench_bare",
+   "y": 180
+  },
+  "blueprint=false,dummy=true,facing=south": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=true,dummy=false,facing=south": {
+   "model": "immersivenuclear:in_workbench",
+   "y": 180
+  },
+  "blueprint=true,dummy=true,facing=south": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=false,dummy=false,facing=west": {
+   "model": "immersivenuclear:in_workbench_bare",
+   "y": 270
+  },
+  "blueprint=false,dummy=true,facing=west": {
+   "model": "immersivenuclear:in_workbench_empty"
+  },
+  "blueprint=true,dummy=false,facing=west": {
+   "model": "immersivenuclear:in_workbench",
+   "y": 270
+  },
+  "blueprint=true,dummy=true,facing=west": {
+   "model": "immersivenuclear:in_workbench_empty"
+  }
+ }
+}

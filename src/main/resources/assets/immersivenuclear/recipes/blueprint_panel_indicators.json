@@ -1,0 +1,32 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "ABC",
+    "DDD",
+    "PPP"
+  ],
+  "key": {
+    "A": {
+      "type": "forge:ore_dict",
+      "ore": "dustGlowstone"
+    },
+    "B": {
+      "type": "forge:ore_dict",
+      "ore": "paneGlass"
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "dustGlowstone"
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBrown"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:blueprint_panel_indicators"
+  }
+}

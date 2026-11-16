@@ -1,0 +1,16 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "ingotDepletedUranium"
+    },
+    {
+      "item": "immersiveengineering:tool",
+      "data": 0
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:depleted_uranium_plate"
+  }
+}

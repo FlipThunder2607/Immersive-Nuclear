@@ -1,0 +1,8 @@
+{
+  "parent": "block/half_slab",
+  "textures": {
+    "bottom": "immersivenuclear:blocks/zircaloy_sheetmetal",
+    "top": "immersivenuclear:blocks/zircaloy_sheetmetal",
+    "side": "immersivenuclear:blocks/zircaloy_sheetmetal"
+  }
+}

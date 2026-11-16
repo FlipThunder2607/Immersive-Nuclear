@@ -1,0 +1,16 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "ingotHafnium"
+    },
+    {
+      "item": "immersiveengineering:tool",
+      "data": 0
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:hafnium_plate"
+  }
+}

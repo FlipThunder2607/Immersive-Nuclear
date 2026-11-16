@@ -69,7 +69,7 @@ public class RenderChemicalProcessor extends TileEntitySpecialRenderer<TileChemi
 		int light = te.getWorld().getCombinedLight(te.getPos().up(4), 0);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light & 0xFFFF, light >> 16);
 
-		Fluid slurryFluid = INContent.fluidSlurry;
+		Fluid slurryFluid = TileChemicalProcessor.outputOf(te.clientMaterial);
 		if(level > 0.002F)
 		{
 			// The water, then the slurry over it as the reaction goes on

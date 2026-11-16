@@ -1,0 +1,13 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "ingotStainlessSteel"
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:stainless_steel_nugget",
+    "count": 9
+  }
+}

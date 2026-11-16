@@ -133,18 +133,27 @@ public class INContent
 			structure.add(itemLeadedGlass);
 			Item[][] groups = {
 					structure.toArray(new Item[0]),
-					{itemFluoriteOre, itemFluorite, itemFluoriteDust},
-					{itemReagent, itemQuicklime, itemPrecipitatingAgent, itemFilter, itemWetConcentrate, itemYellowcake, itemConcentrateDrum,
-							itemResidue, itemNeutralizedResidue, itemCake, itemMixedDeposit},
-					{itemElectrodeSteel, itemElectrodeLeadSilver, itemElectrodeElectrum},
-					{itemGypsum, itemFluorinationAsh, itemDepletedUraniumOxide, itemDepletedUraniumIngot},
+					{INAssembly.itemINWorkbench},
+					cat(new Item[]{itemFluoriteOre}, INRawMaterials.oreItems()),
+					INRawMaterials.metalBlockItems(),
 					{itemAgglomerate, itemAgglomerateBlock, itemAgglomerateTile, itemAgglomerateBricks, itemAgglomerateStairs, itemAgglomerateSlab,
 							itemPlaster, itemPlasterTile, itemPlasterBricks, itemPlasterStairs, itemPlasterSlab},
-					{itemRemoteManipulator, itemPrecisionBearing},
+					cat(INRawMaterials.ingotItems(), new Item[]{INAssembly.itemFerriteIngot}),
+					INRawMaterials.nuggetItems(),
+					cat(INRawMaterials.plateItems(), new Item[]{INAssembly.itemSiliconWafer}),
+					cat(new Item[]{itemFluorite, itemFluoriteDust}, INRawMaterials.dustItems(),
+							new Item[]{INAssembly.itemSilicon, INAssembly.itemSilica, itemQuicklime, itemGypsum, itemYellowcake, itemUraniumDioxide, itemGreenSalt, itemDepletedUraniumOxide}),
+					cat(new Item[]{itemReagent, itemPrecipitatingAgent, itemFilter, itemWetConcentrate, itemConcentrateDrum, itemResidue,
+							itemNeutralizedResidue, itemCake, itemMixedDeposit, itemFluorinationAsh}, INRawMaterials.precipitateItems()),
+					INFuel.items(),
+					INAssembly.blueprintGroup(),
+					cat(new Item[]{itemElectrodeSteel, itemElectrodeLeadSilver, itemElectrodeElectrum, itemRemoteManipulator, itemPrecisionBearing},
+							INAssembly.partsGroup()),
 			};
 			for(Item[] group : groups)
 				group(list, group, done);
-			java.util.List<Item> computer = new java.util.ArrayList<>(java.util.Arrays.asList(itemComputerParts));
+			java.util.List<Item> computer = new java.util.ArrayList<>(java.util.Arrays.asList(INAssembly.electronicsGroup()));
+			computer.addAll(java.util.Arrays.asList(itemComputerParts));
 			computer.add(itemLinkConnector);
 			computer.add(itemLinkRelay);
 			if(itemConduit != null)
@@ -254,6 +263,8 @@ public class INContent
 	/** Line 2's uranium by-products: the Conversion Unit's fluorination ash (impurities' fluorides and a little uranium
 	 * that did not react, for the Chemical Processing Unit), the Deconversion's depleted uranium oxide and its ingot. */
 	public static Item itemFluorinationAsh, itemDepletedUraniumOxide, itemDepletedUraniumIngot;
+	/** The modular Conversion's stage products (14/11/2026): the Reduction Reactor's UO2 powder, the Hydrofluorinator's UF4. */
+	public static Item itemUraniumDioxide, itemGreenSalt;
 	/** Building blocks of gypsum plaster, as the agglomerate's: the block (4 gypsum), its tile, its bricks and the bricks'
 	 * slab and stairs. */
 	public static Block blockPlaster, blockPlasterTile, blockPlasterBricks, blockPlasterStairs;
@@ -282,9 +293,9 @@ public class INContent
 	 * use them for now. */
 	public static Fluid fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate;
 	/** Line 2: the Sulfuric Acid Unit's acid and steam (shared with other mods by name: theirs is used when they have one). */
-	public static Fluid fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid, fluidHydrogen, fluidOxygen;
+	public static Fluid fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid, fluidDiluteHydrofluoricAcid, fluidHydrogen, fluidOxygen;
 	/** The uranium hexafluorides of line 2: natural (from the conversion), enriched in three grades and depleted. */
-	public static Fluid fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6Depleted;
+	public static Fluid fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6VeryHigh, fluidUF6Depleted;
 	/** What the Conversion Unit's fluorination leaves: spent hydrofluoric acid with the fluorides of the impurities. */
 	public static Fluid fluidFluorinatedEffluent;
 	/** mB of fluorinated effluent that, with one quicklime, give one fluorite dust. */
@@ -481,6 +492,7 @@ public class INContent
 		fluidSulfuricAcid = fluid("sulfuric_acid", 1830, 2600);
 		// thin and dense like the real one; shared by name with other mods (Immersive Intelligence has it too)
 		fluidHydrofluoricAcid = fluid("hydrofluoric_acid", 1150, 900);
+		fluidDiluteHydrofluoricAcid = fluid("dilute_hydrofluoric_acid", 1080, 1000);   // the Hydrofluorinator's by-product (14/11/2026)
 		// the Electrolyzer's gases: light, rising; shared by name with other mods (Immersive Intelligence, Mekanism...)
 		fluidHydrogen = gas("hydrogen", -900, 100);
 		fluidOxygen = gas("oxygen", -200, 200);
@@ -489,12 +501,17 @@ public class INContent
 		fluidUF6Low = fluid("uranium_hexafluoride_low", 3000, 600);
 		fluidUF6Medium = fluid("uranium_hexafluoride_medium", 3000, 600);
 		fluidUF6High = fluid("uranium_hexafluoride_high", 3000, 600);
+		fluidUF6VeryHigh = fluid("uranium_hexafluoride_very_high", 3000, 600);   // 90%: the modular cascade's fourth module (14/11/2026)
 		fluidUF6Depleted = fluid("depleted_uranium_hexafluoride", 3000, 600);
 		fluidFluorinatedEffluent = fluid("fluorinated_effluent", 1200, 1100);
 		if(fluidSteam == null)
 			constructFluids();
-		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate, fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid, fluidHydrogen, fluidOxygen,
-			fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6Depleted, fluidFluorinatedEffluent};
+		fluids = new Fluid[]{fluidSlurry, fluidCrudeSolution, fluidSolvent, fluidStrippingSolution, fluidPurifiedSolution, fluidEffluent, fluidSludge, fluidDepletedEffluent, fluidCondensate, fluidSulfuricAcid, fluidSteam, fluidHydrofluoricAcid, fluidDiluteHydrofluoricAcid, fluidHydrogen, fluidOxygen,
+			fluidUF6, fluidUF6Low, fluidUF6Medium, fluidUF6High, fluidUF6VeryHigh, fluidUF6Depleted, fluidFluorinatedEffluent};
+		// line 3's raw materials: the nuclear scale's solutions
+		Fluid[] raw = INRawMaterials.fluids();
+		fluids = java.util.Arrays.copyOf(fluids, fluids.length + raw.length);
+		System.arraycopy(raw, 0, fluids, fluids.length - raw.length, raw.length);
 	}
 
 	/** A building block of the finished agglomerate: heavy like the raw one and IE's concrete (provisional values). */
@@ -513,6 +530,15 @@ public class INContent
 				.setTranslationKey(ImmersiveNuclear.MODID + "." + name).setCreativeTab(TAB);
 		b.setHarvestLevel("pickaxe", 0);
 		return b;
+	}
+
+	/** Arrays joined, for the creative tab's groups. */
+	static Item[] cat(Item[]... parts)
+	{
+		java.util.List<Item> l = new java.util.ArrayList<>();
+		for(Item[] q : parts)
+			l.addAll(java.util.Arrays.asList(q));
+		return l.toArray(new Item[0]);
 	}
 
 	static Item item(RegistryEvent.Register<Item> event, String name)
@@ -575,41 +601,27 @@ public class INContent
 		event.getRegistry().register(itemEnrichmentUnit6);
 		itemDeconversionUnit = new ItemMachineIcon().setRegistryName(ImmersiveNuclear.MODID, "deconversion_unit").setTranslationKey(ImmersiveNuclear.MODID + ".deconversion_unit");
 		event.getRegistry().register(itemDeconversionUnit);
-		// The order of registration is the order of JEI's list and of the creative tab: the machines (above), then each
-		// line's materials in the order the process meets them, then building blocks, engineering and computer parts
-		// Line 1: supplies, the main path, residues and their treatment, the Metal Extractor's
-		itemReagent = new Item().setRegistryName(ImmersiveNuclear.MODID, "processing_reagent").setTranslationKey(ImmersiveNuclear.MODID + ".processing_reagent").setCreativeTab(TAB);
-		event.getRegistry().register(itemReagent);
-		itemFilter = new ItemFilter();
-		event.getRegistry().register(itemFilter);
-		itemQuicklime = item(event, "quicklime");
-		itemPrecipitatingAgent = item(event, "precipitating_agent");
-		itemWetConcentrate = item(event, "wet_uranium_concentrate");
-		itemYellowcake = item(event, "yellowcake");
-		itemConcentrateDrum = new ItemConcentrateDrum(blockConcentrateDrum);
-		event.getRegistry().register(itemConcentrateDrum);
-		itemResidue = new Item().setRegistryName(ImmersiveNuclear.MODID, "wet_mineral_residue").setTranslationKey(ImmersiveNuclear.MODID + ".wet_mineral_residue").setCreativeTab(TAB);
-		event.getRegistry().register(itemResidue);
-		itemNeutralizedResidue = item(event, "neutralized_residue");
-		itemCake = item(event, "neutralization_cake");
-		// Life in batches, share of the deposit (6 steel plates = the base 6 deposits), share of the recovery's energy
-		itemElectrodeSteel = new ItemElectrode("electrode_steel", 1, 32, 1F, 1F, new float[]{1F, 1F, 1F});
-		itemElectrodeLeadSilver = new ItemElectrode("electrode_lead_silver", 2, 64, 7 / 6F, 0.9F, new float[]{0.78F, 0.82F, 0.95F});
-		itemElectrodeElectrum = new ItemElectrode("electrode_electrum", 3, 128, 8 / 6F, 0.75F, new float[]{1F, 0.86F, 0.5F});
-		event.getRegistry().register(itemElectrodeSteel);
-		event.getRegistry().register(itemElectrodeLeadSilver);
-		event.getRegistry().register(itemElectrodeElectrum);
-		itemMixedDeposit = item(event, "mixed_metal_deposit");
-		// Line 2: fluorite
+		// The order of registration is the order of JEI's list (and of the creative tab, displayAllRelevantItems): by KIND,
+		// as IE's (the user, 14/11/2026): engineering blocks, ores, metal blocks, building blocks, ingots, plates, crystals and
+		// dusts, process materials (supplies, concentrates, residues, slags, precipitates), electrodes and parts, computers
+		// 1. Engineering blocks (what the machines are built from) and lead glass
+		itemEngineering = new Item[blockEngineering.length];
+		for(int i = 0; i < blockEngineering.length; i++)
+		{
+			itemEngineering[i] = new ItemBlock(blockEngineering[i]).setRegistryName(blockEngineering[i].getRegistryName());
+			event.getRegistry().register(itemEngineering[i]);
+		}
+		itemLeadedGlass = new ItemBlock(blockLeadedGlass).setRegistryName(blockLeadedGlass.getRegistryName());
+		event.getRegistry().register(itemLeadedGlass);
+		// 1b. Work blocks: the IN Workbench
+		INAssembly.bench(event);
+		// 2. Ores
 		itemFluoriteOre = new ItemBlock(blockFluoriteOre).setRegistryName(blockFluoriteOre.getRegistryName());
 		event.getRegistry().register(itemFluoriteOre);
-		itemFluorite = item(event, "fluorite");
-		itemFluoriteDust = item(event, "fluorite_dust");
-		itemGypsum = item(event, "gypsum");
-		itemFluorinationAsh = item(event, "fluorination_ash");
-		itemDepletedUraniumOxide = item(event, "depleted_uranium_oxide");
-		itemDepletedUraniumIngot = item(event, "depleted_uranium_ingot");
-		// Building blocks: the agglomerate from the residues, and lead glass
+		INRawMaterials.ores(event);
+		// 3. Metal blocks: storage, sheet metal, sheet metal slabs
+		INRawMaterials.metalBlocks(event);
+		// 4. Building blocks: the agglomerate from the residues, the gypsum plaster
 		itemAgglomerate = new ItemBlock(blockAgglomerate).setRegistryName(blockAgglomerate.getRegistryName());
 		event.getRegistry().register(itemAgglomerate);
 		itemAgglomerateBlock = new ItemBlock(blockAgglomerateBlock).setRegistryName(blockAgglomerateBlock.getRegistryName());
@@ -624,17 +636,57 @@ public class INContent
 		itemPlasterStairs = new ItemBlock(blockPlasterStairs).setRegistryName(blockPlasterStairs.getRegistryName());
 		itemPlasterSlab = new ItemSlab(blockPlasterSlab, blockPlasterSlab, blockPlasterSlabDouble).setRegistryName(blockPlasterSlab.getRegistryName());
 		event.getRegistry().registerAll(itemPlaster, itemPlasterTile, itemPlasterBricks, itemPlasterStairs, itemPlasterSlab);
-		itemLeadedGlass = new ItemBlock(blockLeadedGlass).setRegistryName(blockLeadedGlass.getRegistryName());
-		event.getRegistry().register(itemLeadedGlass);
-		// Engineering blocks and their parts
-		itemEngineering = new Item[blockEngineering.length];
-		for(int i = 0; i < blockEngineering.length; i++)
-		{
-			itemEngineering[i] = new ItemBlock(blockEngineering[i]).setRegistryName(blockEngineering[i].getRegistryName());
-			event.getRegistry().register(itemEngineering[i]);
-		}
+		// 5. Ingots and 6. plates
+		itemDepletedUraniumIngot = item(event, "depleted_uranium_ingot");
+		INRawMaterials.ingots(event);
+		INAssembly.ingots(event);
+		INRawMaterials.nuggets(event);
+		INRawMaterials.plates(event);
+		INAssembly.plates(event);
+		// 7. Crystals and dusts
+		itemFluorite = item(event, "fluorite");
+		itemFluoriteDust = item(event, "fluorite_dust");
+		INRawMaterials.dusts(event);
+		INAssembly.dusts(event);
+		itemQuicklime = item(event, "quicklime");
+		itemGypsum = item(event, "gypsum");
+		itemYellowcake = item(event, "yellowcake");
+		itemUraniumDioxide = item(event, "uranium_dioxide");
+		itemGreenSalt = item(event, "green_salt");
+		itemDepletedUraniumOxide = item(event, "depleted_uranium_oxide");
+		// 8. Process materials: supplies, the uranium's concentrates, residues, slags and precipitates
+		itemReagent = new Item().setRegistryName(ImmersiveNuclear.MODID, "processing_reagent").setTranslationKey(ImmersiveNuclear.MODID + ".processing_reagent").setCreativeTab(TAB);
+		event.getRegistry().register(itemReagent);
+		itemPrecipitatingAgent = item(event, "precipitating_agent");
+		itemFilter = new ItemFilter();
+		event.getRegistry().register(itemFilter);
+		itemWetConcentrate = item(event, "wet_uranium_concentrate");
+		itemConcentrateDrum = new ItemConcentrateDrum(blockConcentrateDrum);
+		event.getRegistry().register(itemConcentrateDrum);
+		itemResidue = new Item().setRegistryName(ImmersiveNuclear.MODID, "wet_mineral_residue").setTranslationKey(ImmersiveNuclear.MODID + ".wet_mineral_residue").setCreativeTab(TAB);
+		event.getRegistry().register(itemResidue);
+		itemNeutralizedResidue = item(event, "neutralized_residue");
+		itemCake = item(event, "neutralization_cake");
+		itemMixedDeposit = item(event, "mixed_metal_deposit");
+		itemFluorinationAsh = item(event, "fluorination_ash");
+		INRawMaterials.precipitates(event);
+		// 8b. The fuel line's items (powder, pellets, tube, rod, element, the tube mold, the control rod)
+		INFuel.items(event);
+		// 8c. Molds and blueprints: the wafer mold, the sepia blueprints
+		INAssembly.blueprints(event);
+		// 9. Electrodes (life in batches, share of the deposit, share of the recovery's energy) and machine parts
+		itemElectrodeSteel = new ItemElectrode("electrode_steel", 1, 32, 1F, 1F, new float[]{1F, 1F, 1F});
+		itemElectrodeLeadSilver = new ItemElectrode("electrode_lead_silver", 2, 64, 7 / 6F, 0.9F, new float[]{0.78F, 0.82F, 0.95F});
+		itemElectrodeElectrum = new ItemElectrode("electrode_electrum", 3, 128, 8 / 6F, 0.75F, new float[]{1F, 0.86F, 0.5F});
+		event.getRegistry().register(itemElectrodeSteel);
+		event.getRegistry().register(itemElectrodeLeadSilver);
+		event.getRegistry().register(itemElectrodeElectrum);
 		itemRemoteManipulator = item(event, "remote_manipulator");
 		itemPrecisionBearing = item(event, "precision_bearing");
+		// 9b. The Modular Assembly Station's modules and jigs
+		INAssembly.parts(event);
+		// 10. Electronics: the components, the reel, the component tape (they open the computers' group)
+		INAssembly.electronics(event);
 		// Computer parts
 		itemComputerParts = new Item[COMPUTER_PARTS.length];
 		for(int i = 0; i < COMPUTER_PARTS.length; i++)
@@ -753,6 +805,7 @@ public class INContent
 		event.getRegistry().register(blockAgglomerate);
 		blockFluoriteOre = new immersivenuclear.common.block.BlockFluoriteOre();
 		event.getRegistry().register(blockFluoriteOre);
+		INRawMaterials.blocks(event);
 		blockAgglomerateBlock = agglomerate("agglomerate_block");
 		blockAgglomerateTile = agglomerate("agglomerate_tile");
 		blockAgglomerateBricks = agglomerate("agglomerate_bricks");
@@ -779,6 +832,7 @@ public class INContent
 		GameRegistry.registerTileEntity(TileLinkConnector.class, new ResourceLocation(ImmersiveNuclear.MODID, "link_connector"));
 		blockLinkRelay = new BlockLinkConnector("link_relay", true);
 		event.getRegistry().register(blockLinkRelay);
+		INAssembly.blocks(event);
 		for(Fluid f : fluids)
 			if(f.getBlock() == null && ImmersiveNuclear.MODID.equals(f.getStill().getNamespace()))
 			{
@@ -808,6 +862,8 @@ public class INContent
 		for(immersivenuclear.common.multiblock.MultiblockComputer m : immersivenuclear.common.multiblock.MultiblockComputer.ALL)
 			MultiblockHandler.registerMultiblock(m);
 		fluorite();
+		INRawMaterials.recipes();
+		INAssembly.recipes();
 		mixerRecipes();
 		cokeOvenRecipes();
 		crusherRecipes();
@@ -846,7 +902,7 @@ public class INContent
 	// The Mixed Metal Deposit: one per 2000 mB of effluent, so each chance is twice the old Recovery Unit's per 1000 mB
 	public static final int DEPOSIT_CRUSH_ENERGY = 4800, SLAG_META = 7;
 	public static final float DEPOSIT_IRON = .20F, DEPOSIT_ALUMINUM = .12F, DEPOSIT_COPPER = .08F, DEPOSIT_LEAD = .06F, DEPOSIT_NICKEL = .04F,
-			DEPOSIT_URANIUM = .02F, DEPOSIT_CLAY = .30F;
+			DEPOSIT_URANIUM = .02F, DEPOSIT_CLAY = .30F, DEPOSIT_HAFNIUM = .02F;
 
 	/**
 	 * Neutralized residue: mostly gangue (sand), with some iron minerals, clay and the little uranium the leaching did
@@ -857,7 +913,10 @@ public class INContent
 		// The Mixed Metal Deposit: slag (the plates' scale) and, by chance, the metals of the effluent
 		CrusherRecipe.addRecipe(new ItemStack(blusunrize.immersiveengineering.common.IEContent.itemMaterial, 1, SLAG_META), new ItemStack(itemMixedDeposit), DEPOSIT_CRUSH_ENERGY)
 				.addToSecondaryOutput(new ItemStack(net.minecraft.init.Items.IRON_NUGGET), DEPOSIT_IRON, "nuggetAluminum", DEPOSIT_ALUMINUM, "nuggetCopper", DEPOSIT_COPPER,
-						"nuggetLead", DEPOSIT_LEAD, "nuggetNickel", DEPOSIT_NICKEL, "nuggetUranium", DEPOSIT_URANIUM, new ItemStack(net.minecraft.init.Items.CLAY_BALL), DEPOSIT_CLAY);
+						"nuggetLead", DEPOSIT_LEAD, "nuggetNickel", DEPOSIT_NICKEL, "nuggetUranium", DEPOSIT_URANIUM, new ItemStack(net.minecraft.init.Items.CLAY_BALL), DEPOSIT_CLAY,
+						// the hafnium the chemical effluent carries (15/11/2026): a nugget now and then, as the other metals, below the
+						// Separation's own hafnium (cycle rule)
+						"nuggetHafnium", DEPOSIT_HAFNIUM);
 		CrusherRecipe.addRecipe(new ItemStack(net.minecraft.init.Blocks.SAND), new ItemStack(itemNeutralizedResidue), RESIDUE_CRUSH_ENERGY)
 				.addToSecondaryOutput(new ItemStack(net.minecraft.init.Items.IRON_NUGGET), RESIDUE_IRON, new ItemStack(net.minecraft.init.Items.CLAY_BALL), RESIDUE_CLAY,
 						"nuggetUranium", RESIDUE_URANIUM);

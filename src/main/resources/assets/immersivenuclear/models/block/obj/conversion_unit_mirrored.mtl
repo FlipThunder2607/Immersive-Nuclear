@@ -19,12 +19,6 @@ map_Kd #conversion_window_reactor_off
 newmtl lead_tank_wall
 map_Kd #lead_tank_wall
 
-newmtl metal_decoration0_coil_hv_side
-map_Kd #metal_decoration0_coil_hv_side
-
-newmtl metal_decoration0_coil_hv_top
-map_Kd #metal_decoration0_coil_hv_top
-
 newmtl metal_decoration0_generator
 map_Kd #metal_decoration0_generator
 

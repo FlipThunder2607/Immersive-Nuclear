@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=bottom,variant=default": {
+      "model": "immersivenuclear:zircaloy_sheetmetal_slab"
+    },
+    "half=top,variant=default": {
+      "model": "immersivenuclear:zircaloy_sheetmetal_slab_top"
+    }
+  }
+}

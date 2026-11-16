@@ -1,0 +1,16 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "ingotZirconium"
+    },
+    {
+      "item": "immersiveengineering:tool",
+      "data": 0
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:zirconium_plate"
+  }
+}

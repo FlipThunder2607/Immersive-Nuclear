@@ -1,0 +1,32 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "ABC",
+    "DDD",
+    "PPP"
+  ],
+  "key": {
+    "A": {
+      "type": "forge:ore_dict",
+      "ore": "plateSteel"
+    },
+    "B": {
+      "item": "immersiveengineering:material",
+      "data": 9
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "plateSteel"
+    },
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBrown"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "item": "immersivenuclear:blueprint_jigs"
+  }
+}

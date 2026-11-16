@@ -243,7 +243,7 @@ public class GuiChemicalProcessor extends GuiIEContainerBase
 			if(reacted < 1)
 				fluid(FluidRegistry.WATER, REACTOR_X, surface, REACTOR_W, lh, COL_WATER);
 			if(reacted > 0)
-				fluid(INContent.fluidSlurry, REACTOR_X, surface, REACTOR_W, lh, (int)(255 * reacted) << 24 | 0xffffff);
+				fluid(immersivenuclear.common.block.TileChemicalProcessor.outputOf(container.material), REACTOR_X, surface, REACTOR_W, lh, (int)(255 * reacted) << 24 | 0xffffff);
 			rect(REACTOR_X, surface, REACTOR_W, 1, 0x46ffffff);
 			// The swirl round the impellers, moving with them
 			if(agitating() && lh > 12)

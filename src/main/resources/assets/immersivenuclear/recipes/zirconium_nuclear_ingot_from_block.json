@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "immersivenuclear:zirconium_nuclear_block"
+    }
+  ],
+  "result": {
+    "item": "immersivenuclear:zirconium_nuclear_ingot",
+    "count": 9
+  }
+}

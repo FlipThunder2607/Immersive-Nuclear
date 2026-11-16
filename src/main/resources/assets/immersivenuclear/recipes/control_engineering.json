@@ -15,7 +15,7 @@
         },
         "T": {
             "type": "forge:ore_dict",
-            "ore": "elecTube"
+            "ore": "electronTube"
         },
         "E": {
             "item": "immersivenuclear:electronic_module"
